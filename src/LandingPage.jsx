@@ -159,7 +159,7 @@ function TimelineIcon({ type, active }) {
   }
 }
 
-export default function LandingPage() {
+export default function LandingPage({ onNavigate }) {
   const wrapperRef = useRef(null)
   const trackRef = useRef(null)
   const followerRef = useRef(null)
@@ -274,7 +274,6 @@ export default function LandingPage() {
       target.scrollIntoView({ behavior: 'smooth' })
     }
   }
-
   return (
     <div className="landing-page-wrapper" ref={wrapperRef}>
       {/* ── Fixed Curved Center Floating Navbar ── */}
@@ -304,7 +303,14 @@ export default function LandingPage() {
           <a
             href="#contact"
             className={`nav-item ${activeSection === 'contact' ? 'active' : ''}`}
-            onClick={(e) => scrollToSection(e, 'contact')}
+            onClick={(e) => {
+              if (onNavigate) {
+                e.preventDefault()
+                onNavigate('contact')
+              } else {
+                scrollToSection(e, 'contact')
+              }
+            }}
           >
             Contact Us
           </a>

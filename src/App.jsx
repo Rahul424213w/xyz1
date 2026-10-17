@@ -5,6 +5,7 @@ import ShuttleModel from './ShuttleModel'
 import { Stars } from './SceneExtras'
 import { initScroll, resetScroll, scrollState } from './scrollState'
 import LandingPage from './LandingPage'
+import ContactPage from './ContactPage'
 import './App.css'
 
 /* ── Loader ── */
@@ -38,8 +39,13 @@ function Loader() {
 
 /* ── Main App ── */
 export default function App() {
-  const [currentPage, setCurrentPage] = useState('intro') // 'intro' | 'landing'
-  const [flashStage, setFlashStage] = useState('idle')    // 'idle' | 'flashing-in' | 'flashing-out'
+  const [currentPage, setCurrentPage] = useState(() => {
+    if (typeof window !== 'undefined' && window.location.hash === '#contact') {
+      return 'contact'
+    }
+    return 'intro' // 'intro' | 'landing' | 'contact'
+  })
+  const [flashStage, setFlashStage] = useState('idle') // 'idle' | 'flashing-in' | 'flashing-out'
 
   // Register wheel/keyboard listeners for the 3D flight
   useEffect(() => {
@@ -50,13 +56,50 @@ export default function App() {
   // Allow pressing 'r' or 'R' or Escape on keyboard to replay the 3D intro anytime
   useEffect(() => {
     const onKey = (e) => {
-      if ((e.key === 'r' || e.key === 'R' || e.key === 'Escape') && currentPage === 'landing') {
+      if ((e.key === 'r' || e.key === 'R' || e.key === 'Escape') && (currentPage === 'landing' || currentPage === 'contact')) {
         handleReplay()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [currentPage])
+
+  // Sync with browser hash changes for back/forward buttons
+  useEffect(() => {
+    const handleHashChange = () => {
+      if (window.location.hash === '#contact') {
+        scrollState.enabled = false
+        setCurrentPage('contact')
+      } else if (window.location.hash === '#home' || window.location.hash === '#tracks' || window.location.hash === '#highlights') {
+        scrollState.enabled = false
+        setCurrentPage('landing')
+      }
+    }
+    window.addEventListener('hashchange', handleHashChange)
+    window.addEventListener('popstate', handleHashChange)
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange)
+      window.removeEventListener('popstate', handleHashChange)
+    }
+  }, [])
+
+  // Navigation handler between pages
+  const handleNavigate = useCallback((page, targetHash) => {
+    scrollState.enabled = false
+    setCurrentPage(page)
+    if (page === 'contact') {
+      window.history.pushState(null, '', '#contact')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else if (page === 'landing') {
+      window.history.pushState(null, '', targetHash || '#home')
+      if (targetHash) {
+        setTimeout(() => {
+          const el = document.querySelector(targetHash)
+          if (el) el.scrollIntoView({ behavior: 'smooth' })
+        }, 50)
+      }
+    }
+  }, [])
 
   // Quick flash transition to landing page when shuttle arrives
   const handleArrival = useCallback(() => {
@@ -130,7 +173,12 @@ export default function App() {
 
       {/* ── Page 2: Fullscreen 4K Hero Section ── */}
       {currentPage === 'landing' && (
-        <LandingPage />
+        <LandingPage onNavigate={handleNavigate} />
+      )}
+
+      {/* ── Page 3: Meet The Team Behind & Contact Us ── */}
+      {currentPage === 'contact' && (
+        <ContactPage onNavigate={handleNavigate} />
       )}
     </div>
   )
