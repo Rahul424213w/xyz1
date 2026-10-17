@@ -30,8 +30,9 @@
 .hero-fullscreen {
   width: 100vw;
   height: 100vh;
-  min-height: 100vh;
-  position: relative;
+  position: sticky;
+  top: 0;
+  left: 0;
   margin: 0;
   padding: 0;
   background: #000000;
@@ -39,6 +40,17 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  z-index: 1;
+}
+
+.hero-parallax-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transform: translateY(calc(var(--scroll-top, 0px) * -0.32));
+  will-change: transform;
 }
 
 /* ── 4K Background Image ── */
@@ -58,7 +70,7 @@
   z-index: 1;
 }
 
-/* ── Curved Center Floating Navbar ── */
+/* ── Curved Center Floating Navbar (Pitch Black with Golden Amber Accents) ── */
 .curved-navbar {
   position: fixed;
   top: 24px;
@@ -68,15 +80,14 @@
   align-items: center;
   gap: 28px;
   padding: 8px 10px 8px 28px;
-  background: rgba(4, 12, 28, 0.72);
-  border: 1px solid rgba(0, 210, 255, 0.28);
+  background: rgba(8, 8, 10, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   box-shadow: 
-    0 10px 30px -5px rgba(0, 0, 0, 0.8),
-    0 0 20px rgba(0, 210, 255, 0.2),
-    inset 0 0 15px rgba(0, 210, 255, 0.08);
+    0 16px 40px -8px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
   z-index: 1000;
   animation: nav-slide-down 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -95,46 +106,48 @@
 .nav-menu {
   display: flex;
   align-items: center;
-  gap: 22px;
+  gap: 18px;
 }
 
 .nav-item {
-  color: #cbd5e1;
+  color: #94a3b8;
   text-decoration: none;
   font-family: 'Outfit', sans-serif;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.8px;
-  padding: 6px 14px;
+  padding: 6px 16px;
   border-radius: 25px;
+  border: 1px solid transparent;
   transition: all 0.25s ease;
   white-space: nowrap;
 }
 
 .nav-item:hover {
-  color: #00d2ff;
-  text-shadow: 0 0 12px rgba(0, 210, 255, 0.6);
-  background: rgba(0, 210, 255, 0.08);
+  color: #fbbf24;
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.08);
 }
 
 .nav-item.active {
   color: #ffffff;
-  background: rgba(0, 210, 255, 0.14);
-  border: 1px solid rgba(0, 210, 255, 0.3);
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.65);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
 }
 
 .nav-btn-register {
   padding: 10px 26px;
-  background: linear-gradient(135deg, #0072ff 0%, #00d2ff 100%);
+  background: linear-gradient(135deg, #facc15 0%, #f59e0b 50%, #ea580c 100%);
   border-radius: 40px;
-  color: #ffffff;
+  color: #000000;
   text-decoration: none;
   font-family: 'Orbitron', sans-serif;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  box-shadow: 0 0 20px rgba(0, 210, 255, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.3);
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.35);
   transition: all 0.3s ease;
   white-space: nowrap;
   cursor: pointer;
@@ -142,7 +155,7 @@
 
 .nav-btn-register:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 30px rgba(0, 210, 255, 0.85), inset 0 0 14px rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 32px rgba(245, 158, 11, 0.8), inset 0 0 14px rgba(255, 255, 255, 0.55);
 }
 
 /* ── 3D Astronaut Container (Side-by-side to the left of Hack Vally) ── */
@@ -391,248 +404,418 @@
 }
 
 /* ========================================================
-   SECTION 2: 3 Highlight Boxes (Tracks, Prize Pool, Organizer)
+   SECTION 2: About Us Section (hack2future style cutting curtain)
    ======================================================== */
-.highlights-section {
+.about-section {
   position: relative;
+  z-index: 10;
   width: 100%;
-  min-height: 80vh;
-  padding: 110px 40px 120px;
-  background: 
-    radial-gradient(ellipse at 50% 0%, rgba(0, 114, 255, 0.16) 0%, rgba(2, 6, 23, 0.95) 50%, #000000 100%);
+  min-height: 100vh;
+  background-color: #000000;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+  box-shadow: 0 -40px 80px rgba(0, 0, 0, 0.98);
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
+  padding: 130px 48px 140px;
   box-sizing: border-box;
-  border-top: 1px solid rgba(0, 210, 255, 0.2);
-  box-shadow: 0 -25px 50px rgba(0, 0, 0, 0.9);
 }
 
-.highlights-container {
+.about-container {
   width: 100%;
-  max-width: 1220px;
+  max-width: 1080px;
   margin: 0 auto;
-}
-
-.highlights-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 32px;
-  align-items: stretch;
-}
-
-/* ── Card Base ── */
-.highlight-card {
-  position: relative;
-  background: rgba(4, 14, 34, 0.78);
-  border: 1px solid rgba(0, 210, 255, 0.28);
-  border-radius: 24px;
-  padding: 38px 32px 36px;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  box-shadow: 
-    0 16px 40px -10px rgba(0, 0, 0, 0.85),
-    0 0 25px rgba(0, 210, 255, 0.12),
-    inset 0 0 20px rgba(0, 210, 255, 0.04);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  align-items: center;
+  text-align: center;
+  z-index: 2;
 }
 
-.highlight-card:hover {
-  transform: translateY(-8px);
-  border-color: rgba(0, 210, 255, 0.75);
-  box-shadow: 
-    0 24px 50px -10px rgba(0, 0, 0, 0.95),
-    0 0 35px rgba(0, 210, 255, 0.35),
-    inset 0 0 25px rgba(0, 210, 255, 0.1);
-}
-
-/* Neon Top Border Accent */
-.card-top-bar {
-  position: absolute;
-  top: 0;
-  left: 20%;
-  right: 20%;
-  height: 3px;
-  background: linear-gradient(90deg, transparent 0%, #00d2ff 50%, transparent 100%);
-  box-shadow: 0 0 15px #00d2ff;
-}
-
-.card-top-bar.gold-bar {
-  background: linear-gradient(90deg, transparent 0%, #ffd700 50%, transparent 100%);
-  box-shadow: 0 0 15px #ffd700;
-}
-
-/* ── Card Header ── */
-.card-header {
+/* ── About Us Tag with Amber Lines ── */
+.about-tag-wrap {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
   margin-bottom: 24px;
 }
 
-.card-icon-wrap {
-  width: 48px;
-  height: 48px;
-  border-radius: 14px;
-  background: rgba(0, 210, 255, 0.1);
-  border: 1px solid rgba(0, 210, 255, 0.35);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #00d2ff;
-  box-shadow: 0 0 15px rgba(0, 210, 255, 0.25);
-  flex-shrink: 0;
+.amber-line {
+  display: block;
+  width: 42px;
+  height: 2px;
+  border-radius: 2px;
 }
 
-.card-icon {
-  width: 24px;
-  height: 24px;
+.amber-line-left {
+  background: linear-gradient(to right, transparent, #f59e0b);
 }
 
-.trophy-icon-wrap {
-  background: rgba(255, 215, 0, 0.1);
-  border-color: rgba(255, 215, 0, 0.4);
-  color: #ffd700;
-  box-shadow: 0 0 15px rgba(255, 215, 0, 0.25);
+.amber-line-right {
+  background: linear-gradient(to left, transparent, #f59e0b);
 }
 
-.card-title {
-  margin: 0;
-  font-family: 'Orbitron', 'Outfit', sans-serif;
-  font-size: 19px;
+.about-tag-text {
+  font-family: 'Space Mono', 'Orbitron', monospace;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 1.2px;
-  color: #f8fafc;
-  text-shadow: 0 0 12px rgba(0, 210, 255, 0.4);
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #fbbf24;
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
 }
 
-/* ── Box 1: Tracks List ── */
-.tracks-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.track-item {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 14px 18px;
-  background: rgba(0, 210, 255, 0.05);
-  border: 1px solid rgba(0, 210, 255, 0.22);
-  border-radius: 14px;
-  transition: all 0.25s ease;
-}
-
-.track-item:hover {
-  background: rgba(0, 210, 255, 0.12);
-  border-color: rgba(0, 210, 255, 0.6);
-  transform: translateX(5px);
-  box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
-}
-
-.track-bullet {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #00d2ff;
-  box-shadow: 0 0 10px #00d2ff, 0 0 20px #00d2ff;
-  flex-shrink: 0;
-}
-
-.track-name {
-  font-family: 'Orbitron', 'Outfit', sans-serif;
-  font-size: 17px;
-  font-weight: 600;
+/* ── Main Heading: About Hack Vally ── */
+.about-main-heading {
+  font-family: 'Outfit', 'Bricolage Grotesque', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 4.4rem);
+  font-weight: 700;
   color: #ffffff;
-  letter-spacing: 1px;
-}
-
-/* ── Box 2: Prize Pool (50 K in Big Words) ── */
-.prize-amount-wrap {
+  margin: 0 0 40px;
+  letter-spacing: -0.5px;
+  line-height: 1.15;
   display: flex;
   align-items: baseline;
   justify-content: center;
-  gap: 8px;
-  margin: 16px 0 12px;
+  flex-wrap: wrap;
 }
 
-.prize-currency {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 40px;
-  font-weight: 700;
-  color: #00d2ff;
-  text-shadow: 0 0 20px rgba(0, 210, 255, 0.7);
-}
-
-.prize-amount {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 72px;
-  font-weight: 900;
-  letter-spacing: 3px;
-  background: linear-gradient(135deg, #ffffff 0%, #00d2ff 55%, #0072ff 100%);
+.about-accent-text {
+  background: linear-gradient(90deg, #facc15 0%, #f59e0b 50%, #ea580c 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 25px rgba(0, 210, 255, 0.75));
-  line-height: 1;
+  font-style: italic;
+  font-weight: 800;
+  margin-left: 14px;
+  padding-right: 8px;
+  display: inline-block;
+  filter: drop-shadow(0 0 25px rgba(245, 158, 11, 0.45));
 }
 
-.prize-subtitle {
-  text-align: center;
+/* ── Description Paragraph ── */
+.about-text-wrap {
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.about-description {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 18px;
+  line-height: 1.88;
+  color: #cbd5e1;
+  text-align: left;
+  letter-spacing: 0.25px;
+  font-weight: 300;
   margin: 0;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  color: #94a3b8;
-  letter-spacing: 2px;
-  text-transform: uppercase;
 }
 
-/* ── Box 3: Organized By ── */
-.organizer-content {
+/* ========================================================
+   SECTION 3: Timeline Section (Alternating 01 to 08)
+   ======================================================== */
+.timeline-section {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #000000;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 32px 32px;
+  padding: 120px 48px 180px;
+  box-sizing: border-box;
+}
+
+.timeline-container {
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.timeline-header {
+  text-align: center;
+  margin-bottom: 95px;
+}
+
+.timeline-title {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 4.4rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.5px;
+  margin: 0 0 16px;
+  line-height: 1.15;
+}
+
+.timeline-subtitle {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: clamp(15px, 2vw, 18px);
+  color: #94a3b8;
+  font-weight: 300;
+  max-width: 650px;
+  margin: 0 auto;
+  line-height: 1.6;
+  letter-spacing: 0.2px;
+}
+
+/* ── Central Track & Spine Line (No shuttle ship) ── */
+.timeline-track {
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.timeline-spine-line {
+  position: absolute;
+  top: 24px;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    #f59e0b 0%,
+    rgba(245, 158, 11, 0.5) 12%,
+    rgba(255, 255, 255, 0.12) 24%,
+    rgba(255, 255, 255, 0.12) 100%
+  );
+  z-index: 1;
+}
+
+/* ── Alternating Rows ── */
+.timeline-row {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr 70px 1fr;
+  align-items: center;
+  gap: 36px;
+  margin-bottom: 64px;
+}
+
+.timeline-row:last-child {
+  margin-bottom: 0;
+}
+
+.timeline-col {
+  display: flex;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* In align-box-right: Left col has date (aligned right), Right col has card (aligned left) */
+.timeline-row.align-box-right .timeline-col-left {
+  justify-content: flex-end;
+  text-align: right;
+}
+
+.timeline-row.align-box-right .timeline-col-right {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+/* In align-box-left: Left col has card (aligned right), Right col has date (aligned left) */
+.timeline-row.align-box-left .timeline-col-left {
+  justify-content: flex-end;
+  text-align: left;
+}
+
+.timeline-row.align-box-left .timeline-col-right {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+/* ── Central Concentric Node Ring ── */
+.timeline-node-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 70px;
+}
+
+.timeline-node-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #09090c;
+  border: 1.5px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 7px #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.35s ease;
+  position: relative;
+}
+
+.timeline-node-number {
+  font-family: 'Space Mono', 'Orbitron', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  letter-spacing: 0.5px;
+}
+
+/* Stage 01 Active Node in Golden Amber */
+.timeline-node-circle.node-active {
+  border-color: #f59e0b;
+  background: #170e02;
+  box-shadow: 
+    0 0 0 7px #000000,
+    0 0 25px rgba(245, 158, 11, 0.6),
+    inset 0 0 12px rgba(245, 158, 11, 0.35);
+}
+
+.timeline-node-circle.node-active .timeline-node-number {
+  color: #fbbf24;
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+}
+
+/* ── Date & Stage Tag Block ── */
+.timeline-date-block {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  margin-top: 6px;
+  max-width: 340px;
 }
 
-.dept-name {
-  margin: 0;
+.timeline-row.align-box-right .timeline-date-block {
+  align-items: flex-end;
+}
+
+.timeline-row.align-box-left .timeline-date-block {
+  align-items: flex-start;
+}
+
+.timeline-stage-tag {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 20px;
+  font-family: 'Space Mono', 'Orbitron', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: #64748b;
+  transition: all 0.3s ease;
+}
+
+.timeline-date-display {
   font-family: 'Outfit', sans-serif;
-  font-size: 21px;
+  font-size: clamp(1.8rem, 2.5vw, 2.4rem);
   font-weight: 700;
   color: #ffffff;
-  line-height: 1.4;
-  text-shadow: 0 0 15px rgba(0, 210, 255, 0.3);
+  letter-spacing: -0.3px;
+  line-height: 1.1;
+  transition: all 0.3s ease;
 }
 
-.college-subtext {
-  margin: 0;
+/* Active Golden Amber Date Block */
+.timeline-date-block.active-amber .timeline-stage-tag {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.45);
+  color: #fbbf24;
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
+}
+
+.timeline-date-block.active-amber .timeline-date-display {
+  color: #fbbf24;
+  text-shadow: 0 0 24px rgba(245, 158, 11, 0.5);
+}
+
+/* ── Card Box ── */
+.timeline-card {
+  background: rgba(14, 14, 18, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 24px 28px;
+  width: 100%;
+  max-width: 440px;
+  box-sizing: border-box;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 14px 34px -5px rgba(0, 0, 0, 0.7);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.timeline-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(255, 255, 255, 0.16);
+  box-shadow: 0 18px 40px -5px rgba(0, 0, 0, 0.85);
+}
+
+.timeline-card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 12px;
+}
+
+.timeline-card-icon-wrap {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.3s ease;
+}
+
+.timeline-card-title {
   font-family: 'Outfit', sans-serif;
-  font-size: 15px;
-  color: #00d2ff;
-  font-weight: 500;
-  letter-spacing: 0.8px;
+  font-size: 19px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.timeline-card-desc {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #94a3b8;
+  margin: 0;
+  font-weight: 300;
+  letter-spacing: 0.15px;
+}
+
+/* Active Golden Amber Card */
+.timeline-card.active-amber {
+  border-color: rgba(245, 158, 11, 0.38);
+  box-shadow: 
+    0 14px 35px -5px rgba(0, 0, 0, 0.85),
+    0 0 25px rgba(245, 158, 11, 0.14);
+}
+
+.timeline-card.active-amber:hover {
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 
+    0 18px 40px -5px rgba(0, 0, 0, 0.9),
+    0 0 35px rgba(245, 158, 11, 0.25);
+}
+
+.timeline-card.active-amber .timeline-card-icon-wrap {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.4);
 }
 
 /* ── Responsive adjustments ── */
-@media (max-width: 960px) {
-  .highlights-grid {
-    grid-template-columns: 1fr;
-    gap: 24px;
+@media (max-width: 900px) {
+  .about-section {
+    padding: 100px 24px 110px;
   }
-  .highlight-card {
-    padding: 28px 24px;
+  .about-main-heading {
+    font-size: 2.2rem;
   }
-  .prize-amount {
-    font-size: 58px;
+  .about-description {
+    font-size: 15px;
+    line-height: 1.75;
   }
   .curved-navbar {
     gap: 14px;
@@ -666,5 +849,44 @@
     width: 56px;
     height: 56px;
     padding: 6px;
+  }
+
+  /* Timeline mobile responsive */
+  .timeline-section {
+    padding: 80px 20px 120px;
+  }
+  .timeline-header {
+    margin-bottom: 60px;
+  }
+  .timeline-spine-line {
+    left: 28px;
+    transform: none;
+  }
+  .timeline-row {
+    display: flex;
+    flex-direction: column;
+    padding-left: 64px;
+    gap: 16px;
+    margin-bottom: 50px;
+  }
+  .timeline-node-wrap {
+    position: absolute;
+    left: 7px;
+    top: 0;
+    width: auto;
+  }
+  .timeline-row.align-box-right .timeline-col-left,
+  .timeline-row.align-box-right .timeline-col-right,
+  .timeline-row.align-box-left .timeline-col-left,
+  .timeline-row.align-box-left .timeline-col-right {
+    justify-content: flex-start;
+    text-align: left;
+  }
+  .timeline-row.align-box-right .timeline-date-block,
+  .timeline-row.align-box-left .timeline-date-block {
+    align-items: flex-start;
+  }
+  .timeline-card {
+    max-width: 100%;
   }
 }
