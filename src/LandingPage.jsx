@@ -8,7 +8,7 @@ const PARTNER_LOGOS = [
   { id: 4, src: '/logo4.jpg', alt: 'Partner 4', label: 'Logo 4' },
 ]
 
-export default function LandingPage() {
+export default function LandingPage({ onNavigate }) {
   return (
     <div className="landing-page-wrapper">
       {/* ── Fixed Curved Center Floating Navbar ── */}
@@ -23,7 +23,16 @@ export default function LandingPage() {
           <a href="#highlights" className="nav-item">
             Prize Pool
           </a>
-          <a href="#contact" className="nav-item">
+          <a
+            href="#contact"
+            className="nav-item"
+            onClick={(e) => {
+              e.preventDefault()
+              if (onNavigate) {
+                onNavigate('contact')
+              }
+            }}
+          >
             Contact Us
           </a>
         </div>
