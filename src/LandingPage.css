@@ -513,7 +513,174 @@
 }
 
 /* ========================================================
-   SECTION 3: Timeline Section (Alternating 01 to 08)
+   SECTION 2.5: ISRO Astronaut Perks Section (Dual-Color Cards)
+   ======================================================== */
+.astronaut-perks-section {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  padding: 80px 32px 100px;
+  background-color: #000000;
+  box-sizing: border-box;
+}
+
+.astronaut-perks-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 0;
+  min-height: 280px;
+}
+
+/* Base Card Styling */
+.perk-card {
+  position: relative;
+  min-height: 280px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.perk-card:hover {
+  transform: translateY(-2px);
+}
+
+/* Left Card: Vibrant Orange to Dark Mahogany Gradient */
+.perk-card-orange {
+  background: linear-gradient(110deg, #ea580c 0%, #c2410c 22%, #7c2d12 55%, #260c04 85%, #0e0502 100%);
+  border: 1px solid rgba(249, 115, 22, 0.38);
+  box-shadow: 
+    0 20px 45px -10px rgba(234, 88, 12, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  padding: 40px 110px 40px 48px;
+}
+
+.perk-card-orange:hover {
+  box-shadow: 
+    0 25px 55px -10px rgba(234, 88, 12, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Right Card: Dark Midnight to Vivid Royal Blue Gradient */
+.perk-card-blue {
+  background: linear-gradient(110deg, #070d1e 0%, #0f1d44 25%, #1d4ed8 62%, #2563eb 85%, #3b82f6 100%);
+  border: 1px solid rgba(59, 130, 246, 0.38);
+  box-shadow: 
+    0 20px 45px -10px rgba(37, 99, 235, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  padding: 40px 48px 40px 110px;
+  text-align: right;
+}
+
+.perk-card-blue:hover {
+  box-shadow: 
+    0 25px 55px -10px rgba(37, 99, 235, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.perk-card-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.perk-content-right {
+  align-items: flex-end;
+}
+
+/* Card Typography */
+.perk-heading {
+  font-family: 'Space Grotesk', 'Outfit', sans-serif;
+  font-size: clamp(1.45rem, 2.1vw, 2.05rem);
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 1.25;
+  margin: 0 0 20px;
+  letter-spacing: 0.3px;
+}
+
+.perk-heading-right {
+  text-align: right;
+}
+
+.perk-desc {
+  font-family: 'Space Grotesk', 'Outfit', 'Inter', sans-serif;
+  font-size: clamp(13.5px, 1.05vw, 15px);
+  line-height: 1.48;
+  color: #f1f5f9;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  margin: 0;
+}
+
+.perk-desc-right {
+  text-align: right;
+}
+
+/* Center Overlapping Astronaut Visual */
+.astronaut-center-badge {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 360px;
+  height: 350px;
+  z-index: 8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.astronaut-center-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.95));
+  mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
+}
+
+/* Responsive Astronaut Perks Section */
+@media (max-width: 900px) {
+  .astronaut-perks-container {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .perk-card-orange {
+    padding: 36px 32px;
+  }
+  .perk-card-blue {
+    padding: 36px 32px;
+    text-align: left;
+  }
+  .perk-heading-right,
+  .perk-desc-right {
+    text-align: left;
+  }
+  .astronaut-center-badge {
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
+    margin: 0 auto;
+    width: 260px;
+    height: 260px;
+    order: -1;
+  }
+}
+
+/* ========================================================
+   SECTION 3: Timeline Section (Matching hack2future Exactly)
    ======================================================== */
 .timeline-section {
   position: relative;
@@ -521,9 +688,9 @@
   width: 100%;
   min-height: 100vh;
   background-color: #000000;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
-  background-size: 32px 32px;
-  padding: 120px 48px 180px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 36px 36px;
+  padding: 110px 48px 180px;
   box-sizing: border-box;
 }
 
@@ -535,23 +702,23 @@
 
 .timeline-header {
   text-align: center;
-  margin-bottom: 95px;
+  margin-bottom: 100px;
 }
 
 .timeline-title {
-  font-family: 'Outfit', 'Inter', sans-serif;
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
   font-size: clamp(2.8rem, 6vw, 4.4rem);
-  font-weight: 700;
+  font-weight: 600;
   color: #ffffff;
-  letter-spacing: -0.5px;
-  margin: 0 0 16px;
+  letter-spacing: -0.02em;
+  margin: 0 0 14px;
   line-height: 1.15;
 }
 
 .timeline-subtitle {
   font-family: 'Outfit', 'Inter', sans-serif;
-  font-size: clamp(15px, 2vw, 18px);
-  color: #94a3b8;
+  font-size: clamp(14px, 1.8vw, 16px);
+  color: rgba(255, 255, 255, 0.4);
   font-weight: 300;
   max-width: 650px;
   margin: 0 auto;
@@ -559,13 +726,18 @@
   letter-spacing: 0.2px;
 }
 
-/* ── Central Track & Spine Line (No shuttle ship) ── */
+.timeline-subtitle-faint {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* ── Central Vertical Track & Spines ── */
 .timeline-track {
   position: relative;
   width: 100%;
   margin: 0 auto;
 }
 
+/* Base Spine (Faint White Line) */
 .timeline-spine-line {
   position: absolute;
   top: 24px;
@@ -575,23 +747,76 @@
   width: 2px;
   background: linear-gradient(
     to bottom,
-    #f59e0b 0%,
-    rgba(245, 158, 11, 0.5) 12%,
-    rgba(255, 255, 255, 0.12) 24%,
-    rgba(255, 255, 255, 0.12) 100%
+    transparent 0%,
+    rgba(255, 255, 255, 0.12) 6%,
+    rgba(255, 255, 255, 0.12) 94%,
+    transparent 100%
   );
   z-index: 1;
 }
 
-/* ── Alternating Rows ── */
+/* Active Glowing Spine (Amber line matching rocket motion) */
+.timeline-spine-active {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 2px;
+  background: linear-gradient(
+    to bottom,
+    rgba(245, 158, 11, 0.8) 0%,
+    #f59e0b 70%,
+    #fbbf24 100%
+  );
+  box-shadow: 
+    0 0 12px rgba(245, 158, 11, 0.75),
+    0 0 4px #f59e0b;
+  z-index: 2;
+  height: 36px;
+  pointer-events: none;
+}
+
+/* ── Smooth HD 4K Space Shuttle Follower (No CSS top lag, buttery smooth) ── */
+.timeline-shuttle-follower {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 140px;
+  height: 140px;
+  z-index: 45;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Crucial: NO CSS transition: top! Position updated via RAF lerp for zero delay */
+}
+
+.timeline-rocket-wrap {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.timeline-rocket-img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+  filter: drop-shadow(0 0 18px rgba(245, 158, 11, 0.65));
+  transition: transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  will-change: transform;
+}
+
+/* ── Alternating Rows (Slower, relaxed pacing with 84px gap) ── */
 .timeline-row {
   position: relative;
-  z-index: 2;
+  z-index: 5;
   display: grid;
-  grid-template-columns: 1fr 70px 1fr;
+  grid-template-columns: 1fr 80px 1fr;
   align-items: center;
   gap: 36px;
-  margin-bottom: 64px;
+  margin-bottom: 84px;
 }
 
 .timeline-row:last-child {
@@ -626,44 +851,81 @@
   text-align: left;
 }
 
-/* ── Central Concentric Node Ring ── */
+/* ── Central Concentric Halo Rings & Center Node ── */
 .timeline-node-wrap {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 70px;
+  width: 80px;
+  position: relative;
 }
 
-.timeline-node-circle {
-  width: 44px;
-  height: 44px;
+.timeline-node-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+}
+
+.timeline-halo-ring {
+  position: absolute;
   border-radius: 50%;
-  background: #09090c;
-  border: 1.5px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 0 0 7px #000000;
+  pointer-events: none;
+}
+
+/* Dual outer rings for active Stage 01 matching Image 1 */
+.ring-outer-large {
+  width: 76px;
+  height: 76px;
+  border: 1px solid rgba(245, 158, 11, 0.2);
+}
+
+.ring-outer-medium {
+  width: 54px;
+  height: 54px;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+/* Inactive subtle outer ring */
+.ring-inactive-subtle {
+  width: 54px;
+  height: 54px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* The 40px center circular node badge */
+.timeline-node-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #111215;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 0 6px #000000;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: all 0.35s ease;
   position: relative;
+  z-index: 2;
 }
 
 .timeline-node-number {
-  font-family: 'Space Mono', 'Orbitron', monospace;
-  font-size: 13px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
   font-weight: 700;
-  color: #64748b;
+  color: rgba(255, 255, 255, 0.65);
   letter-spacing: 0.5px;
 }
 
 /* Stage 01 Active Node in Golden Amber */
 .timeline-node-circle.node-active {
-  border-color: #f59e0b;
-  background: #170e02;
+  border-color: rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.2);
   box-shadow: 
-    0 0 0 7px #000000,
-    0 0 25px rgba(245, 158, 11, 0.6),
-    inset 0 0 12px rgba(245, 158, 11, 0.35);
+    0 0 0 6px #000000,
+    0 0 25px rgba(245, 158, 11, 0.45);
 }
 
 .timeline-node-circle.node-active .timeline-node-number {
@@ -671,12 +933,12 @@
   text-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
 }
 
-/* ── Date & Stage Tag Block ── */
+/* ── Date & Stage Tag Block (Matching Image 1 & hack2future) ── */
 .timeline-date-block {
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  max-width: 340px;
+  gap: 8px;
+  max-width: 360px;
 }
 
 .timeline-row.align-box-right .timeline-date-block {
@@ -687,63 +949,77 @@
   align-items: flex-start;
 }
 
+/* The Stage Tag Pill */
 .timeline-stage-tag {
   display: inline-block;
-  padding: 5px 14px;
-  border-radius: 20px;
-  font-family: 'Space Mono', 'Orbitron', monospace;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.4px;
+  padding: 4px 12px;
+  border-radius: 9999px;
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  color: #64748b;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
   transition: all 0.3s ease;
+  width: fit-content;
 }
 
+/* Clean, refined Date Display (Semi-bold, NOT heavy bold!) */
 .timeline-date-display {
-  font-family: 'Outfit', sans-serif;
-  font-size: clamp(1.8rem, 2.5vw, 2.4rem);
-  font-weight: 700;
-  color: #ffffff;
-  letter-spacing: -0.3px;
-  line-height: 1.1;
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: 24px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
   transition: all 0.3s ease;
 }
 
 /* Active Golden Amber Date Block */
 .timeline-date-block.active-amber .timeline-stage-tag {
-  background: rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.45);
+  background: rgba(245, 158, 11, 0.1);
+  border-color: rgba(245, 158, 11, 0.22);
   color: #fbbf24;
-  text-shadow: 0 0 10px rgba(245, 158, 11, 0.35);
+  text-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
 }
 
 .timeline-date-block.active-amber .timeline-date-display {
   color: #fbbf24;
-  text-shadow: 0 0 24px rgba(245, 158, 11, 0.5);
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
 }
 
-/* ── Card Box ── */
+/* ── Timeline Card (Matching hack2future) ── */
 .timeline-card {
-  background: rgba(14, 14, 18, 0.65);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+  background: rgba(23, 23, 23, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.09);
   border-radius: 16px;
   padding: 24px 28px;
   width: 100%;
   max-width: 440px;
   box-sizing: border-box;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow: 0 14px 34px -5px rgba(0, 0, 0, 0.7);
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
 }
 
 .timeline-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 18px 40px -5px rgba(0, 0, 0, 0.85);
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.22);
+  background: rgba(26, 26, 26, 0.6);
+  box-shadow: 0 18px 45px -5px rgba(0, 0, 0, 0.9);
+}
+
+.timeline-card.active-amber {
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
+.timeline-card.active-amber:hover {
+  border-color: rgba(245, 158, 11, 0.45);
 }
 
 .timeline-card-header {
@@ -754,9 +1030,9 @@
 }
 
 .timeline-card-icon-wrap {
-  width: 38px;
-  height: 38px;
-  border-radius: 10px;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
@@ -766,38 +1042,45 @@
   transition: all 0.3s ease;
 }
 
+.timeline-card.active-amber .timeline-card-icon-wrap {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.25);
+}
+
 .timeline-card-title {
-  font-family: 'Outfit', sans-serif;
-  font-size: 19px;
-  font-weight: 700;
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
   color: #ffffff;
   margin: 0;
   letter-spacing: -0.2px;
 }
 
+.timeline-card.active-amber .timeline-card-title {
+  color: #ffffff;
+}
+
 .timeline-card-desc {
   font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14px;
-  line-height: 1.65;
-  color: #94a3b8;
+  line-height: 1.625;
+  color: rgba(255, 255, 255, 0.42);
   margin: 0;
   font-weight: 300;
   letter-spacing: 0.15px;
 }
 
-/* Active Golden Amber Card */
-.timeline-card.active-amber {
-  border-color: rgba(245, 158, 11, 0.38);
-  box-shadow: 
-    0 14px 35px -5px rgba(0, 0, 0, 0.85),
-    0 0 25px rgba(245, 158, 11, 0.14);
+.timeline-card:hover .timeline-card-desc {
+  color: rgba(255, 255, 255, 0.58);
 }
 
 .timeline-card.active-amber:hover {
-  border-color: rgba(245, 158, 11, 0.6);
+  border-color: rgba(245, 158, 11, 0.75);
+  border-top-color: #fbbf24;
   box-shadow: 
-    0 18px 40px -5px rgba(0, 0, 0, 0.9),
-    0 0 35px rgba(245, 158, 11, 0.25);
+    0 18px 45px -5px rgba(0, 0, 0, 0.9),
+    0 0 35px rgba(245, 158, 11, 0.3),
+    inset 0 1px 0 rgba(245, 158, 11, 0.3);
 }
 
 .timeline-card.active-amber .timeline-card-icon-wrap {
@@ -862,6 +1145,11 @@
     left: 28px;
     transform: none;
   }
+  .timeline-shuttle-follower {
+    left: 28px;
+    width: 64px;
+    height: 82px;
+  }
   .timeline-row {
     display: flex;
     flex-direction: column;
@@ -890,3 +1178,4 @@
     max-width: 100%;
   }
 }
+

@@ -1,5 +1,6 @@
 import { useRef, useEffect, useState } from 'react'
 import Astronaut from './Astronaut'
+import TimelineShuttle from './TimelineShuttle'
 import './LandingPage.css'
 
 const PARTNER_LOGOS = [
@@ -160,37 +161,107 @@ function TimelineIcon({ type, active }) {
 
 export default function LandingPage() {
   const wrapperRef = useRef(null)
-  const [activeSection, setActiveSection] = useState('home')
+  const trackRef = useRef(null)
+  const followerRef = useRef(null)
+  const spineActiveRef = useRef(null)
+  const lastScrollTop = useRef(0)
 
-  // Track scroll position for the sticky-cut parallax animation and active section
+  // Smooth lerp tracking for timeline shuttle
+  const targetYRef = useRef(36)
+  const currentYRef = useRef(36)
+
+  const [activeSection, setActiveSection] = useState('home')
+  const [shuttleDirection, setShuttleDirection] = useState('down')
+  const [isAtTimelineTop, setIsAtTimelineTop] = useState(true)
+
+  // Track scroll position for active section and buttery-smooth timeline rocket follower
   useEffect(() => {
     const el = wrapperRef.current
     if (!el) return
 
-    let rafId
+    let animId
+    let isRunning = true
+
+    // Continuous smooth animation loop running at display refresh rate (60fps/120fps)
+    const tick = () => {
+      if (!isRunning) return
+
+      // Smooth lerp: glides gracefully towards targetYRef with cushioned damping
+      const diff = targetYRef.current - currentYRef.current
+      if (Math.abs(diff) > 0.05) {
+        currentYRef.current += diff * 0.12
+      } else {
+        currentYRef.current = targetYRef.current
+      }
+
+      // Update follower position and active spine glow directly on DOM for zero lag
+      if (followerRef.current) {
+        followerRef.current.style.top = `${currentYRef.current}px`
+      }
+      if (spineActiveRef.current) {
+        spineActiveRef.current.style.height = `${currentYRef.current}px`
+      }
+
+      animId = requestAnimationFrame(tick)
+    }
+
+    animId = requestAnimationFrame(tick)
+
     const onScroll = () => {
-      cancelAnimationFrame(rafId)
-      rafId = requestAnimationFrame(() => {
-        el.style.setProperty('--scroll-top', `${el.scrollTop}px`)
+      const scrollTop = el.scrollTop
+      el.style.setProperty('--scroll-top', `${scrollTop}px`)
 
-        const scrollTop = el.scrollTop
-        const offset = window.innerHeight * 0.4
-        const aboutEl = document.getElementById('about')
-        const timelineEl = document.getElementById('timeline')
+      // Detect scroll direction (up/down) with a 3px deadband threshold
+      if (scrollTop > lastScrollTop.current + 3) {
+        setShuttleDirection('down')
+      } else if (scrollTop < lastScrollTop.current - 3) {
+        setShuttleDirection('up')
+      }
+      lastScrollTop.current = scrollTop
 
-        if (timelineEl && scrollTop + offset >= timelineEl.offsetTop) {
-          setActiveSection('timeline')
-        } else if (aboutEl && scrollTop + offset >= aboutEl.offsetTop) {
-          setActiveSection('about')
-        } else {
-          setActiveSection('home')
-        }
-      })
+      // Calculate active section
+      const offset = window.innerHeight * 0.4
+      const aboutEl = document.getElementById('about')
+      const timelineEl = document.getElementById('timeline')
+
+      if (timelineEl && scrollTop + offset >= timelineEl.offsetTop) {
+        setActiveSection('timeline')
+      } else if (aboutEl && scrollTop + offset >= aboutEl.offsetTop) {
+        setActiveSection('about')
+      } else {
+        setActiveSection('home')
+      }
+
+      // Calculate Timeline Shuttle vertical position along the central track
+      if (trackRef.current) {
+        const track = trackRef.current
+        const trackRect = track.getBoundingClientRect()
+        const viewportHeight = window.innerHeight
+
+        // Center of viewport (50%) is the reference focus point
+        const viewportCenter = viewportHeight * 0.5
+        const trackHeight = track.offsetHeight
+
+        // Progress travels smoothly across the entire track
+        const rawProgress = (viewportCenter - trackRect.top) / trackHeight
+        const clamped = Math.max(0, Math.min(1, rawProgress))
+
+        // Position startY aligns with Node 01; endY aligns with Node 08
+        const startY = 36
+        const endY = Math.max(startY, trackHeight - 44)
+        targetYRef.current = startY + clamped * (endY - startY)
+
+        // At top when near start of timeline
+        setIsAtTimelineTop(clamped <= 0.02)
+      }
     }
 
     el.addEventListener('scroll', onScroll, { passive: true })
+    onScroll()
+
     return () => {
-      cancelAnimationFrame(rafId)
+      isRunning = false
+      cancelAnimationFrame(animId)
       el.removeEventListener('scroll', onScroll)
     }
   }, [])
@@ -325,6 +396,48 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── SECTION 2.5: ISRO Astronaut Perks Banner (Generous Space, Centered Astronaut) ── */}
+      <section className="astronaut-perks-section">
+        <div className="astronaut-perks-container">
+          {/* Left Orange Card */}
+          <div className="perk-card perk-card-orange">
+            <div className="perk-card-content perk-content-left">
+              <h3 className="perk-heading">
+                Recognition and<br />Internship Opportunities
+              </h3>
+              <p className="perk-desc">
+                Recognition by ISRO and the<br />
+                chance to grab an internship at<br />
+                ISRO.
+              </p>
+            </div>
+          </div>
+
+          {/* Center Space Astronaut Graphic */}
+          <div className="astronaut-center-badge">
+            <img
+              src="/astronaut.webp"
+              alt="ISRO Astronaut"
+              className="astronaut-center-img"
+            />
+          </div>
+
+          {/* Right Blue Card */}
+          <div className="perk-card perk-card-blue">
+            <div className="perk-card-content perk-content-right">
+              <h3 className="perk-heading perk-heading-right">
+                Mentorship from<br />ISRO Experts
+              </h3>
+              <p className="perk-desc perk-desc-right">
+                Gain invaluable insights and<br />
+                guidance from leading scientists<br />
+                and engineers.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── SECTION 3: Timeline Section (Alternating 01 to 08, 01 in Golden Amber) ── */}
       <section className="timeline-section" id="timeline">
         <div className="timeline-container">
@@ -332,14 +445,25 @@ export default function LandingPage() {
           <div className="timeline-header">
             <h2 className="timeline-title">Timeline</h2>
             <p className="timeline-subtitle">
-              Every great mission has a sequence. Here's yours — from launch to landing.
+              Every great mission has a sequence.{' '}
+              <span className="timeline-subtitle-faint">
+                Here's yours — from launch to landing.
+              </span>
             </p>
           </div>
 
-          {/* Central Vertical Timeline Track (No shuttle ship) */}
-          <div className="timeline-track">
-            {/* The vertical spine line */}
+          {/* Central Vertical Timeline Track with Smooth HD Space Shuttle */}
+          <div className="timeline-track" ref={trackRef}>
+            {/* The base vertical spine line */}
             <div className="timeline-spine-line" />
+
+            {/* Glowing active amber spine trace line */}
+            <div className="timeline-spine-active" ref={spineActiveRef} />
+
+            {/* Dynamic HD 4K Space Shuttle Following Scroll Smoothly */}
+            <div className="timeline-shuttle-follower" ref={followerRef}>
+              <TimelineShuttle direction={shuttleDirection} isAtTop={isAtTimelineTop} />
+            </div>
 
             {/* Alternating Events */}
             {TIMELINE_EVENTS.map((event) => {
@@ -375,10 +499,20 @@ export default function LandingPage() {
                     {isRightAligned ? dateComponent : cardComponent}
                   </div>
 
-                  {/* Center Node (Concentric Ring with Number) */}
+                  {/* Center Node (Concentric Halo Rings with Number) */}
                   <div className="timeline-node-wrap">
-                    <div className={`timeline-node-circle ${event.active ? 'node-active' : ''}`}>
-                      <span className="timeline-node-number">{event.id}</span>
+                    <div className="timeline-node-container">
+                      {event.active ? (
+                        <>
+                          <div className="timeline-halo-ring ring-outer-large" />
+                          <div className="timeline-halo-ring ring-outer-medium" />
+                        </>
+                      ) : (
+                        <div className="timeline-halo-ring ring-inactive-subtle" />
+                      )}
+                      <div className={`timeline-node-circle ${event.active ? 'node-active' : ''}`}>
+                        <span className="timeline-node-number">{event.id}</span>
+                      </div>
                     </div>
                   </div>
 
