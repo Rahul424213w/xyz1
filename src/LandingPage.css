@@ -378,6 +378,28 @@
   -webkit-backdrop-filter: none;
 }
 
+/* ── Soft text-only backdrop (fades to transparent at the edges) so white
+      hero text stays readable in front of the white astronaut — hugs the
+      text itself, no solid card/shape. Mobile only (desktop keeps clean text) ── */
+.college-badge .college-text {
+  padding: 3px 8px;
+  background: radial-gradient(
+    ellipse 75% 95% at center,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.38) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.hero-duration-badge {
+  background: radial-gradient(
+    ellipse 78% 92% at center,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.35) 55%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
 .partners-grid {
   display: flex;
   align-items: center;
@@ -433,77 +455,6 @@
   font-weight: 700;
   color: #f59e0b;
   letter-spacing: 1px;
-}
-
-/* ── Scroll Down Indicator ── */
-.scroll-indicator {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  color: rgba(254, 243, 199, 0.75);
-  text-decoration: none;
-  font-family: 'Orbitron', sans-serif;
-  font-size: 11px;
-  letter-spacing: 2.5px;
-  text-transform: uppercase;
-  z-index: 20;
-  transition: all 0.3s ease;
-  animation: bounce-subtle 2.2s infinite ease-in-out;
-}
-
-.scroll-indicator:hover {
-  color: #fbbf24;
-  text-shadow: 0 0 12px rgba(245, 158, 11, 0.85);
-}
-
-.scroll-mouse-icon {
-  width: 20px;
-  height: 32px;
-  border: 1.5px solid rgba(245, 158, 11, 0.65);
-  border-radius: 14px;
-  position: relative;
-  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
-}
-
-.scroll-mouse-wheel {
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 3px;
-  height: 7px;
-  background: #f59e0b;
-  border-radius: 2px;
-  box-shadow: 0 0 8px #f59e0b;
-  animation: scroll-wheel-anim 1.8s infinite ease-in-out;
-}
-
-@keyframes scroll-wheel-anim {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 0);
-  }
-  30% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translate(-50%, 12px);
-  }
-}
-
-@keyframes bounce-subtle {
-  0%, 100% {
-    transform: translate(-50%, 0);
-  }
-  50% {
-    transform: translate(-50%, 6px);
-  }
 }
 
 /* ========================================================
@@ -609,10 +560,11 @@
   font-size: 18px;
   line-height: 1.88;
   color: #cbd5e1;
-  text-align: left;
+  text-align: center;
   letter-spacing: 0.25px;
   font-weight: 300;
-  margin: 0;
+  margin: 0 auto;
+  max-width: 880px;
 }
 
 .about-strong-highlight {
@@ -1385,7 +1337,7 @@
   .mobile-nav-wrapper {
     display: block !important;
     position: fixed;
-    top: 14px;
+    top: 10px;
     left: 50%;
     transform: translateX(-50%);
     width: calc(100vw - 32px);
@@ -1398,10 +1350,10 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 18px;
+    padding: 7px 14px;
     background: rgba(12, 14, 18, 0.94);
     border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 20px;
+    border-radius: 18px;
     backdrop-filter: blur(24px);
     -webkit-backdrop-filter: blur(24px);
     box-shadow: 0 14px 35px -6px rgba(0, 0, 0, 0.9);
@@ -1410,12 +1362,12 @@
   .mobile-nav-brand {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 9px;
   }
 
   .mobile-nav-logo-badge {
-    width: 32px;
-    height: 32px;
+    width: 27px;
+    height: 27px;
     border-radius: 50%;
     background: #000000;
     border: 1px solid rgba(255, 255, 255, 0.22);
@@ -1426,14 +1378,14 @@
   }
 
   .mobile-nav-logo-img {
-    width: 24px;
-    height: 24px;
+    width: 20px;
+    height: 20px;
     object-fit: contain;
   }
 
   .mobile-nav-brand-title {
     font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
-    font-size: 18px;
+    font-size: 15px;
     font-weight: 700;
     color: #ffffff;
     letter-spacing: -0.01em;
@@ -1442,17 +1394,17 @@
   .mobile-nav-hamburger-btn {
     background: transparent;
     border: none;
-    padding: 6px;
+    padding: 5px;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
   }
 
   .mobile-hamburger-line {
-    width: 22px;
+    width: 19px;
     height: 2px;
     background: #ffffff;
     border-radius: 2px;
@@ -1562,21 +1514,26 @@
   .hero-parallax-wrap {
     transform: none !important;
   }
+  /* Mobile: show the right-most part of the hero video instead of the center */
+  .hero-bg-video {
+    object-position: right center;
+  }
   .astronaut-left-wrapper {
     position: absolute;
-    top: 6%;
+    top: 26%;
     left: 50%;
     transform: translateX(-50%);
-    width: 65vw;
-    height: 28vh;
-    max-height: 200px;
-    opacity: 0.35;
-    z-index: 5;
+    width: 95vw;
+    height: 55vh;
+    max-height: 420px;
+    opacity: 1;
+    z-index: 4;
     pointer-events: none;
   }
   .astronaut-floating-img {
     height: 100%;
-    max-height: 200px;
+    max-height: 420px;
+    filter: none;
   }
 
   .hero-center-content {
@@ -1608,6 +1565,13 @@
     font-size: clamp(36px, 9vw, 54px);
     letter-spacing: 3.5px;
     line-height: 1.05;
+    padding: 6px 24px;
+    background: radial-gradient(
+      ellipse 72% 88% at center,
+      rgba(0, 0, 0, 0.62) 0%,
+      rgba(0, 0, 0, 0.42) 55%,
+      rgba(0, 0, 0, 0) 100%
+    );
   }
   .hero-duration-badge {
     font-size: 12px;
@@ -1640,13 +1604,6 @@
     width: 54px;
     height: 54px;
     padding: 6px;
-  }
-  .scroll-indicator {
-    bottom: 14px;
-  }
-  .scroll-mouse-icon {
-    width: 17px;
-    height: 28px;
   }
 
   /* About Us Section */
@@ -1753,9 +1710,9 @@
   }
 
   .astronaut-left-wrapper {
-    top: 5%;
-    height: 24vh;
-    max-height: 170px;
+    top: 24%;
+    height: 46vh;
+    max-height: 350px;
   }
 
   .hero-center-content {
@@ -2081,13 +2038,14 @@
 
 /* ── Rewards Header (Matching Image 3 & 4) ── */
 .rewards-header {
-  text-align: left;
+  text-align: center;
   margin-bottom: 54px;
 }
 
 .rewards-tag-wrap {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   margin-bottom: 14px;
 }
@@ -2529,6 +2487,101 @@
   letter-spacing: 0.15px;
 }
 
+/* ── Meet The Crew CTA Section (between Rewards & FAQ — amber theme) ── */
+.meet-crew-section {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  background-color: #000000;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  padding: 100px 32px 120px;
+  box-sizing: border-box;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.meet-crew-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  max-width: 720px;
+  width: 100%;
+}
+
+.meet-crew-tag-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.meet-crew-tag-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #f59e0b;
+  text-transform: uppercase;
+}
+
+.meet-crew-main-title {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: clamp(2.4rem, 5vw, 3.8rem);
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.15;
+  text-align: center;
+}
+
+.meet-crew-subtitle {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: clamp(14px, 1.2vw, 16px);
+  color: #cbd5e1;
+  font-weight: 300;
+  margin: 0;
+  text-align: center;
+  max-width: 520px;
+}
+
+.meet-crew-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 14px 34px;
+  background: linear-gradient(135deg, #facc15 0%, #f59e0b 50%, #ea580c 100%);
+  border-radius: 40px;
+  border: none;
+  color: #000000;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 0 0 22px rgba(245, 158, 11, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.35);
+  transition: all 0.3s ease;
+}
+
+.meet-crew-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 32px rgba(245, 158, 11, 0.8), inset 0 0 14px rgba(255, 255, 255, 0.55);
+}
+
+.meet-crew-btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
 /* ── Responsive Styling for Challenges, Rewards & FAQ ── */
 @media (max-width: 900px) {
   .challenges-section {
@@ -2582,6 +2635,14 @@
   .faq-answer-content {
     padding: 0 20px 20px;
   }
+  .meet-crew-section {
+    padding: 80px 20px 100px;
+  }
+  .meet-crew-btn {
+    padding: 12px 26px;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -2618,6 +2679,18 @@
   }
   .faq-answer-text {
     font-size: 13.5px;
+  }
+  .meet-crew-section {
+    padding: 64px 16px 80px;
+  }
+  .meet-crew-btn {
+    padding: 11px 22px;
+    font-size: 10.5px;
+    letter-spacing: 1px;
+  }
+  .meet-crew-btn-icon {
+    width: 15px;
+    height: 15px;
   }
 }
 
@@ -2738,10 +2811,15 @@
   box-shadow: 0 0 15px rgba(45, 212, 191, 0.25);
 }
 
-/* Middle Contact Column */
+/* Middle Contact Column — blue theme card matching the venue / prize-pool box */
 .footer-contact-col {
   display: flex;
   flex-direction: column;
+  background: linear-gradient(160deg, #0d1b3f 0%, #1d4ed8 55%, #2563eb 85%, #3b82f6 100%);
+  border-radius: 24px;
+  padding: 36px 38px;
+  box-shadow: 12px 22px 50px -10px rgba(37, 99, 235, 0.35);
+  box-sizing: border-box;
 }
 
 .footer-tag-wrap {
@@ -2767,57 +2845,72 @@
   text-transform: uppercase;
 }
 
+/* Amber accents inside the blue contact card (site theme) */
+.footer-contact-col .cyan-line {
+  background: #fbbf24;
+  box-shadow: 0 0 8px rgba(251, 191, 36, 0.7);
+}
+
+.footer-contact-col .footer-tag-text {
+  color: #fbbf24;
+}
+
 .footer-main-email {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  color: rgba(255, 255, 255, 0.7);
-  font-family: 'Space Mono', monospace;
-  font-size: 13.5px;
+  color: rgba(255, 255, 255, 0.92);
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 14.5px;
+  font-weight: 500;
   text-decoration: none;
-  margin-bottom: 28px;
+  margin-bottom: 26px;
   transition: color 0.3s ease;
   width: fit-content;
 }
 
 .footer-main-email:hover {
-  color: #2dd4bf;
+  color: #fbbf24;
 }
 
 .footer-contacts-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 26px 36px;
+  gap: 22px 28px;
 }
 
 .footer-contact-card {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 16px 18px;
 }
 
 .contact-card-header {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 3px;
+  gap: 5px;
   margin-bottom: 6px;
 }
 
 .contact-person-name {
-  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
-  font-size: 16px;
-  font-weight: 600;
+  font-family: 'Space Grotesk', 'Outfit', sans-serif;
+  font-size: 15.5px;
+  font-weight: 500;
   color: #ffffff;
-  letter-spacing: -0.01em;
+  letter-spacing: 0.1px;
 }
 
 .contact-role-badge {
   font-family: 'Space Mono', monospace;
-  font-size: 9.5px;
+  font-size: 9px;
   font-weight: 700;
-  letter-spacing: 0.8px;
-  color: #2dd4bf;
+  letter-spacing: 0.9px;
+  color: #fbbf24;
   text-transform: uppercase;
 }
 
@@ -2825,9 +2918,9 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Space Mono', monospace;
-  font-size: 12px;
-  color: rgba(255, 255, 255, 0.55);
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.78);
   text-decoration: none;
   transition: color 0.25s ease;
 }
@@ -2837,11 +2930,12 @@
 }
 
 .contact-phone-line {
-  color: #2dd4bf;
+  color: #ffffff;
+  font-weight: 500;
 }
 
 .contact-phone-line:hover {
-  color: #5eead4;
+  color: #fbbf24;
 }
 
 /* Right Floating 3D Astronaut Visual */
@@ -2939,6 +3033,9 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
+  /* Orange gradient card matching the prize-pool orange box */
+  background: linear-gradient(160deg, #7c2d12 0%, #c2410c 30%, #ea580c 70%, #f97316 100%);
+  box-shadow: 12px 22px 50px -10px rgba(234, 88, 12, 0.35);
 }
 
 .venue-pin-badge {
@@ -2963,20 +3060,20 @@
 }
 
 .venue-title {
-  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
-  font-size: clamp(20px, 2.2vw, 24px);
-  font-weight: 600;
+  font-family: 'Space Grotesk', 'Outfit', sans-serif;
+  font-size: clamp(19px, 2vw, 23px);
+  font-weight: 500;
   color: #ffffff;
   margin: 0 0 12px;
-  letter-spacing: -0.01em;
-  line-height: 1.25;
+  letter-spacing: 0.2px;
+  line-height: 1.3;
 }
 
 .venue-address {
   font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 14.5px;
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.55);
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.82);
   font-weight: 300;
   margin: 0 0 24px;
 }
@@ -2985,17 +3082,22 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  color: #2dd4bf;
-  font-family: 'Space Mono', monospace;
+  padding: 10px 20px;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #c2410c;
+  font-family: 'Outfit', 'Inter', sans-serif;
   font-size: 13.5px;
-  font-weight: 700;
+  font-weight: 600;
   text-decoration: none;
-  transition: color 0.25s ease;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+  transition: all 0.25s ease;
 }
 
 .venue-maps-btn:hover {
-  color: #5eead4;
-  text-decoration: underline;
+  background: #eff6ff;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
 }
 
 /* Bottom Bar */
@@ -3046,6 +3148,9 @@
   .footer-contacts-grid {
     grid-template-columns: 1fr;
     gap: 20px;
+  }
+  .footer-contact-col {
+    padding: 28px 22px;
   }
   .venue-info-side {
     padding: 24px 20px;

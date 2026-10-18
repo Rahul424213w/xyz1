@@ -4,6 +4,12 @@ import Astronaut3D from './Astronaut3D'
 import Navbar from './Navbar'
 import './LandingPage.css'
 
+// Hero background video: desktop skips first 20s;
+// mobile loops starting from 20s
+const isMobileViewport = () =>
+  typeof window !== 'undefined' && window.innerWidth <= 900
+const heroVideoStartSec = () => (isMobileViewport() ? 20 : 20)
+
 const PARTNER_LOGOS = [
   { id: 1, src: '/logo1.jpg', alt: 'Partner 1', label: 'Logo 1' },
   { id: 2, src: '/logo2.jpg', alt: 'Partner 2', label: 'Logo 2' },
@@ -363,13 +369,25 @@ export default function LandingPage({ onNavigate }) {
       {/* ── SECTION 1: Fullscreen 4K Hero Section with Sticky Cutting Scroll ── */}
       <section className="hero-fullscreen" id="home">
         <div className="hero-parallax-wrap">
-          {/* Hero Section Background Video */}
+          {/* Hero Section Background Video (skips the first 20 seconds) */}
           <video
             className="hero-bg-video"
             autoPlay
             loop
             muted
             playsInline
+            onLoadedMetadata={(e) => {
+              const v = e.currentTarget
+              const start = heroVideoStartSec()
+              if (v.duration > start + 1) v.currentTime = start
+            }}
+            onTimeUpdate={(e) => {
+              const v = e.currentTarget
+              const start = heroVideoStartSec()
+              if (v.readyState >= 1 && v.duration > start + 1 && v.currentTime < start) {
+                v.currentTime = start
+              }
+            }}
           >
             <source src="/189457-885804464.mp4" type="video/mp4" />
           </video>
@@ -435,14 +453,6 @@ export default function LandingPage({ onNavigate }) {
               </div>
             </div>
           </div>
-
-          {/* Scroll down indicator */}
-          <a href="#about" className="scroll-indicator" aria-label="Scroll to About section">
-            <div className="scroll-mouse-icon">
-              <span className="scroll-mouse-wheel" />
-            </div>
-            <span>Scroll</span>
-          </a>
         </div>
       </section>
 
@@ -688,6 +698,7 @@ export default function LandingPage({ onNavigate }) {
             <div className="rewards-tag-wrap">
               <span className="amber-line amber-line-left" />
               <span className="rewards-tag-text">REWARDS</span>
+              <span className="amber-line amber-line-right" />
             </div>
 
             <h2 className="rewards-main-title">
@@ -794,6 +805,51 @@ export default function LandingPage({ onNavigate }) {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 5.5: Meet The Crew CTA Section ── */}
+      <section className="meet-crew-section">
+        <div className="meet-crew-container">
+          {/* Tag Line */}
+          <div className="meet-crew-tag-wrap">
+            <span className="amber-line amber-line-left" />
+            <span className="meet-crew-tag-text">THE CREW</span>
+            <span className="amber-line amber-line-right" />
+          </div>
+
+          {/* Heading */}
+          <h2 className="meet-crew-main-title">
+            Meet The <span className="about-accent-text">Crew</span>
+          </h2>
+
+          {/* Subtitle */}
+          <p className="meet-crew-subtitle">
+            The organisers, mentors and volunteers making Hack Vally happen — say hello!
+          </p>
+
+          {/* CTA Button → redirects to Contact Us */}
+          <button
+            type="button"
+            className="meet-crew-btn"
+            onClick={() => onNavigate && onNavigate('contact')}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="meet-crew-btn-icon"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span>Meet The Crew</span>
+          </button>
         </div>
       </section>
 
