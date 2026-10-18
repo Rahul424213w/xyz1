@@ -663,45 +663,31 @@
 
 /* Left Card: Vibrant Orange Gradient, rounded on left, OPEN on right with NO border */
 .perk-card-orange {
-  border-top: 1px solid rgba(249, 115, 22, 0.45);
-  border-left: 1px solid rgba(249, 115, 22, 0.45);
-  border-bottom: 1px solid rgba(249, 115, 22, 0.45);
-  border-right: none !important;
+  border: none !important;
   border-radius: 28px 0 0 28px;
   /* Fades from rich vibrant orange on the left into transparent towards the astronaut */
   background: linear-gradient(to right, #ea580c 0%, #c2410c 18%, #7c2d12 42%, #200802 70%, transparent 100%);
-  box-shadow: 
-    -12px 22px 50px -10px rgba(234, 88, 12, 0.35),
-    inset 1px 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow: -12px 22px 50px -10px rgba(234, 88, 12, 0.35);
   padding: 56px 64px 56px 52px;
 }
 
 .perk-card-orange:hover {
-  box-shadow: 
-    -15px 28px 60px -10px rgba(234, 88, 12, 0.5),
-    inset 1px 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: -15px 28px 60px -10px rgba(234, 88, 12, 0.5);
 }
 
 /* Right Card: Dark Midnight to Vivid Royal Blue, rounded on right, OPEN on left with NO border */
 .perk-card-blue {
-  border-top: 1px solid rgba(59, 130, 246, 0.45);
-  border-right: 1px solid rgba(59, 130, 246, 0.45);
-  border-bottom: 1px solid rgba(59, 130, 246, 0.45);
-  border-left: none !important;
+  border: none !important;
   border-radius: 0 28px 28px 0;
   /* Starts from transparent near the astronaut into deep navy, then radiant royal blue on right */
   background: linear-gradient(to right, transparent 0%, #0d1b3f 25%, #1d4ed8 55%, #2563eb 80%, #3b82f6 100%);
-  box-shadow: 
-    12px 22px 50px -10px rgba(37, 99, 235, 0.35),
-    inset -1px 1px 0 rgba(255, 255, 255, 0.22);
+  box-shadow: 12px 22px 50px -10px rgba(37, 99, 235, 0.35);
   padding: 56px 52px 56px 64px;
   text-align: right;
 }
 
 .perk-card-blue:hover {
-  box-shadow: 
-    15px 28px 60px -10px rgba(37, 99, 235, 0.5),
-    inset -1px 1px 0 rgba(255, 255, 255, 0.3);
+  box-shadow: 15px 28px 60px -10px rgba(37, 99, 235, 0.5);
 }
 
 .perk-card-content {
@@ -745,6 +731,27 @@
   text-align: right;
 }
 
+.perk-prize-amount {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: clamp(3.2rem, 4.8vw, 4.6rem);
+  font-weight: 800;
+  color: #ffffff;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  text-shadow: 0 4px 30px rgba(249, 115, 22, 0.45);
+  margin-top: 4px;
+}
+
+.perk-organized-desc {
+  font-family: 'Space Grotesk', 'Outfit', sans-serif;
+  font-size: clamp(15px, 1.25vw, 18px);
+  line-height: 1.45;
+  color: #f1f5f9;
+  font-weight: 500;
+  max-width: 320px;
+  margin-top: 6px;
+}
+
 /* Large Center Astronaut Visual (No frame behind, sits directly on black space background) */
 .astronaut-center-badge {
   position: absolute;
@@ -769,41 +776,187 @@
   -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
 }
 
-/* Responsive Astronaut Perks Section */
+/* ── Mobile Astronaut Perks Layout (Hidden on Desktop by default) ── */
+.astronaut-perks-mobile-wrapper {
+  display: none !important;
+}
+
+/* ── Responsive Astronaut Perks Section (<= 900px) ── */
 @media (max-width: 900px) {
-  .astronaut-perks-container {
-    grid-template-columns: 1fr;
-    column-gap: 0;
-    row-gap: 28px;
-    min-height: auto;
+  .astronaut-perks-section {
+    padding: 70px 18px 90px;
+    overflow: visible;
   }
-  .perk-card {
-    min-height: auto;
+
+  /* Hide Desktop Layout on Mobile */
+  .perks-desktop-layout {
+    display: none !important;
   }
-  .perk-card-orange {
-    border-radius: 24px;
-    border-right: 1px solid rgba(249, 115, 22, 0.45) !important;
-    padding: 38px 30px;
-  }
-  .perk-card-blue {
-    border-radius: 24px;
-    border-left: 1px solid rgba(59, 130, 246, 0.45) !important;
-    padding: 38px 30px;
-    text-align: left;
-  }
-  .perk-heading-right,
-  .perk-desc-right {
-    text-align: left;
-  }
-  .astronaut-center-badge {
-    position: relative;
-    left: auto;
-    top: auto;
-    transform: none;
+
+  /* Show Mobile Layout matching attached reference image with astr2.webp */
+  .astronaut-perks-mobile-wrapper {
+    display: block !important;
+    width: 100%;
+    max-width: 440px;
     margin: 0 auto;
-    width: 320px;
-    height: 320px;
-    order: -1;
+    position: relative;
+  }
+
+  .perks-mobile-stack {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    width: 100%;
+    overflow: visible;
+  }
+
+  .perks-mobile-card {
+    position: relative;
+    border-radius: 26px;
+    padding: 26px 18px 26px 54%;
+    min-height: 165px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-sizing: border-box;
+    overflow: hidden;
+    z-index: 1;
+    border: none !important;
+  }
+
+  /* Top Card: Dark contrast on left, vibrant warm orange on right matching Image 2 */
+  .perks-mobile-orange {
+    background: linear-gradient(115deg, #1c0b04 0%, #7c2d12 25%, #ea580c 65%, #f97316 100%);
+    box-shadow: 0 16px 36px -6px rgba(234, 88, 12, 0.45);
+  }
+
+  /* Bottom Card: Deep navy on left, radiant royal blue on right matching Image 2 */
+  .perks-mobile-blue {
+    background: linear-gradient(115deg, #050d24 0%, #1e3a8a 25%, #1d4ed8 65%, #2563eb 100%);
+    box-shadow: 0 16px 36px -6px rgba(37, 99, 235, 0.45);
+  }
+
+  .perks-mobile-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: left;
+    position: relative;
+    z-index: 3;
+    gap: 4px;
+  }
+
+  .perks-mobile-content-blue {
+    padding-left: 2px;
+  }
+
+  .perks-mobile-heading {
+    font-family: 'Space Grotesk', 'Outfit', sans-serif;
+    font-size: 19px;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 6px;
+    line-height: 1.25;
+    letter-spacing: 0.2px;
+  }
+
+  .perks-mobile-heading-sm {
+    font-size: 16px !important;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0 0 5px;
+    line-height: 1.25;
+    letter-spacing: 0.2px;
+  }
+
+  .perks-mobile-amount {
+    font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+    font-size: 40px;
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-shadow: 0 3px 18px rgba(0, 0, 0, 0.35);
+  }
+
+  .perks-mobile-desc {
+    font-family: 'Outfit', 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: rgba(255, 255, 255, 0.95);
+    margin: 0;
+    font-weight: 500;
+    letter-spacing: 0.15px;
+  }
+
+  .perks-mobile-desc-blue {
+    font-size: 12px !important;
+    line-height: 1.35 !important;
+    color: rgba(255, 255, 255, 0.95);
+  }
+
+  /* Overlaid Astronaut Image (astr2.webp) spanning both cards on the left - NOT CUT */
+  .perks-mobile-astronaut-wrap {
+    position: absolute;
+    left: -20px;
+    top: -6px;
+    bottom: -6px;
+    width: 58%;
+    max-width: 250px;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    overflow: visible;
+  }
+
+  .perks-mobile-astronaut-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: left center;
+    filter: drop-shadow(4px 10px 22px rgba(0, 0, 0, 0.85));
+  }
+}
+
+@media (max-width: 480px) {
+  .astronaut-perks-mobile-wrapper {
+    max-width: 390px;
+  }
+
+  .perks-mobile-card {
+    padding: 20px 14px 20px 52%;
+    min-height: 152px;
+    border-radius: 22px;
+  }
+
+  .perks-mobile-heading {
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+
+  .perks-mobile-heading-sm {
+    font-size: 14.5px !important;
+    margin-bottom: 4px;
+  }
+
+  .perks-mobile-amount {
+    font-size: 34px;
+  }
+
+  .perks-mobile-desc-blue {
+    font-size: 11.5px !important;
+    line-height: 1.3 !important;
+  }
+
+  .perks-mobile-astronaut-wrap {
+    left: -16px;
+    top: -4px;
+    bottom: -4px;
+    width: 58%;
+    max-width: 215px;
   }
 }
 
@@ -1216,28 +1369,189 @@
   border-color: rgba(245, 158, 11, 0.4);
 }
 
+/* ── Mobile Responsive Navbar (Hidden on Desktop by default) ── */
+.mobile-nav-wrapper {
+  display: none !important;
+}
+
 /* ── Responsive Mobile & Tablet Adjustments (Desktop > 900px 100% untouched) ── */
 @media (max-width: 900px) {
-  /* Curved Floating Navbar */
-  .curved-navbar {
+  /* Hide Desktop Navbar on Mobile */
+  .curved-navbar.desktop-only-navbar {
+    display: none !important;
+  }
+
+  /* Show Mobile Navbar matching Images 3 & 4 */
+  .mobile-nav-wrapper {
+    display: block !important;
+    position: fixed;
     top: 14px;
-    width: calc(100vw - 28px);
-    max-width: 460px;
-    padding: 6px 10px 6px 14px;
-    gap: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vw - 32px);
+    max-width: 440px;
+    z-index: 1000;
+  }
+
+  /* Image 3: Closed Compact Floating Pill */
+  .mobile-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    background: rgba(12, 14, 18, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 14px 35px -6px rgba(0, 0, 0, 0.9);
+  }
+
+  .mobile-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mobile-nav-logo-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #000000;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .mobile-nav-logo-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  .mobile-nav-brand-title {
+    font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+  }
+
+  .mobile-nav-hamburger-btn {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .mobile-hamburger-line {
+    width: 22px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 2px;
+  }
+
+  /* Image 4: Open Floating Expanded Card Modal */
+  .mobile-nav-expanded-card {
+    background: rgba(14, 16, 23, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    padding: 18px 22px 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95);
+    animation: mobile-nav-expand 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes mobile-nav-expand {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .mobile-nav-card-header {
+    display: flex;
+    align-items: center;
     justify-content: space-between;
   }
-  .nav-menu {
-    gap: 6px;
+
+  .mobile-nav-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
   }
-  .nav-item {
-    font-size: 12px;
-    padding: 4px 8px;
+
+  .mobile-nav-close-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: #ffffff;
   }
-  .nav-btn-register {
-    padding: 8px 16px;
-    font-size: 11px;
-    letter-spacing: 1px;
+
+  .mobile-nav-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 16px 0 10px;
+  }
+
+  .mobile-nav-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .mobile-nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 11px 4px;
+    transition: color 0.2s ease;
+    display: block;
+  }
+
+  .mobile-nav-link:hover {
+    color: #ffffff;
+  }
+
+  .mobile-nav-register-btn {
+    margin-top: 14px;
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #facc15 0%, #f59e0b 50%, #ea580c 100%);
+    border-radius: 35px;
+    color: #000000;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    cursor: pointer;
   }
 
   /* Hero Section Center Alignment */
@@ -1352,6 +1666,10 @@
   .timeline-section {
     padding: 80px 20px 120px;
   }
+  /* Timeline Section */
+  .timeline-section {
+    padding: 80px 20px 120px;
+  }
   .timeline-header {
     margin-bottom: 50px;
   }
@@ -1359,26 +1677,39 @@
     font-size: clamp(2.2rem, 7vw, 3rem);
   }
   .timeline-spine-line {
-    left: 24px;
-    transform: none;
+    display: block !important;
+    left: 28px !important;
+    transform: translateX(-50%) !important;
+  }
+  .timeline-spine-active {
+    display: block !important;
+    left: 28px !important;
+    transform: translateX(-50%) !important;
   }
   .timeline-shuttle-follower {
-    left: 28px;
-    width: 64px;
-    height: 82px;
+    display: flex !important;
+    left: 28px !important;
+    transform: translate(-50%, -50%) !important;
+    width: 70px !important;
+    height: 70px !important;
+  }
+  .timeline-rocket-img {
+    width: 60px !important;
+    height: 60px !important;
   }
   .timeline-row {
-    display: flex;
-    flex-direction: column;
-    padding-left: 56px;
-    gap: 14px;
-    margin-bottom: 45px;
+    display: flex !important;
+    flex-direction: column !important;
+    padding-left: 68px !important;
+    gap: 14px !important;
+    margin-bottom: 48px !important;
   }
   .timeline-node-wrap {
-    position: absolute;
-    left: 3px;
-    top: 0;
-    width: auto;
+    position: absolute !important;
+    left: -12px !important;
+    top: 0 !important;
+    width: 80px !important;
+    height: 80px !important;
   }
   .timeline-row.align-box-right .timeline-col-left,
   .timeline-row.align-box-right .timeline-col-right,
@@ -1399,21 +1730,26 @@
 
 /* ── Small Mobile Phones (iPhone SE, Galaxy, Mini displays <= 480px) ── */
 @media (max-width: 480px) {
-  .curved-navbar {
-    top: 8px;
-    width: calc(100vw - 16px);
-    padding: 5px 6px 5px 10px;
-    gap: 4px;
+  .timeline-spine-line {
+    display: block !important;
+    left: 26px !important;
+    transform: translateX(-50%) !important;
   }
-  .nav-item {
-    font-size: 10.5px;
-    padding: 4px 6px;
-    letter-spacing: 0;
+  .timeline-spine-active {
+    display: block !important;
+    left: 26px !important;
+    transform: translateX(-50%) !important;
   }
-  .nav-btn-register {
-    padding: 6px 11px;
-    font-size: 9.5px;
-    letter-spacing: 0.5px;
+  .timeline-shuttle-follower {
+    display: flex !important;
+    left: 26px !important;
+    transform: translate(-50%, -50%) !important;
+    width: 64px !important;
+    height: 64px !important;
+  }
+  .timeline-rocket-img {
+    width: 52px !important;
+    height: 52px !important;
   }
 
   .astronaut-left-wrapper {
@@ -1477,14 +1813,15 @@
     padding: 60px 14px 90px;
   }
   .timeline-row {
-    padding-left: 44px;
-    margin-bottom: 36px;
-  }
-  .timeline-spine-line {
-    left: 18px;
+    padding-left: 64px !important;
+    margin-bottom: 40px !important;
   }
   .timeline-node-wrap {
-    left: -3px;
+    position: absolute !important;
+    left: -14px !important;
+    top: 0 !important;
+    width: 80px !important;
+    height: 80px !important;
   }
   .timeline-card-title {
     font-size: 17px;
@@ -1494,3 +1831,1223 @@
   }
 }
 
+/* ========================================================
+   SECTION 4: Challenges (Problem Statements) Section
+   ======================================================== */
+.challenges-section {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  background-color: #000000;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  padding: 130px 32px 140px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.challenges-container {
+  max-width: 1140px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ── Header Area with Ghost Watermark "TRACKS" ── */
+.challenges-header-wrap {
+  position: relative;
+  text-align: center;
+  margin-bottom: 50px;
+  overflow: visible;
+}
+
+.challenges-watermark-text {
+  position: absolute;
+  right: -25px;
+  left: auto;
+  top: -46px;
+  transform: none;
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: clamp(2.8rem, 5.2vw, 4.2rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.08);
+  user-select: none;
+  pointer-events: none;
+  z-index: 0;
+  text-transform: uppercase;
+  line-height: 0.85;
+  white-space: nowrap;
+}
+
+.challenges-tag-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 18px;
+  position: relative;
+  z-index: 2;
+}
+
+.challenges-tag-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #f59e0b;
+  text-transform: uppercase;
+}
+
+.challenges-main-title {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 4.4rem);
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+  line-height: 1.15;
+  position: relative;
+  z-index: 2;
+}
+
+.challenges-subtitle {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: clamp(14px, 1.25vw, 16.5px);
+  color: rgba(255, 255, 255, 0.48);
+  font-weight: 300;
+  max-width: 660px;
+  margin: 0 auto;
+  line-height: 1.6;
+  letter-spacing: 0.15px;
+  position: relative;
+  z-index: 2;
+}
+
+/* ── Big Square Announcement Box with Generous Spacing ── */
+.challenges-announcement-box {
+  position: relative;
+  max-width: 840px;
+  margin: 56px auto 0;
+  padding: 56px 48px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(24, 24, 28, 0.72) 0%, rgba(14, 14, 17, 0.88) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-top: 1px solid rgba(245, 158, 11, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 
+    0 24px 50px -10px rgba(0, 0, 0, 0.85),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  text-align: center;
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  box-sizing: border-box;
+}
+
+.challenges-announcement-box:hover {
+  transform: translateY(-4px);
+  border-color: rgba(245, 158, 11, 0.55);
+  box-shadow: 
+    0 30px 65px -10px rgba(0, 0, 0, 0.95),
+    0 0 45px rgba(245, 158, 11, 0.18),
+    inset 0 1px 0 rgba(245, 158, 11, 0.35);
+}
+
+.challenges-box-ambient-glow {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60%;
+  height: 90px;
+  background: radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.22) 0%, transparent 80%);
+  pointer-events: none;
+}
+
+.challenges-box-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 16px;
+  border-radius: 9999px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  font-family: 'Space Mono', monospace;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 1.6px;
+  color: #fbbf24;
+  margin-bottom: 24px;
+}
+
+.challenges-pulse-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fbbf24;
+  box-shadow: 0 0 10px #fbbf24;
+  animation: pulseAmber 2s infinite ease-in-out;
+}
+
+@keyframes pulseAmber {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.85);
+  }
+}
+
+.challenges-box-icon-wrap {
+  width: 60px;
+  height: 60px;
+  border-radius: 16px;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.18);
+  transition: transform 0.35s ease;
+}
+
+.challenges-announcement-box:hover .challenges-box-icon-wrap {
+  transform: scale(1.08);
+}
+
+.challenges-statement-text {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: clamp(20px, 2.3vw, 26px);
+  font-weight: 500;
+  color: #ffffff;
+  line-height: 1.55;
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto 34px;
+  letter-spacing: 0.2px;
+}
+
+.challenges-channels-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+
+.channel-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font-family: 'Space Mono', monospace;
+  font-size: 11.5px;
+  color: #cbd5e1;
+  letter-spacing: 0.5px;
+}
+
+.channel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f59e0b;
+}
+
+/* ========================================================
+   SECTION 5: Prizes & Rewards Section (Winner & Runner Up only)
+   ======================================================== */
+.rewards-section {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  background-color: #000000;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  padding: 120px 32px 160px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.rewards-container {
+  max-width: 1040px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ── Rewards Header (Matching Image 3 & 4) ── */
+.rewards-header {
+  text-align: left;
+  margin-bottom: 54px;
+}
+
+.rewards-tag-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.rewards-tag-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #f59e0b;
+  text-transform: uppercase;
+}
+
+.rewards-main-title {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 4.4rem);
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0;
+  line-height: 1.15;
+}
+
+/* ── 2 Prize Cards Grid (Winner & Runner Up only) ── */
+.rewards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 36px;
+  width: 100%;
+}
+
+/* Base Card */
+.reward-card {
+  position: relative;
+  border-radius: 24px;
+  padding: 44px 40px 48px;
+  background: rgba(18, 18, 20, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 420px;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+  box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.85);
+  box-sizing: border-box;
+}
+
+/* Background Geometry (Radar / Hexagon) */
+.reward-bg-graphic {
+  position: absolute;
+  right: -30px;
+  top: -20px;
+  width: 320px;
+  height: 320px;
+  pointer-events: none;
+  user-select: none;
+  z-index: 1;
+  opacity: 0.65;
+  transition: opacity 0.45s ease, transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reward-card:hover .reward-bg-graphic {
+  opacity: 0.95;
+  transform: scale(1.06);
+}
+
+/* Ambient Radial Glow Layer */
+.reward-glow-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  z-index: 2;
+}
+
+.reward-glow-winner {
+  background: radial-gradient(circle at 40% 15%, rgba(245, 158, 11, 0.18) 0%, transparent 72%);
+}
+
+.reward-glow-runnerup {
+  background: radial-gradient(circle at 40% 15%, rgba(226, 232, 240, 0.18) 0%, transparent 72%);
+}
+
+.reward-card-inner {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* Top Icon Badge */
+.reward-icon-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  transition: transform 0.35s ease;
+}
+
+.reward-badge-winner {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.15);
+}
+
+.reward-badge-runnerup {
+  background: rgba(226, 232, 240, 0.1);
+  border: 1px solid rgba(226, 232, 240, 0.2);
+  box-shadow: 0 0 20px rgba(226, 232, 240, 0.12);
+}
+
+.reward-card:hover .reward-icon-badge {
+  transform: scale(1.06);
+}
+
+/* Sub-label shown on hover (Image 5) */
+.reward-place-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: all 0.35s ease;
+}
+
+.place-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.dot-winner {
+  background: #fbbf24;
+  box-shadow: 0 0 8px #fbbf24;
+}
+
+.dot-runnerup {
+  background: #ffffff;
+  box-shadow: 0 0 8px #ffffff;
+}
+
+.label-winner {
+  color: #fbbf24;
+}
+
+.label-runnerup {
+  color: #e2e8f0;
+}
+
+/* Amount Display */
+.reward-amount {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: clamp(38px, 4.2vw, 48px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  letter-spacing: -0.02em;
+}
+
+.amount-winner {
+  color: #fde047;
+  text-shadow: 0 0 24px rgba(245, 158, 11, 0.3);
+}
+
+.amount-runnerup {
+  color: #ffffff;
+}
+
+/* Description */
+.reward-desc {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.625;
+  color: rgba(255, 255, 255, 0.52);
+  font-weight: 300;
+  margin: 0 0 24px;
+  letter-spacing: 0.15px;
+  transition: color 0.35s ease;
+}
+
+/* Glowing Divider Line (Shown on hover, Image 5) */
+.reward-divider {
+  height: 1.5px;
+  width: 0%;
+  opacity: 0;
+  margin-top: auto;
+  transition: width 0.45s ease, opacity 0.45s ease;
+}
+
+.divider-winner {
+  background: linear-gradient(90deg, #f59e0b, #fbbf24 60%, transparent);
+  box-shadow: 0 0 10px rgba(245, 158, 11, 0.65);
+}
+
+.divider-runnerup {
+  background: linear-gradient(90deg, #e2e8f0, #ffffff 60%, transparent);
+  box-shadow: 0 0 10px rgba(226, 232, 240, 0.65);
+}
+
+/* ── HOVER ANIMATION: WINNER (Golden Amber luminous glow matching Image 5) ── */
+.reward-card-winner:hover {
+  transform: translateY(-6px);
+  border-color: #f59e0b;
+  box-shadow: 
+    0 22px 50px -5px rgba(0, 0, 0, 0.92),
+    0 0 40px rgba(245, 158, 11, 0.38),
+    inset 0 1px 0 rgba(245, 158, 11, 0.35);
+}
+
+.reward-card-winner:hover .reward-glow-layer {
+  opacity: 1;
+}
+
+.reward-card-winner:hover .reward-place-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reward-card-winner:hover .reward-divider {
+  opacity: 1;
+  width: 100%;
+}
+
+.reward-card-winner:hover .reward-desc {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ── HOVER ANIMATION: RUNNER UP (White Silver luminous glow matching prompt) ── */
+.reward-card-runnerup:hover {
+  transform: translateY(-6px);
+  border-color: #e2e8f0;
+  box-shadow: 
+    0 22px 50px -5px rgba(0, 0, 0, 0.92),
+    0 0 40px rgba(226, 232, 240, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.reward-card-runnerup:hover .reward-glow-layer {
+  opacity: 1;
+}
+
+.reward-card-runnerup:hover .reward-place-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reward-card-runnerup:hover .reward-divider {
+  opacity: 1;
+  width: 100%;
+}
+
+.reward-card-runnerup:hover .reward-desc {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* ========================================================
+   SECTION 6: Accommodation and Event FAQ Section
+   ======================================================== */
+.faq-section {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  background-color: #000000;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  padding: 130px 32px 170px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.faq-container {
+  max-width: 920px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.faq-header {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.faq-tag-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  margin-bottom: 18px;
+}
+
+.faq-tag-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #f59e0b;
+  text-transform: uppercase;
+}
+
+.faq-main-title {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: clamp(2.8rem, 6vw, 4.4rem);
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0 0 16px;
+  line-height: 1.15;
+}
+
+.faq-subtitle {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: clamp(14px, 1.25vw, 16.5px);
+  color: rgba(255, 255, 255, 0.48);
+  font-weight: 300;
+  max-width: 660px;
+  margin: 0 auto;
+  line-height: 1.6;
+  letter-spacing: 0.15px;
+}
+
+/* ── FAQ Accordion List ── */
+.faq-accordion-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.faq-accordion-item {
+  position: relative;
+  border-radius: 18px;
+  background: rgba(18, 18, 22, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.5);
+}
+
+.faq-accordion-item:hover {
+  border-color: rgba(245, 158, 11, 0.35);
+  background: rgba(24, 24, 30, 0.85);
+}
+
+.faq-accordion-item.faq-item-open {
+  border-color: rgba(245, 158, 11, 0.6);
+  box-shadow: 
+    0 14px 40px -5px rgba(0, 0, 0, 0.8),
+    0 0 30px rgba(245, 158, 11, 0.12);
+}
+
+.faq-question-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 28px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  color: #ffffff;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: clamp(16px, 1.35vw, 18.5px);
+  font-weight: 500;
+  line-height: 1.45;
+  gap: 18px;
+  transition: color 0.3s ease;
+}
+
+.faq-question-btn:hover {
+  color: #fbbf24;
+}
+
+.faq-item-open .faq-question-btn {
+  color: #fbbf24;
+}
+
+.faq-icon-indicator {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.faq-item-open .faq-icon-indicator {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.4);
+  color: #fbbf24;
+  transform: rotate(180deg);
+}
+
+.faq-answer-wrap {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
+}
+
+.faq-item-open .faq-answer-wrap {
+  max-height: 320px;
+  opacity: 1;
+}
+
+.faq-answer-content {
+  padding: 0 28px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  padding-top: 18px;
+}
+
+.faq-answer-text {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: clamp(14px, 1.15vw, 15.5px);
+  line-height: 1.7;
+  color: #cbd5e1;
+  font-weight: 300;
+  margin: 0;
+  white-space: pre-line;
+  letter-spacing: 0.15px;
+}
+
+/* ── Responsive Styling for Challenges, Rewards & FAQ ── */
+@media (max-width: 900px) {
+  .challenges-section {
+    padding: 90px 20px 110px;
+  }
+  .challenges-watermark-text {
+    font-size: clamp(2.4rem, 7vw, 4rem);
+    right: -10px;
+    left: auto;
+    top: -30px;
+    transform: none;
+    opacity: 0.08;
+  }
+  .challenges-announcement-box {
+    padding: 40px 24px;
+    margin-top: 40px;
+  }
+  .challenges-statement-text {
+    font-size: 18px;
+  }
+  
+  .rewards-section {
+    padding: 90px 20px 120px;
+  }
+  .rewards-grid {
+    grid-template-columns: 1fr;
+    max-width: 480px;
+    margin: 0 auto;
+    gap: 28px;
+  }
+  .reward-card {
+    padding: 36px 28px;
+    min-height: auto;
+  }
+  .reward-place-label {
+    opacity: 1;
+    transform: none;
+  }
+  .reward-divider {
+    opacity: 1;
+    width: 100%;
+  }
+
+  .faq-section {
+    padding: 90px 20px 120px;
+  }
+  .faq-question-btn {
+    padding: 18px 20px;
+    font-size: 16px;
+  }
+  .faq-answer-content {
+    padding: 0 20px 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .challenges-section {
+    padding: 70px 16px 85px;
+  }
+  .challenges-statement-text {
+    font-size: 16px;
+    line-height: 1.5;
+  }
+  .rewards-section {
+    padding: 70px 16px 95px;
+  }
+  .reward-amount {
+    font-size: 34px;
+  }
+  .reward-desc {
+    font-size: 13.5px;
+  }
+  .faq-section {
+    padding: 70px 16px 95px;
+  }
+  .faq-question-btn {
+    padding: 16px 16px;
+    font-size: 14.5px;
+    gap: 12px;
+  }
+  .faq-icon-indicator {
+    width: 28px;
+    height: 28px;
+  }
+  .faq-answer-content {
+    padding: 0 16px 18px;
+  }
+  .faq-answer-text {
+    font-size: 13.5px;
+  }
+}
+
+/* ========================================================
+   SECTION 7: Footer (Contact, Venue & Floating Astronaut)
+   ======================================================== */
+.hack-footer-section {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  background-color: #000000;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-size: 36px 36px;
+  padding: 100px 32px 50px;
+  box-sizing: border-box;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.footer-container {
+  max-width: 1220px;
+  margin: 0 auto;
+  position: relative;
+}
+
+/* ── Top Row Grid: Brand, Contact, Astronaut ── */
+.footer-top-grid {
+  display: grid;
+  grid-template-columns: 300px 1.15fr 360px;
+  gap: 40px;
+  align-items: center;
+  margin-bottom: 70px;
+  position: relative;
+}
+
+/* Left Brand Column */
+.footer-brand-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-brand-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.footer-brand-logo-wrap {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.footer-brand-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2dd4bf;
+  box-shadow: 0 0 8px #2dd4bf;
+}
+
+.footer-brand-badge-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.footer-brand-title {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
+
+.footer-brand-desc {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 14px;
+  line-height: 1.68;
+  color: rgba(255, 255, 255, 0.52);
+  font-weight: 300;
+  margin: 0 0 24px;
+}
+
+.footer-socials-row {
+  display: flex;
+  gap: 12px;
+}
+
+.footer-social-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.65);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.footer-social-btn:hover {
+  color: #2dd4bf;
+  border-color: rgba(45, 212, 191, 0.5);
+  background: rgba(45, 212, 191, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 0 15px rgba(45, 212, 191, 0.25);
+}
+
+/* Middle Contact Column */
+.footer-contact-col {
+  display: flex;
+  flex-direction: column;
+}
+
+.footer-tag-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.cyan-line {
+  width: 20px;
+  height: 2px;
+  background: #2dd4bf;
+  box-shadow: 0 0 8px #2dd4bf;
+}
+
+.footer-tag-text {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: #2dd4bf;
+  text-transform: uppercase;
+}
+
+.footer-main-email {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  font-family: 'Space Mono', monospace;
+  font-size: 13.5px;
+  text-decoration: none;
+  margin-bottom: 28px;
+  transition: color 0.3s ease;
+  width: fit-content;
+}
+
+.footer-main-email:hover {
+  color: #2dd4bf;
+}
+
+.footer-contacts-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 26px 36px;
+}
+
+.footer-contact-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.contact-card-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  margin-bottom: 6px;
+}
+
+.contact-person-name {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.contact-role-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  color: #2dd4bf;
+  text-transform: uppercase;
+}
+
+.contact-detail-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.55);
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.contact-detail-line:hover {
+  color: #ffffff;
+}
+
+.contact-phone-line {
+  color: #2dd4bf;
+}
+
+.contact-phone-line:hover {
+  color: #5eead4;
+}
+
+/* Right Floating 3D Astronaut Visual */
+.footer-astronaut-wrap {
+  position: relative;
+  width: 100%;
+  height: 440px;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  margin-top: 10px;
+}
+
+.astronaut-3d-canvas-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+
+.astronaut-3d-canvas-container:active {
+  cursor: grabbing;
+}
+
+/* ── Lower Section: Venue & Interactive Google Map Card ── */
+.footer-venue-wrap {
+  margin-top: 30px;
+  margin-bottom: 50px;
+}
+
+.venue-card {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  border-radius: 20px;
+  background: rgba(18, 18, 22, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  overflow: hidden;
+  box-shadow: 0 16px 45px -10px rgba(0, 0, 0, 0.85);
+  min-height: 280px;
+}
+
+.venue-map-side {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  background: #0c0d10;
+  overflow: hidden;
+}
+
+.venue-map-iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  border: none;
+  filter: invert(90%) hue-rotate(180deg) brightness(85%) contrast(90%);
+}
+
+.venue-map-overlay-btn {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  z-index: 10;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #0f172a;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  transition: all 0.25s ease;
+}
+
+.venue-map-overlay-btn:hover {
+  background: #f1f5f9;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+}
+
+.venue-info-side {
+  padding: 44px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.venue-pin-badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(45, 212, 191, 0.12);
+  border: 1px solid rgba(45, 212, 191, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  box-shadow: 0 0 20px rgba(45, 212, 191, 0.2);
+}
+
+.venue-pin-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #2dd4bf;
+  box-shadow: 0 0 10px #2dd4bf;
+}
+
+.venue-title {
+  font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+  font-size: clamp(20px, 2.2vw, 24px);
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0 0 12px;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+.venue-address {
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.55);
+  font-weight: 300;
+  margin: 0 0 24px;
+}
+
+.venue-maps-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #2dd4bf;
+  font-family: 'Space Mono', monospace;
+  font-size: 13.5px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.25s ease;
+}
+
+.venue-maps-btn:hover {
+  color: #5eead4;
+  text-decoration: underline;
+}
+
+/* Bottom Bar */
+.footer-bottom-bar {
+  padding-top: 28px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  text-align: center;
+  font-family: 'Outfit', 'Inter', sans-serif;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.4);
+  letter-spacing: 0.3px;
+}
+
+/* ── Responsive Footer ── */
+@media (max-width: 1024px) {
+  .footer-top-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+  .footer-astronaut-wrap {
+    grid-column: span 2;
+    height: 380px;
+    margin-top: 10px;
+  }
+  .venue-card {
+    grid-template-columns: 1fr;
+  }
+  .venue-map-side {
+    min-height: 240px;
+  }
+  .venue-info-side {
+    padding: 32px 28px;
+  }
+}
+
+@media (max-width: 640px) {
+  .hack-footer-section {
+    padding: 70px 16px 40px;
+  }
+  .footer-top-grid {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
+  .footer-astronaut-wrap {
+    grid-column: span 1;
+    height: 320px;
+  }
+  .footer-contacts-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  .venue-info-side {
+    padding: 24px 20px;
+  }
+}

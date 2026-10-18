@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { TEAM_CATEGORIES, TEAM_MEMBERS } from './teamData'
+import Navbar from './Navbar'
 import './ContactPage.css'
 
 export default function ContactPage({ onNavigate }) {
@@ -230,53 +231,8 @@ export default function ContactPage({ onNavigate }) {
       {/* ── Dynamic Constellation Background Canvas ── */}
       <canvas ref={canvasRef} className="constellation-canvas" />
 
-      {/* ── Fixed Floating Navbar (Same as Hero) ── */}
-      <nav className="curved-navbar contact-navbar">
-        <div className="nav-menu">
-          <button
-            type="button"
-            className="nav-item nav-btn-link"
-            onClick={() => onNavigate && onNavigate('landing', '#home')}
-          >
-            Home
-          </button>
-          <button
-            type="button"
-            className="nav-item nav-btn-link"
-            onClick={() => onNavigate && onNavigate('landing', '#about')}
-          >
-            About
-          </button>
-          <button
-            type="button"
-            className="nav-item nav-btn-link"
-            onClick={() => onNavigate && onNavigate('landing', '#timeline')}
-          >
-            Timeline
-          </button>
-          <button
-            type="button"
-            className="nav-item nav-btn-link active"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
-            Contact Us
-          </button>
-        </div>
-        <a
-          href="#register"
-          className="nav-btn-register"
-          onClick={(e) => {
-            e.preventDefault()
-            if (onNavigate) {
-              onNavigate('register')
-            } else {
-              window.location.hash = '#register'
-            }
-          }}
-        >
-          <span>Register</span>
-        </a>
-      </nav>
+      {/* ── Unified Floating Navbar ── */}
+      <Navbar currentPage="contact" onNavigate={onNavigate} />
 
       {/* ── Main Content ── */}
       <main className="team-main-content">

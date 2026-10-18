@@ -1,0 +1,291 @@
+/* ========================================================
+   Navbar.css - Unified Desktop Curved Floating Nav &
+   Mobile Floating Responsive Pill / Modal (Images 3 & 4)
+   Shared across Landing, Contact, and Register pages
+   ======================================================== */
+
+/* ── Curved Center Floating Navbar (Desktop Only) ── */
+.curved-navbar {
+  position: fixed;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 8px 10px 8px 28px;
+  background: rgba(8, 8, 10, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 50px;
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  box-shadow: 
+    0 16px 40px -8px rgba(0, 0, 0, 0.95),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  z-index: 1000;
+  animation: nav-slide-down 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes nav-slide-down {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.nav-item {
+  color: #94a3b8;
+  text-decoration: none;
+  font-family: 'Outfit', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.8px;
+  padding: 6px 16px;
+  border-radius: 25px;
+  border: 1px solid transparent;
+  transition: all 0.25s ease;
+  white-space: nowrap;
+}
+
+.nav-item:hover {
+  color: #fbbf24;
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.5);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.nav-item.active {
+  color: #ffffff;
+  background: rgba(245, 158, 11, 0.14);
+  border: 1px solid rgba(245, 158, 11, 0.65);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.25);
+}
+
+.nav-btn-register {
+  padding: 10px 26px;
+  background: linear-gradient(135deg, #facc15 0%, #f59e0b 50%, #ea580c 100%);
+  border-radius: 40px;
+  color: #000000;
+  text-decoration: none;
+  font-family: 'Orbitron', sans-serif;
+  font-size: 13.5px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+}
+
+.nav-btn-register:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.8);
+}
+
+.nav-btn-register.active-register {
+  box-shadow: 0 0 30px rgba(245, 158, 11, 0.95), 0 0 0 2px #ffffff;
+}
+
+.nav-btn-register span {
+  position: relative;
+  z-index: 1;
+}
+
+/* Hidden on desktop */
+.mobile-nav-wrapper {
+  display: none !important;
+}
+
+/* ── Mobile & Tablet Navbar (<= 900px) ── */
+@media (max-width: 900px) {
+  .curved-navbar.desktop-only-navbar {
+    display: none !important;
+  }
+
+  .mobile-nav-wrapper {
+    display: block !important;
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100vw - 32px);
+    max-width: 440px;
+    z-index: 1000;
+  }
+
+  /* Image 3: Closed Compact Floating Pill */
+  .mobile-nav-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 18px;
+    background: rgba(12, 14, 18, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: 0 14px 35px -6px rgba(0, 0, 0, 0.9);
+  }
+
+  .mobile-nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .mobile-nav-logo-badge {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #000000;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .mobile-nav-logo-img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+  }
+
+  .mobile-nav-brand-title {
+    font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+  }
+
+  .mobile-nav-hamburger-btn {
+    background: transparent;
+    border: none;
+    padding: 6px;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .mobile-hamburger-line {
+    width: 22px;
+    height: 2px;
+    background: #ffffff;
+    border-radius: 2px;
+  }
+
+  /* Image 4: Open Floating Expanded Card Modal */
+  .mobile-nav-expanded-card {
+    background: rgba(14, 16, 23, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 24px;
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    padding: 18px 22px 24px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.95);
+    animation: mobile-nav-expand 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes mobile-nav-expand {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+  }
+
+  .mobile-nav-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .mobile-nav-close-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mobile-nav-close-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: #ffffff;
+  }
+
+  .mobile-nav-divider {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 16px 0 10px;
+  }
+
+  .mobile-nav-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .mobile-nav-link {
+    font-family: 'Outfit', sans-serif;
+    font-size: 17px;
+    font-weight: 500;
+    color: #cbd5e1;
+    text-decoration: none;
+    padding: 11px 4px;
+    transition: color 0.2s ease;
+    display: block;
+  }
+
+  .mobile-nav-link:hover,
+  .mobile-nav-link.active-mobile-link {
+    color: #fbbf24;
+  }
+
+  .mobile-nav-register-btn {
+    margin-top: 14px;
+    width: 100%;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #facc15 0%, #f59e0b 50%, #ea580c 100%);
+    border-radius: 35px;
+    color: #000000;
+    text-decoration: none;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    cursor: pointer;
+    border: none;
+  }
+}
