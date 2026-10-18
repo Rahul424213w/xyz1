@@ -519,27 +519,27 @@
   position: relative;
   z-index: 10;
   width: 100%;
-  padding: 80px 32px 100px;
+  padding: 100px 32px 140px;
   background-color: #000000;
   box-sizing: border-box;
+  overflow: visible;
 }
 
 .astronaut-perks-container {
-  max-width: 1140px;
+  max-width: 1260px;
   margin: 0 auto;
   position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
+  column-gap: 220px; /* Opens a 220px center channel so NO frame goes behind the astronaut */
   align-items: stretch;
-  gap: 0;
-  min-height: 280px;
+  min-height: 440px;
 }
 
-/* Base Card Styling */
+/* Base Card Styling - Substantially taller frame height */
 .perk-card {
   position: relative;
-  min-height: 280px;
-  border-radius: 24px;
+  min-height: 440px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -549,40 +549,50 @@
 }
 
 .perk-card:hover {
-  transform: translateY(-2px);
+  transform: translateY(-3px);
 }
 
-/* Left Card: Vibrant Orange to Dark Mahogany Gradient */
+/* Left Card: Vibrant Orange Gradient, rounded on left, OPEN on right with NO border */
 .perk-card-orange {
-  background: linear-gradient(110deg, #ea580c 0%, #c2410c 22%, #7c2d12 55%, #260c04 85%, #0e0502 100%);
-  border: 1px solid rgba(249, 115, 22, 0.38);
+  border-top: 1px solid rgba(249, 115, 22, 0.45);
+  border-left: 1px solid rgba(249, 115, 22, 0.45);
+  border-bottom: 1px solid rgba(249, 115, 22, 0.45);
+  border-right: none !important;
+  border-radius: 28px 0 0 28px;
+  /* Fades from rich vibrant orange on the left into transparent towards the astronaut */
+  background: linear-gradient(to right, #ea580c 0%, #c2410c 18%, #7c2d12 42%, #200802 70%, transparent 100%);
   box-shadow: 
-    0 20px 45px -10px rgba(234, 88, 12, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  padding: 40px 110px 40px 48px;
+    -12px 22px 50px -10px rgba(234, 88, 12, 0.35),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.22);
+  padding: 56px 64px 56px 52px;
 }
 
 .perk-card-orange:hover {
   box-shadow: 
-    0 25px 55px -10px rgba(234, 88, 12, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    -15px 28px 60px -10px rgba(234, 88, 12, 0.5),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* Right Card: Dark Midnight to Vivid Royal Blue Gradient */
+/* Right Card: Dark Midnight to Vivid Royal Blue, rounded on right, OPEN on left with NO border */
 .perk-card-blue {
-  background: linear-gradient(110deg, #070d1e 0%, #0f1d44 25%, #1d4ed8 62%, #2563eb 85%, #3b82f6 100%);
-  border: 1px solid rgba(59, 130, 246, 0.38);
+  border-top: 1px solid rgba(59, 130, 246, 0.45);
+  border-right: 1px solid rgba(59, 130, 246, 0.45);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.45);
+  border-left: none !important;
+  border-radius: 0 28px 28px 0;
+  /* Starts from transparent near the astronaut into deep navy, then radiant royal blue on right */
+  background: linear-gradient(to right, transparent 0%, #0d1b3f 25%, #1d4ed8 55%, #2563eb 80%, #3b82f6 100%);
   box-shadow: 
-    0 20px 45px -10px rgba(37, 99, 235, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.2);
-  padding: 40px 48px 40px 110px;
+    12px 22px 50px -10px rgba(37, 99, 235, 0.35),
+    inset -1px 1px 0 rgba(255, 255, 255, 0.22);
+  padding: 56px 52px 56px 64px;
   text-align: right;
 }
 
 .perk-card-blue:hover {
   box-shadow: 
-    0 25px 55px -10px rgba(37, 99, 235, 0.5),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    15px 28px 60px -10px rgba(37, 99, 235, 0.5),
+    inset -1px 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .perk-card-content {
@@ -597,14 +607,14 @@
   align-items: flex-end;
 }
 
-/* Card Typography */
+/* Card Typography - Prominent & clean matching Reference Image 1 */
 .perk-heading {
   font-family: 'Space Grotesk', 'Outfit', sans-serif;
-  font-size: clamp(1.45rem, 2.1vw, 2.05rem);
+  font-size: clamp(1.65rem, 2.3vw, 2.35rem);
   font-weight: 400;
   color: #ffffff;
-  line-height: 1.25;
-  margin: 0 0 20px;
+  line-height: 1.22;
+  margin: 0 0 24px;
   letter-spacing: 0.3px;
 }
 
@@ -614,8 +624,8 @@
 
 .perk-desc {
   font-family: 'Space Grotesk', 'Outfit', 'Inter', sans-serif;
-  font-size: clamp(13.5px, 1.05vw, 15px);
-  line-height: 1.48;
+  font-size: clamp(14px, 1.1vw, 16px);
+  line-height: 1.5;
   color: #f1f5f9;
   font-weight: 400;
   letter-spacing: 0.2px;
@@ -626,14 +636,14 @@
   text-align: right;
 }
 
-/* Center Overlapping Astronaut Visual */
+/* Large Center Astronaut Visual (No frame behind, sits directly on black space background) */
 .astronaut-center-badge {
   position: absolute;
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 360px;
-  height: 350px;
+  width: 520px;
+  height: 550px;
   z-index: 8;
   display: flex;
   align-items: center;
@@ -645,7 +655,7 @@
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 18px 40px rgba(0, 0, 0, 0.95));
+  filter: drop-shadow(0 20px 45px rgba(0, 0, 0, 0.95));
   mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
   -webkit-mask-image: linear-gradient(to bottom, #000 84%, transparent 100%);
 }
@@ -654,13 +664,22 @@
 @media (max-width: 900px) {
   .astronaut-perks-container {
     grid-template-columns: 1fr;
-    gap: 24px;
+    column-gap: 0;
+    row-gap: 28px;
+    min-height: auto;
+  }
+  .perk-card {
+    min-height: auto;
   }
   .perk-card-orange {
-    padding: 36px 32px;
+    border-radius: 24px;
+    border-right: 1px solid rgba(249, 115, 22, 0.45) !important;
+    padding: 38px 30px;
   }
   .perk-card-blue {
-    padding: 36px 32px;
+    border-radius: 24px;
+    border-left: 1px solid rgba(59, 130, 246, 0.45) !important;
+    padding: 38px 30px;
     text-align: left;
   }
   .perk-heading-right,
@@ -673,8 +692,8 @@
     top: auto;
     transform: none;
     margin: 0 auto;
-    width: 260px;
-    height: 260px;
+    width: 320px;
+    height: 320px;
     order: -1;
   }
 }
