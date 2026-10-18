@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState } from 'react'
-import Astronaut from './Astronaut'
 import './LandingPage.css'
 
 const PARTNER_LOGOS = [
@@ -252,48 +251,76 @@ export default function LandingPage({ onNavigate }) {
       {/* ── SECTION 1: Fullscreen 4K Hero Section with Sticky Cutting Scroll ── */}
       <section className="hero-fullscreen" id="home">
         <div className="hero-parallax-wrap">
-          {/* 4K Fullscreen Background Image */}
-          <img
-            src="/hero_section_4k.png"
-            alt="HACK VALLY - 24 Hours Hackathon | 12 - 13 November"
-            className="hero-img-4k"
-          />
+          {/* Hero Section Background Video */}
+          <video
+            className="hero-bg-video"
+            autoPlay
+            loop
+            muted
+            playsInline
+          >
+            <source src="/189457-885804464.mp4" type="video/mp4" />
+          </video>
 
-          {/* College Header (Above Hack Vally with breathing room) */}
-          <div className="hero-college-title">
-            <div className="college-badge">
-              <span className="college-dot" />
-              <span className="college-text">Jain College Of Engineering And Research</span>
-            </div>
-          </div>
-
-          {/* 3D Animated Floating Astronaut (Side-by-side on left of Hack Vally) */}
+          {/* Flowing Floating Astronaut */}
           <div className="astronaut-left-wrapper">
-            <Astronaut />
+            <img
+              src="/astronaut_floating.png"
+              alt="Floating Astronaut in Space"
+              className="astronaut-floating-img"
+            />
           </div>
 
-          {/* Our Partners Section (Below 12-13 Nov) */}
-          <div className="hero-partners-section">
-            <h3 className="partners-heading">Our Partners</h3>
-            <div className="partners-grid">
-              {PARTNER_LOGOS.map((logo) => (
-                <div className="partner-card" key={logo.id} title={logo.alt}>
-                  <img
-                    src={logo.src}
-                    alt={logo.alt}
-                    className="partner-img"
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none'
-                      if (e.currentTarget.nextElementSibling) {
-                        e.currentTarget.nextElementSibling.style.display = 'flex'
-                      }
-                    }}
-                  />
-                  <div className="partner-fallback" style={{ display: 'none' }}>
-                    <span>{logo.label}</span>
+          {/* Main Hero Center Content (College badge, Hack Vally title, Hackathon dates, Partners) */}
+          <div className="hero-center-content">
+            {/* College Header */}
+            <div className="hero-college-title">
+              <div className="college-badge">
+                <span className="college-dot" />
+                <span className="college-text">Jain College Of Engineering And Research</span>
+              </div>
+            </div>
+
+            {/* Futuristic HACK VALLY Headline */}
+            <h1 className="hero-main-title">
+              HACK <span className="hero-title-accent">VALLY</span>
+            </h1>
+
+            {/* 24 Hours Hackathon Subtitle */}
+            <div className="hero-duration-badge">
+              <span>24 HOURS HACKATHON</span>
+            </div>
+
+            {/* 12 - 13 November Dates */}
+            <div className="hero-date-row">
+              <span className="date-glow-line" />
+              <span className="hero-date-val">12 — 13 NOVEMBER</span>
+              <span className="date-glow-line" />
+            </div>
+
+            {/* Our Partners Section */}
+            <div className="hero-partners-section">
+              <h3 className="partners-heading">OUR PARTNERS</h3>
+              <div className="partners-grid">
+                {PARTNER_LOGOS.map((logo) => (
+                  <div className="partner-card" key={logo.id} title={logo.alt}>
+                    <img
+                      src={logo.src}
+                      alt={logo.alt}
+                      className="partner-img"
+                      onError={(e) => {
+                        e.currentTarget.style.display = 'none'
+                        if (e.currentTarget.nextElementSibling) {
+                          e.currentTarget.nextElementSibling.style.display = 'flex'
+                        }
+                      }}
+                    />
+                    <div className="partner-fallback" style={{ display: 'none' }}>
+                      <span>{logo.label}</span>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
 
@@ -325,7 +352,7 @@ export default function LandingPage({ onNavigate }) {
           {/* Description Paragraph */}
           <div className="about-text-wrap">
             <p className="about-description">
-              Hack Vally is the flagship hackathon of IIIT Dharwad, bringing together developers, designers, and innovators from across the country to build impactful solutions to real-world problems. Designed to foster creativity, collaboration, and rapid innovation, the event provides a platform for participants to transform bold ideas into working prototypes while learning from mentors and industry experts. Now in its second edition, Hack Vally continues to grow as a space where ambitious minds come together to experiment, solve meaningful challenges, and showcase their technical skills. With carefully curated problem statements and an intense build environment, the hackathon encourages participants to push boundaries and create solutions that shape the future.
+              Hack Vally is the flagship hackathon of <strong className="about-strong-highlight">Jain College of Engineering and Research (JCER), Belagavi</strong>, bringing together developers, designers, and innovators to build impactful solutions to real-world challenges. Designed to foster creativity, collaboration, and technological innovation, the event provides a platform for participants to transform bold ideas into working prototypes while learning, experimenting, and collaborating as a team. Hack Vally creates an environment where aspiring innovators can explore emerging technologies, tackle meaningful problem statements, and showcase their technical skills. With an intense 24-hour building experience, the hackathon encourages participants to think beyond conventional boundaries, turn ideas into action, and develop solutions that can make a difference.
             </p>
           </div>
         </div>
