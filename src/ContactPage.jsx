@@ -230,7 +230,7 @@ export default function ContactPage({ onNavigate }) {
       {/* ── Dynamic Constellation Background Canvas ── */}
       <canvas ref={canvasRef} className="constellation-canvas" />
 
-      {/* ── Fixed Floating Navbar (Synced with LandingPage) ── */}
+      {/* ── Fixed Floating Navbar (Same as Hero) ── */}
       <nav className="curved-navbar contact-navbar">
         <div className="nav-menu">
           <button
@@ -243,16 +243,16 @@ export default function ContactPage({ onNavigate }) {
           <button
             type="button"
             className="nav-item nav-btn-link"
-            onClick={() => onNavigate && onNavigate('landing', '#tracks')}
+            onClick={() => onNavigate && onNavigate('landing', '#about')}
           >
-            Timeline
+            About
           </button>
           <button
             type="button"
             className="nav-item nav-btn-link"
-            onClick={() => onNavigate && onNavigate('landing', '#highlights')}
+            onClick={() => onNavigate && onNavigate('landing', '#timeline')}
           >
-            Prize Pool
+            Timeline
           </button>
           <button
             type="button"
