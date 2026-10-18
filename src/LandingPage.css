@@ -53,8 +53,8 @@
   will-change: transform;
 }
 
-/* ── 4K Background Image ── */
-.hero-img-4k {
+/* ── Background Video ── */
+.hero-bg-video {
   position: absolute;
   top: 0;
   left: 0;
@@ -63,11 +63,8 @@
   object-fit: cover;
   object-position: center;
   display: block;
-  user-select: none;
-  -webkit-user-drag: none;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  z-index: 1;
+  z-index: 2;
+  pointer-events: none;
 }
 
 /* ── Curved Center Floating Navbar (Pitch Black with Golden Amber Accents) ── */
@@ -158,48 +155,77 @@
   box-shadow: 0 0 32px rgba(245, 158, 11, 0.8), inset 0 0 14px rgba(255, 255, 255, 0.55);
 }
 
-/* ── 3D Astronaut Container (Side-by-side to the left of Hack Vally) ── */
+/* ── Flowing Astronaut Container (Left side of Hack Vally) ── */
 .astronaut-left-wrapper {
   position: absolute;
-  left: -2%;
-  top: 11%;
-  width: 46vw;
-  height: 84vh;
+  left: 3%;
+  top: 13%;
+  width: 40vw;
+  height: 78vh;
   pointer-events: auto;
   z-index: 10;
   display: flex;
   justify-content: center;
   align-items: center;
-  animation: float-drift 7s ease-in-out infinite alternate;
 }
 
-@keyframes float-drift {
+.astronaut-floating-img {
+  width: auto;
+  height: 74vh;
+  max-height: 560px;
+  max-width: 92%;
+  object-fit: contain;
+  /* Natural realistic depth shadow, zero colored glow halos */
+  filter: drop-shadow(0 20px 35px rgba(0, 0, 0, 0.82));
+  user-select: none;
+  -webkit-user-drag: none;
+  animation: astronaut-planetary-flow 8s ease-in-out infinite alternate;
+  transform-origin: center center;
+  transition: transform 0.4s ease, filter 0.4s ease;
+}
+
+.astronaut-floating-img:hover {
+  filter: drop-shadow(0 28px 45px rgba(0, 0, 0, 0.92));
+}
+
+@keyframes astronaut-planetary-flow {
   0% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateY(0px) rotate(0deg) scale(1);
+  }
+  30% {
+    transform: translateY(-24px) rotate(-3.2deg) scale(1.02);
+  }
+  70% {
+    transform: translateY(16px) rotate(2.4deg) scale(0.99);
   }
   100% {
-    transform: translateY(-16px) rotate(1.2deg);
+    transform: translateY(-12px) rotate(-1.2deg) scale(1.01);
   }
 }
 
-.astronaut-canvas-container {
-  width: 100%;
-  height: 100%;
-  cursor: grab;
-}
-
-.astronaut-canvas-container:active {
-  cursor: grabbing;
+/* ── Main Hero Center Content Column (Positioned Right of Astronaut) ── */
+.hero-center-content {
+  position: absolute;
+  top: 55%;
+  left: 68%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  z-index: 15;
+  text-align: center;
+  pointer-events: auto;
+  gap: 15px;
+  width: max-content;
+  max-width: 58vw;
+  background: transparent;
 }
 
 /* ── College Header (Above Hack Vally) ── */
 .hero-college-title {
-  position: absolute;
-  top: 32%;
-  left: 70%;
-  transform: translate(-50%, -100%);
-  z-index: 15;
-  pointer-events: none;
+  position: static;
+  transform: none;
+  z-index: 1;
   white-space: nowrap;
 }
 
@@ -208,71 +234,148 @@
   align-items: center;
   gap: 10px;
   padding: 8px 24px;
-  background: rgba(4, 14, 32, 0.72);
-  border: 1px solid rgba(0, 210, 255, 0.35);
+  background: transparent;
+  border: 1px solid rgba(245, 158, 11, 0.5);
   border-radius: 30px;
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: 
-    0 8px 24px rgba(0, 0, 0, 0.7),
-    0 0 20px rgba(0, 210, 255, 0.18),
-    inset 0 0 12px rgba(0, 210, 255, 0.08);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  transition: all 0.3s ease;
+}
+
+.college-badge:hover {
+  border-color: rgba(245, 158, 11, 0.9);
+  box-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
 }
 
 .college-dot {
-  width: 7px;
-  height: 7px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: #00d2ff;
-  box-shadow: 0 0 10px #00d2ff, 0 0 20px #00d2ff;
-  animation: pulse-glow 2s infinite ease-in-out;
+  background: #f59e0b;
+  box-shadow: 0 0 10px #f59e0b;
+  animation: pulse-glow-amber 2s infinite ease-in-out;
 }
 
-@keyframes pulse-glow {
+@keyframes pulse-glow-amber {
   0%, 100% {
     opacity: 0.6;
     transform: scale(0.9);
   }
   50% {
     opacity: 1;
-    transform: scale(1.2);
+    transform: scale(1.3);
   }
 }
 
 .college-text {
   font-family: 'Orbitron', 'Outfit', sans-serif;
-  font-size: 15px;
+  font-size: 13.5px;
   font-weight: 600;
-  letter-spacing: 2.2px;
+  letter-spacing: 2px;
   text-transform: uppercase;
-  color: #f1f5f9;
-  text-shadow: 0 0 14px rgba(0, 210, 255, 0.5);
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.9);
+}
+
+/* ── Clean & Impactful HACK VALLY Headline ── */
+.hero-main-title {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(48px, 5.8vw, 82px);
+  font-weight: 900;
+  letter-spacing: 5px;
+  line-height: 1.04;
+  color: #ffffff;
+  margin: 0;
+  text-transform: uppercase;
+  /* Deep multi-layered drop shadow for 100% clarity over terrain */
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.98))
+          drop-shadow(0 12px 30px rgba(0, 0, 0, 0.9));
+}
+
+.hero-title-accent {
+  background: linear-gradient(135deg, #fef08a 0%, #facc15 30%, #f59e0b 70%, #ea580c 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+}
+
+/* ── 24 Hours Hackathon Subtitle ── */
+.hero-duration-badge {
+  display: inline-flex;
+  align-items: center;
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(13px, 1.3vw, 17px);
+  font-weight: 800;
+  letter-spacing: 7px;
+  color: #ffffff;
+  text-transform: uppercase;
+  background: transparent;
+  padding: 8px 24px;
+  border-radius: 30px;
+  border: 1px solid rgba(245, 158, 11, 0.55);
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
+}
+
+/* ── 12 - 13 November Date Row ── */
+.hero-date-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  width: 100%;
+}
+
+.date-glow-line {
+  flex: 1;
+  max-width: 95px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #f59e0b);
+  box-shadow: 0 0 10px #f59e0b;
+}
+
+.hero-date-row .date-glow-line:last-child {
+  background: linear-gradient(90deg, #f59e0b, transparent);
+}
+
+.hero-date-val {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(16px, 1.6vw, 22px);
+  font-weight: 800;
+  letter-spacing: 4.5px;
+  color: #fbbf24;
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.98), 0 0 20px rgba(0, 0, 0, 0.9);
 }
 
 /* ── Our Partners Section (Below 12-13 Nov) ── */
 .hero-partners-section {
-  position: absolute;
-  top: 72%;
-  left: 70%;
-  transform: translateX(-50%);
+  position: static;
+  transform: none;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  z-index: 15;
-  pointer-events: auto;
+  gap: 12px;
+  z-index: 1;
+  margin-top: 4px;
 }
 
 .partners-heading {
   margin: 0;
-  padding: 0;
+  padding: 4px 12px;
   font-family: 'Orbitron', sans-serif;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 3.5px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  color: #94a3b8;
-  text-shadow: 0 0 12px rgba(0, 210, 255, 0.4);
+  color: #fbbf24;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.95);
+  background: transparent;
+  border: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .partners-grid {
@@ -282,16 +385,16 @@
   gap: 20px;
 }
 
-/* Large circular partner logo badge (no rectangular container) */
+/* Large circular partner logo badge */
 .partner-card {
   width: 78px;
   height: 78px;
   border-radius: 50%;
   background: #ffffff;
-  border: 2px solid rgba(0, 210, 255, 0.55);
+  border: 2px solid rgba(245, 158, 11, 0.65);
   box-shadow: 
-    0 0 20px rgba(0, 210, 255, 0.35),
-    0 8px 24px rgba(0, 0, 0, 0.7);
+    0 0 20px rgba(245, 158, 11, 0.35),
+    0 8px 24px rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -304,10 +407,10 @@
 
 .partner-card:hover {
   transform: translateY(-4px) scale(1.1);
-  border-color: #00d2ff;
+  border-color: #fbbf24;
   box-shadow: 
-    0 0 32px rgba(0, 210, 255, 0.8),
-    0 12px 30px rgba(0, 0, 0, 0.85);
+    0 0 32px rgba(245, 158, 11, 0.85),
+    0 12px 30px rgba(0, 0, 0, 0.9);
 }
 
 .partner-img {
@@ -328,7 +431,7 @@
   font-family: 'Orbitron', sans-serif;
   font-size: 11px;
   font-weight: 700;
-  color: #00d2ff;
+  color: #f59e0b;
   letter-spacing: 1px;
 }
 
@@ -342,7 +445,7 @@
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  color: rgba(203, 213, 225, 0.7);
+  color: rgba(254, 243, 199, 0.75);
   text-decoration: none;
   font-family: 'Orbitron', sans-serif;
   font-size: 11px;
@@ -354,17 +457,17 @@
 }
 
 .scroll-indicator:hover {
-  color: #00d2ff;
-  text-shadow: 0 0 10px rgba(0, 210, 255, 0.8);
+  color: #fbbf24;
+  text-shadow: 0 0 12px rgba(245, 158, 11, 0.85);
 }
 
 .scroll-mouse-icon {
   width: 20px;
   height: 32px;
-  border: 1.5px solid rgba(0, 210, 255, 0.6);
+  border: 1.5px solid rgba(245, 158, 11, 0.65);
   border-radius: 14px;
   position: relative;
-  box-shadow: 0 0 12px rgba(0, 210, 255, 0.3);
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.35);
 }
 
 .scroll-mouse-wheel {
@@ -374,9 +477,9 @@
   transform: translateX(-50%);
   width: 3px;
   height: 7px;
-  background: #00d2ff;
+  background: #f59e0b;
   border-radius: 2px;
-  box-shadow: 0 0 8px #00d2ff;
+  box-shadow: 0 0 8px #f59e0b;
   animation: scroll-wheel-anim 1.8s infinite ease-in-out;
 }
 
@@ -414,7 +517,7 @@
   background-color: #000000;
   background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
   background-size: 32px 32px;
-  box-shadow: 0 -40px 80px rgba(0, 0, 0, 0.98);
+  box-shadow: none;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -510,6 +613,12 @@
   letter-spacing: 0.25px;
   font-weight: 300;
   margin: 0;
+}
+
+.about-strong-highlight {
+  color: #fbbf24;
+  font-weight: 700;
+  text-shadow: 0 0 16px rgba(245, 158, 11, 0.4);
 }
 
 /* ========================================================
@@ -1107,61 +1216,150 @@
   border-color: rgba(245, 158, 11, 0.4);
 }
 
-/* ── Responsive adjustments ── */
+/* ── Responsive Mobile & Tablet Adjustments (Desktop > 900px 100% untouched) ── */
 @media (max-width: 900px) {
-  .about-section {
-    padding: 100px 24px 110px;
-  }
-  .about-main-heading {
-    font-size: 2.2rem;
-  }
-  .about-description {
-    font-size: 15px;
-    line-height: 1.75;
-  }
+  /* Curved Floating Navbar */
   .curved-navbar {
-    gap: 14px;
-    padding: 6px 8px 6px 16px;
+    top: 14px;
+    width: calc(100vw - 28px);
+    max-width: 460px;
+    padding: 6px 10px 6px 14px;
+    gap: 8px;
+    justify-content: space-between;
   }
   .nav-menu {
-    gap: 10px;
+    gap: 6px;
   }
   .nav-item {
     font-size: 12px;
     padding: 4px 8px;
   }
-  .astronaut-left-wrapper {
-    width: 50vw;
-    height: 60vh;
-    left: 0;
-  }
-  .hero-college-title {
-    top: 28%;
-    left: 50%;
-  }
-  .college-text {
+  .nav-btn-register {
+    padding: 8px 16px;
     font-size: 11px;
     letter-spacing: 1px;
   }
-  .hero-partners-section {
-    top: 80%;
-    left: 50%;
+
+  /* Hero Section Center Alignment */
+  .hero-fullscreen {
+    height: 100vh;
+    min-height: 620px;
   }
-  .partner-card {
-    width: 56px;
-    height: 56px;
-    padding: 6px;
+  .hero-parallax-wrap {
+    transform: none !important;
+  }
+  .astronaut-left-wrapper {
+    position: absolute;
+    top: 6%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 65vw;
+    height: 28vh;
+    max-height: 200px;
+    opacity: 0.35;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .astronaut-floating-img {
+    height: 100%;
+    max-height: 200px;
   }
 
-  /* Timeline mobile responsive */
+  .hero-center-content {
+    position: absolute;
+    top: 59%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 92vw;
+    max-width: 92vw;
+    gap: 12px;
+    z-index: 15;
+  }
+  .hero-college-title {
+    margin-bottom: 2px;
+  }
+  .college-badge {
+    padding: 6px 18px;
+    gap: 8px;
+  }
+  .college-dot {
+    width: 6px;
+    height: 6px;
+  }
+  .college-text {
+    font-size: 11px;
+    letter-spacing: 1.2px;
+  }
+  .hero-main-title {
+    font-size: clamp(36px, 9vw, 54px);
+    letter-spacing: 3.5px;
+    line-height: 1.05;
+  }
+  .hero-duration-badge {
+    font-size: 12px;
+    letter-spacing: 4.5px;
+    padding: 6px 18px;
+  }
+  .hero-date-row {
+    gap: 12px;
+  }
+  .date-glow-line {
+    max-width: 50px;
+  }
+  .hero-date-val {
+    font-size: 14.5px;
+    letter-spacing: 3px;
+  }
+  .hero-partners-section {
+    gap: 8px;
+    margin-top: 4px;
+  }
+  .partners-heading {
+    font-size: 11px;
+    letter-spacing: 3px;
+    padding: 3px 12px;
+  }
+  .partners-grid {
+    gap: 14px;
+  }
+  .partner-card {
+    width: 54px;
+    height: 54px;
+    padding: 6px;
+  }
+  .scroll-indicator {
+    bottom: 14px;
+  }
+  .scroll-mouse-icon {
+    width: 17px;
+    height: 28px;
+  }
+
+  /* About Us Section */
+  .about-section {
+    padding: 90px 20px 100px;
+  }
+  .about-main-heading {
+    font-size: clamp(2rem, 6.5vw, 2.6rem);
+    margin-bottom: 24px;
+  }
+  .about-description {
+    font-size: 15px;
+    line-height: 1.75;
+  }
+
+  /* Timeline Section */
   .timeline-section {
     padding: 80px 20px 120px;
   }
   .timeline-header {
-    margin-bottom: 60px;
+    margin-bottom: 50px;
+  }
+  .timeline-title {
+    font-size: clamp(2.2rem, 7vw, 3rem);
   }
   .timeline-spine-line {
-    left: 28px;
+    left: 24px;
     transform: none;
   }
   .timeline-shuttle-follower {
@@ -1172,13 +1370,13 @@
   .timeline-row {
     display: flex;
     flex-direction: column;
-    padding-left: 64px;
-    gap: 16px;
-    margin-bottom: 50px;
+    padding-left: 56px;
+    gap: 14px;
+    margin-bottom: 45px;
   }
   .timeline-node-wrap {
     position: absolute;
-    left: 7px;
+    left: 3px;
     top: 0;
     width: auto;
   }
@@ -1195,6 +1393,104 @@
   }
   .timeline-card {
     max-width: 100%;
+    padding: 18px 20px;
+  }
+}
+
+/* ── Small Mobile Phones (iPhone SE, Galaxy, Mini displays <= 480px) ── */
+@media (max-width: 480px) {
+  .curved-navbar {
+    top: 8px;
+    width: calc(100vw - 16px);
+    padding: 5px 6px 5px 10px;
+    gap: 4px;
+  }
+  .nav-item {
+    font-size: 10.5px;
+    padding: 4px 6px;
+    letter-spacing: 0;
+  }
+  .nav-btn-register {
+    padding: 6px 11px;
+    font-size: 9.5px;
+    letter-spacing: 0.5px;
+  }
+
+  .astronaut-left-wrapper {
+    top: 5%;
+    height: 24vh;
+    max-height: 170px;
+  }
+
+  .hero-center-content {
+    top: 60%;
+    gap: 10px;
+  }
+
+  .hero-main-title {
+    font-size: 32px;
+    letter-spacing: 2px;
+  }
+  .college-badge {
+    padding: 5px 12px;
+  }
+  .college-text {
+    font-size: 9.5px;
+    letter-spacing: 0.8px;
+  }
+  .hero-duration-badge {
+    font-size: 10px;
+    letter-spacing: 3px;
+    padding: 5px 14px;
+  }
+  .hero-date-val {
+    font-size: 12.5px;
+    letter-spacing: 1.5px;
+  }
+  .date-glow-line {
+    max-width: 25px;
+  }
+  .partner-card {
+    width: 44px;
+    height: 44px;
+    padding: 4px;
+  }
+  .partners-grid {
+    gap: 9px;
+  }
+
+  .about-section {
+    padding: 70px 16px 80px;
+  }
+  .about-description {
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .about-tag-wrap {
+    gap: 10px;
+  }
+  .amber-line {
+    width: 24px;
+  }
+
+  .timeline-section {
+    padding: 60px 14px 90px;
+  }
+  .timeline-row {
+    padding-left: 44px;
+    margin-bottom: 36px;
+  }
+  .timeline-spine-line {
+    left: 18px;
+  }
+  .timeline-node-wrap {
+    left: -3px;
+  }
+  .timeline-card-title {
+    font-size: 17px;
+  }
+  .timeline-card-desc {
+    font-size: 13px;
   }
 }
 
