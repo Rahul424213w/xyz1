@@ -1671,7 +1671,7 @@
   .timeline-row {
     display: flex !important;
     flex-direction: column !important;
-    padding-left: 68px !important;
+    padding-left: 74px !important;
     gap: 14px !important;
     margin-bottom: 48px !important;
   }
@@ -1682,20 +1682,39 @@
     width: 80px !important;
     height: 80px !important;
   }
+  /* Enforce mobile sequence: First Date Block, Then Card/Description below */
+  .timeline-col.timeline-col-date {
+    order: 1 !important;
+    width: 100% !important;
+  }
+  .timeline-col.timeline-col-card {
+    order: 2 !important;
+    width: 100% !important;
+  }
   .timeline-row.align-box-right .timeline-col-left,
   .timeline-row.align-box-right .timeline-col-right,
   .timeline-row.align-box-left .timeline-col-left,
   .timeline-row.align-box-left .timeline-col-right {
-    justify-content: flex-start;
-    text-align: left;
+    justify-content: flex-start !important;
+    text-align: left !important;
   }
   .timeline-row.align-box-right .timeline-date-block,
-  .timeline-row.align-box-left .timeline-date-block {
-    align-items: flex-start;
+  .timeline-row.align-box-left .timeline-date-block,
+  .timeline-date-block {
+    align-items: flex-start !important;
+    text-align: left !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+  .timeline-date-display {
+    text-align: left !important;
   }
   .timeline-card {
-    max-width: 100%;
-    padding: 18px 20px;
+    width: 100% !important;
+    max-width: 520px !important;
+    padding: 18px 20px !important;
+    box-sizing: border-box !important;
+    text-align: left !important;
   }
 }
 
@@ -1784,8 +1803,9 @@
     padding: 60px 14px 90px;
   }
   .timeline-row {
-    padding-left: 64px !important;
-    margin-bottom: 40px !important;
+    padding-left: 70px !important;
+    gap: 12px !important;
+    margin-bottom: 42px !important;
   }
   .timeline-node-wrap {
     position: absolute !important;
@@ -1794,11 +1814,70 @@
     width: 80px !important;
     height: 80px !important;
   }
+  .timeline-date-display {
+    font-size: 21px !important;
+  }
+  .timeline-card {
+    padding: 16px 18px !important;
+  }
   .timeline-card-title {
-    font-size: 17px;
+    font-size: 17px !important;
   }
   .timeline-card-desc {
-    font-size: 13px;
+    font-size: 13.5px !important;
+    line-height: 1.55 !important;
+  }
+}
+
+/* ── Extra Small Mobile Phones (e.g. Galaxy Fold, iPhone SE 1st gen <= 360px) ── */
+@media (max-width: 360px) {
+  .timeline-section {
+    padding: 50px 10px 80px !important;
+  }
+  .timeline-spine-line,
+  .timeline-spine-active {
+    left: 20px !important;
+  }
+  .timeline-shuttle-follower {
+    left: 20px !important;
+    width: 56px !important;
+    height: 56px !important;
+  }
+  .timeline-rocket-img {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  .timeline-node-wrap {
+    left: -20px !important;
+  }
+  .timeline-row {
+    padding-left: 60px !important;
+    gap: 10px !important;
+    margin-bottom: 36px !important;
+  }
+  .timeline-stage-tag {
+    font-size: 9px !important;
+    padding: 3px 10px !important;
+  }
+  .timeline-date-display {
+    font-size: 18px !important;
+  }
+  .timeline-card {
+    padding: 14px 14px !important;
+    border-radius: 12px !important;
+  }
+  .timeline-card-header {
+    gap: 10px !important;
+  }
+  .timeline-card-icon-wrap {
+    width: 28px !important;
+    height: 28px !important;
+  }
+  .timeline-card-title {
+    font-size: 15px !important;
+  }
+  .timeline-card-desc {
+    font-size: 12.5px !important;
   }
 }
 

@@ -104,6 +104,10 @@ const TIMELINE_EVENTS = [
 // Accommodation and Event FAQs (transferred from register page to home after rewards)
 const FAQ_ITEMS = [
   {
+    q: 'Will all participants receive a participation certificate?',
+    a: 'Yes, all participants will receive an official Certificate of Participation after the event.',
+  },
+  {
     q: 'Is accommodation available for outstation participants?',
     a: 'Yes, accommodation is available only on the night of 12th November during the hackathon itself. Please note that no prior accommodation (before 12th November) will be provided.',
   },
@@ -333,12 +337,14 @@ export default function LandingPage({ onNavigate }) {
     }
 
     el.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
     onScroll()
 
     return () => {
       isRunning = false
       cancelAnimationFrame(animId)
       el.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
     }
   }, [])
 
@@ -609,7 +615,7 @@ export default function LandingPage({ onNavigate }) {
                   className={`timeline-row ${isRightAligned ? 'align-box-right' : 'align-box-left'} ${event.active ? 'row-active' : ''}`}
                 >
                   {/* Left Column */}
-                  <div className="timeline-col timeline-col-left">
+                  <div className={`timeline-col timeline-col-left ${isRightAligned ? 'timeline-col-date' : 'timeline-col-card'}`}>
                     {isRightAligned ? dateComponent : cardComponent}
                   </div>
 
@@ -631,7 +637,7 @@ export default function LandingPage({ onNavigate }) {
                   </div>
 
                   {/* Right Column */}
-                  <div className="timeline-col timeline-col-right">
+                  <div className={`timeline-col timeline-col-right ${isRightAligned ? 'timeline-col-card' : 'timeline-col-date'}`}>
                     {isRightAligned ? cardComponent : dateComponent}
                   </div>
                 </div>
