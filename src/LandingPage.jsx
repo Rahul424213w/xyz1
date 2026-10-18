@@ -315,7 +315,18 @@ export default function LandingPage({ onNavigate }) {
             Contact Us
           </a>
         </div>
-        <a href="#register" className="nav-btn-register">
+        <a
+          href="#register"
+          className="nav-btn-register"
+          onClick={(e) => {
+            e.preventDefault()
+            if (onNavigate) {
+              onNavigate('register')
+            } else {
+              window.location.hash = '#register'
+            }
+          }}
+        >
           <span>Register</span>
         </a>
       </nav>

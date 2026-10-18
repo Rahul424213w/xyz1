@@ -267,11 +267,14 @@ export default function ContactPage({ onNavigate }) {
           className="nav-btn-register"
           onClick={(e) => {
             e.preventDefault()
-            const reachEl = document.getElementById('direct-contact-section')
-            if (reachEl) reachEl.scrollIntoView({ behavior: 'smooth' })
+            if (onNavigate) {
+              onNavigate('register')
+            } else {
+              window.location.hash = '#register'
+            }
           }}
         >
-          <span>Connect</span>
+          <span>Register</span>
         </a>
       </nav>
 

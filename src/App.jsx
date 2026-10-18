@@ -6,6 +6,7 @@ import { Stars } from './SceneExtras'
 import { initScroll, resetScroll, scrollState } from './scrollState'
 import LandingPage from './LandingPage'
 import ContactPage from './ContactPage'
+import RegisterPage from './RegisterPage'
 import './App.css'
 
 /* ── Loader ── */
@@ -40,10 +41,11 @@ function Loader() {
 /* ── Main App ── */
 export default function App() {
   const [currentPage, setCurrentPage] = useState(() => {
-    if (typeof window !== 'undefined' && window.location.hash === '#contact') {
-      return 'contact'
+    if (typeof window !== 'undefined') {
+      if (window.location.hash === '#contact') return 'contact'
+      if (window.location.hash === '#register') return 'register'
     }
-    return 'intro' // 'intro' | 'landing' | 'contact'
+    return 'intro' // 'intro' | 'landing' | 'contact' | 'register'
   })
   const [flashStage, setFlashStage] = useState('idle') // 'idle' | 'flashing-in' | 'flashing-out'
 
@@ -56,7 +58,10 @@ export default function App() {
   // Allow pressing 'r' or 'R' or Escape on keyboard to replay the 3D intro anytime
   useEffect(() => {
     const onKey = (e) => {
-      if ((e.key === 'r' || e.key === 'R' || e.key === 'Escape') && (currentPage === 'landing' || currentPage === 'contact')) {
+      if (
+        (e.key === 'r' || e.key === 'R' || e.key === 'Escape') &&
+        (currentPage === 'landing' || currentPage === 'contact' || currentPage === 'register')
+      ) {
         handleReplay()
       }
     }
@@ -70,7 +75,14 @@ export default function App() {
       if (window.location.hash === '#contact') {
         scrollState.enabled = false
         setCurrentPage('contact')
-      } else if (window.location.hash === '#home' || window.location.hash === '#tracks' || window.location.hash === '#highlights') {
+      } else if (window.location.hash === '#register') {
+        scrollState.enabled = false
+        setCurrentPage('register')
+      } else if (
+        window.location.hash === '#home' ||
+        window.location.hash === '#about' ||
+        window.location.hash === '#timeline'
+      ) {
         scrollState.enabled = false
         setCurrentPage('landing')
       }
@@ -89,6 +101,9 @@ export default function App() {
     setCurrentPage(page)
     if (page === 'contact') {
       window.history.pushState(null, '', '#contact')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else if (page === 'register') {
+      window.history.pushState(null, '', '#register')
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else if (page === 'landing') {
       window.history.pushState(null, '', targetHash || '#home')
@@ -179,6 +194,11 @@ export default function App() {
       {/* ── Page 3: Meet The Team Behind & Contact Us ── */}
       {currentPage === 'contact' && (
         <ContactPage onNavigate={handleNavigate} />
+      )}
+
+      {/* ── Page 4: Sarthak Branch Hack Vally Registration Page ── */}
+      {currentPage === 'register' && (
+        <RegisterPage onNavigate={handleNavigate} />
       )}
     </div>
   )
