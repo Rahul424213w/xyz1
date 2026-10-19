@@ -7,6 +7,7 @@ import { initScroll, resetScroll, scrollState } from './scrollState'
 import LandingPage from './LandingPage'
 import ContactPage from './ContactPage'
 import RegisterPage from './RegisterPage'
+import AdminPage from './AdminPage'
 import './App.css'
 
 /* ── Loader ── */
@@ -42,10 +43,12 @@ function Loader() {
 export default function App() {
   const [currentPage, setCurrentPage] = useState(() => {
     if (typeof window !== 'undefined') {
+      const path = window.location.pathname.replace(/\/+$/, '')
+      if (path === '/jcerbadmin' || window.location.hash === '#jcerbadmin') return 'admin'
       if (window.location.hash === '#contact') return 'contact'
       if (window.location.hash === '#register') return 'register'
     }
-    return 'intro' // 'intro' | 'landing' | 'contact' | 'register'
+    return 'intro' // 'intro' | 'landing' | 'contact' | 'register' | 'admin'
   })
   const [flashStage, setFlashStage] = useState('idle') // 'idle' | 'flashing-in' | 'flashing-out'
 
@@ -91,10 +94,14 @@ export default function App() {
     return () => window.removeEventListener('keydown', onKey)
   }, [currentPage, handleReplay])
 
-  // Sync with browser hash changes for back/forward buttons
+  // Sync with browser hash changes and URL changes for back/forward buttons
   useEffect(() => {
-    const handleHashChange = () => {
-      if (window.location.hash === '#contact') {
+    const handleUrlChange = () => {
+      const path = window.location.pathname.replace(/\/+$/, '')
+      if (path === '/jcerbadmin' || window.location.hash === '#jcerbadmin') {
+        scrollState.enabled = false
+        setCurrentPage('admin')
+      } else if (window.location.hash === '#contact') {
         scrollState.enabled = false
         setCurrentPage('contact')
       } else if (window.location.hash === '#register') {
@@ -109,11 +116,11 @@ export default function App() {
         setCurrentPage('landing')
       }
     }
-    window.addEventListener('hashchange', handleHashChange)
-    window.addEventListener('popstate', handleHashChange)
+    window.addEventListener('hashchange', handleUrlChange)
+    window.addEventListener('popstate', handleUrlChange)
     return () => {
-      window.removeEventListener('hashchange', handleHashChange)
-      window.removeEventListener('popstate', handleHashChange)
+      window.removeEventListener('hashchange', handleUrlChange)
+      window.removeEventListener('popstate', handleUrlChange)
     }
   }, [])
 
@@ -121,7 +128,10 @@ export default function App() {
   const handleNavigate = useCallback((page, targetHash) => {
     scrollState.enabled = false
     setCurrentPage(page)
-    if (page === 'contact') {
+    if (page === 'admin') {
+      window.history.pushState(null, '', '/jcerbadmin')
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    } else if (page === 'contact') {
       window.history.pushState(null, '', '#contact')
       window.scrollTo({ top: 0, behavior: 'smooth' })
     } else if (page === 'register') {
@@ -159,7 +169,7 @@ export default function App() {
   }, [flashStage])
 
   return (
-    <div className={`app ${currentPage === 'register' ? 'app-register' : ''}`}>
+    <div className={`app ${currentPage === 'register' ? 'app-register' : ''} ${currentPage === 'admin' ? 'app-admin' : ''}`}>
       {/* ── Quick White Flash Overlay ── */}
       <div
         className={`white-flash ${flashStage === 'flashing-in' ? 'flashing-in' : flashStage === 'flashing-out' ? 'flashing-out' : ''}`}
@@ -206,6 +216,11 @@ export default function App() {
       {/* ── Page 4: Sarthak Branch Hack Vally Registration Page ── */}
       {currentPage === 'register' && (
         <RegisterPage onNavigate={handleNavigate} />
+      )}
+
+      {/* ── Page 5: Private JCERB Admin Panel ── */}
+      {currentPage === 'admin' && (
+        <AdminPage onNavigate={handleNavigate} />
       )}
     </div>
   )

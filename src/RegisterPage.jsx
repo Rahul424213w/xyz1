@@ -26,7 +26,6 @@ const INITIAL_FORM = {
   ],
   boys: '',
   girls: '',
-  accom: '',
   utr: '',
   date: new Date().toISOString().split('T')[0],
   time: new Date().toTimeString().slice(0, 5),
@@ -47,7 +46,7 @@ export default function RegisterPage({ onNavigate }) {
   const canvasRef = useRef(null)
   const fileInputRef = useRef(null)
   const containerRef = useRef(null)
-  const totalSteps = 6
+  const totalSteps = 5
 
   const scrollToTop = () => {
     if (containerRef.current) {
@@ -254,10 +253,6 @@ export default function RegisterPage({ onNavigate }) {
         }
       }
     } else if (currentStep === 5) {
-      if (!form.accom) {
-        return { msg: 'Please select whether accommodation is required (Yes or No).', field: 'accom' }
-      }
-    } else if (currentStep === 6) {
       const cleanUtr = form.utr.trim().replace(/\s+/g, '')
       if (!cleanUtr || cleanUtr.length !== 12 || !/^\d{12}$/.test(cleanUtr)) {
         return { msg: 'UTR must contain exactly 12 numeric digits from your UPI app.', field: 'utr' }
@@ -302,8 +297,8 @@ export default function RegisterPage({ onNavigate }) {
     }
   }
 
-  const handleSubmit = () => {
-    const err = validateStep(6)
+  const handleSubmit = async () => {
+    const err = validateStep(5)
     if (err) {
       setError(err)
       return
@@ -311,8 +306,27 @@ export default function RegisterPage({ onNavigate }) {
 
     setIsSubmitting(true)
 
-    // Generate Registration ID
-    const regId = 'HF27-' + Math.floor(1000 + Math.random() * 9000)
+    // Generate Unique Registration ID: format HV26-XXX (e.g. HV26-258)
+    const existingTeams = (() => {
+      try {
+        return JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
+      } catch (e) {
+        return []
+      }
+    })()
+    const usedIds = new Set(existingTeams.map((t) => t.registrationId))
+    let regId = ''
+    for (let i = 0; i < 1000; i++) {
+      const rand3 = Math.floor(100 + Math.random() * 900) // 100 to 999 (3 digits)
+      const candidate = `HV26-${rand3}`
+      if (!usedIds.has(candidate)) {
+        regId = candidate
+        break
+      }
+    }
+    if (!regId) {
+      regId = `HV26-${Math.floor(100 + Math.random() * 900)}`
+    }
 
     const payload = {
       registrationId: regId,
@@ -332,10 +346,10 @@ export default function RegisterPage({ onNavigate }) {
       })),
       boys: parseInt(form.boys, 10),
       girls: parseInt(form.girls, 10),
-      accommodation: form.accom,
       utr: form.utr.trim(),
       paymentDate: form.date,
       paymentTime: form.time,
+      paymentScreenshot: form.paymentScreenshot,
       paymentScreenshotName: form.paymentScreenshotName,
       paymentStatus: 'Pending Verification',
       submittedAt: new Date().toISOString()
@@ -352,13 +366,24 @@ export default function RegisterPage({ onNavigate }) {
       console.warn('[HackVally] Storage note:', e)
     }
 
-    setTimeout(() => {
-      setIsSubmitting(false)
-      setSubmittedData(payload)
-      setShowPopup(true)
-      setIsCompleted(true)
-      scrollToTop()
-    }, 700)
+    // Persist registration to server (email will be dispatched once Admin clicks Approve)
+    try {
+      console.log(`[HackVally] Saving team registration on server for ${payload.teamName}...`)
+      await fetch('/api/register-team', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      })
+      console.log('✅ [HackVally] Registration saved to server successfully')
+    } catch (netErr) {
+      console.warn('⚠️ [HackVally] Server registration note:', netErr.message)
+    }
+
+    setIsSubmitting(false)
+    setSubmittedData(payload)
+    setShowPopup(true)
+    setIsCompleted(true)
+    scrollToTop()
   }
 
   const handleRegisterAnother = () => {
@@ -513,8 +538,7 @@ export default function RegisterPage({ onNavigate }) {
                 {step === 2 && '👤'}
                 {step === 3 && '👥'}
                 {step === 4 && '🚻'}
-                {step === 5 && '🏨'}
-                {step === 6 && '💳'}
+                {step === 5 && '💳'}
               </div>
               <div className="register-step-text">
                 <h2 className="register-step-title">
@@ -522,16 +546,14 @@ export default function RegisterPage({ onNavigate }) {
                   {step === 2 && 'TEAM LEADER DETAILS'}
                   {step === 3 && 'TEAM MEMBERS'}
                   {step === 4 && 'GENDER SPLIT'}
-                  {step === 5 && 'ACCOMMODATION DETAILS'}
-                  {step === 6 && 'PAYMENT & VERIFICATION'}
+                  {step === 5 && 'PAYMENT & VERIFICATION'}
                 </h2>
                 <p className="register-step-sub">
                   {step === 1 && 'Enter your team name, college, domain, and team size.'}
                   {step === 2 && 'Provide the primary contact information for your team leader.'}
                   {step === 3 && 'Enter details for the additional members of your team.'}
                   {step === 4 && 'Specify the gender distribution for event arrangements.'}
-                  {step === 5 && 'Free accommodation is available on 12th November night.'}
-                  {step === 6 && 'Scan the UPI QR code to pay the ₹1000 registration fee.'}
+                  {step === 5 && 'Scan the UPI QR code to pay the ₹1000 registration fee.'}
                 </p>
               </div>
             </div>
@@ -792,45 +814,8 @@ export default function RegisterPage({ onNavigate }) {
                 </div>
               )}
 
-              {/* STEP 5: ACCOMMODATION DETAILS */}
+              {/* STEP 5: PAYMENT & VERIFICATION */}
               {step === 5 && (
-                <div>
-                  <div className="info-banner">
-                    Accommodation on 12th November night and food are included in the registration fee. There are no additional charges.
-                  </div>
-
-                  <div className="accom-cards-grid">
-                    <div
-                      className={`accom-card ${form.accom === 'Yes' ? 'selected' : ''}`}
-                      onClick={() => handleInputChange('accom', 'Yes')}
-                    >
-                      <div className="accom-radio">
-                        <span className="radio-dot" />
-                      </div>
-                      <div className="accom-info">
-                        <h3 className="accom-title">Yes</h3>
-                        <p className="accom-desc">Require accommodation on 12th November night</p>
-                      </div>
-                    </div>
-
-                    <div
-                      className={`accom-card ${form.accom === 'No' ? 'selected' : ''}`}
-                      onClick={() => handleInputChange('accom', 'No')}
-                    >
-                      <div className="accom-radio">
-                        <span className="radio-dot" />
-                      </div>
-                      <div className="accom-info">
-                        <h3 className="accom-title">No</h3>
-                        <p className="accom-desc">No accommodation required</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* STEP 6: PAYMENT & VERIFICATION */}
-              {step === 6 && (
                 <div className="payment-step-wrap">
                   {/* Fee Banner */}
                   <div className="payment-fee-card">
@@ -866,7 +851,7 @@ export default function RegisterPage({ onNavigate }) {
                   <div className="register-form-grid">
                     <div className="register-field col-span-2">
                       <label className="field-lbl">
-                        12-DIGIT UTR NUMBER <span className="req">*</span>
+                        12-DIGIT TRANSACTION ID / UTR NUMBER <span className="req">*</span>
                       </label>
                       <input
                         type="text"
@@ -879,6 +864,14 @@ export default function RegisterPage({ onNavigate }) {
                       <span className="field-helper">
                         12-digit transaction ID / UPI Reference number from your payment app
                       </span>
+
+                      {/* Small Note near 12-Digit Transaction ID */}
+                      <div className="utr-verification-note">
+                        <span className="utr-note-icon">⚠️</span>
+                        <div className="utr-note-content">
+                          <strong>Note:</strong> Please make sure the transaction ID / UPI Reference number is entered correctly. Verify and double-check before submitting to ensure prompt payment verification.
+                        </div>
+                      </div>
                     </div>
 
                     <div className="register-field">

@@ -2732,6 +2732,19 @@
         });
       }
 
+      // Dispatch confirmation email to team leader
+      try {
+        fetch('/api/send-confirmation', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(r => r.json()).then(res => {
+          console.log('✅ [HackVally] Email sent response:', res);
+        }).catch(err => {
+          console.warn('⚠️ [HackVally] Email dispatch note:', err);
+        });
+      } catch (e) {}
+
       await sleep(600);
 
       clearToken();
