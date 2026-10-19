@@ -45,8 +45,8 @@ export default function App() {
     if (typeof window !== 'undefined') {
       const path = window.location.pathname.replace(/\/+$/, '')
       if (path === '/jcerbadmin' || window.location.hash === '#jcerbadmin') return 'admin'
-      if (window.location.hash === '#contact') return 'contact'
-      if (window.location.hash === '#register') return 'register'
+      if (path === '/contact' || window.location.hash === '#contact') return 'contact'
+      if (path === '/register' || window.location.hash === '#register') return 'register'
     }
     return 'intro' // 'intro' | 'landing' | 'contact' | 'register' | 'admin'
   })
@@ -101,10 +101,10 @@ export default function App() {
       if (path === '/jcerbadmin' || window.location.hash === '#jcerbadmin') {
         scrollState.enabled = false
         setCurrentPage('admin')
-      } else if (window.location.hash === '#contact') {
+      } else if (path === '/contact' || window.location.hash === '#contact') {
         scrollState.enabled = false
         setCurrentPage('contact')
-      } else if (window.location.hash === '#register') {
+      } else if (path === '/register' || window.location.hash === '#register') {
         scrollState.enabled = false
         setCurrentPage('register')
       } else if (
