@@ -1,0 +1,30 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Registrations collection: teams submit registrations securely
+    match /registrations/{registrationId} {
+      // Allow legitimate registration creation with schema validation
+      allow create: if request.resource.data.registrationId == registrationId
+                    && request.resource.data.teamName is string
+                    && request.resource.data.teamName.size() >= 2
+                    && request.resource.data.leaderEmail is string
+                    && request.resource.data.leaderEmail.size() >= 5
+                    && request.resource.data.utr is string
+                    && request.resource.data.utr.size() >= 10;
+
+      // Allow reading team registrations for admin panel and pass lookup
+      allow read: if true;
+
+      // Allow updating registration status (e.g. Approved / Verified)
+      allow update: if true;
+
+      // Prevent accidental or unauthorized deletion of registrations
+      allow delete: if false;
+    }
+
+    // Default deny for all other collections
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

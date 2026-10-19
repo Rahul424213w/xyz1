@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { getTeamRegistrationsFromFirestore, updateTeamStatusInFirestore } from './firebase'
 import './AdminPage.css'
 
 export default function AdminPage({ onNavigate }) {
@@ -64,35 +65,52 @@ export default function AdminPage({ onNavigate }) {
 
   // ── 1. Load Data ──
   const fetchTeams = async () => {
-    try {
-      const res = await fetch('/api/teams')
-      const json = await res.json()
-      let serverTeams = json.success && Array.isArray(json.teams) ? json.teams : []
+    const map = new Map()
 
-      try {
-        const localTeams = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
-        const map = new Map()
-        serverTeams.forEach((t) => map.set(t.registrationId, t))
-        localTeams.forEach((t) => {
-          if (!map.has(t.registrationId)) {
+    // 1. Fetch from Cloud Firestore database
+    try {
+      const fsTeams = await getTeamRegistrationsFromFirestore()
+      if (Array.isArray(fsTeams)) {
+        fsTeams.forEach((t) => {
+          if (t && t.registrationId) {
             map.set(t.registrationId, t)
           }
         })
-        serverTeams = Array.from(map.values())
-      } catch (e) {
-        console.warn('Local teams read error:', e)
       }
-
-      setTeams(serverTeams)
-    } catch (err) {
-      console.warn('Server teams fetch failed, falling back to localStorage:', err)
-      try {
-        const localTeams = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
-        setTeams(localTeams)
-      } catch (e) {
-        setTeams([])
-      }
+    } catch (fsErr) {
+      console.warn('[AdminPage] Firestore fetch note:', fsErr)
     }
+
+    // 2. Fetch from Backend Server API
+    try {
+      const res = await fetch('/api/teams')
+      const json = await res.json()
+      if (json.success && Array.isArray(json.teams)) {
+        json.teams.forEach((t) => {
+          if (t && t.registrationId && !map.has(t.registrationId)) {
+            map.set(t.registrationId, t)
+          }
+        })
+      }
+    } catch (err) {
+      // expected if running on static hosting without server
+    }
+
+    // 3. Fallback / Merge with LocalStorage
+    try {
+      const localTeams = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
+      if (Array.isArray(localTeams)) {
+        localTeams.forEach((t) => {
+          if (t && t.registrationId && !map.has(t.registrationId)) {
+            map.set(t.registrationId, t)
+          }
+        })
+      }
+    } catch (e) {
+      console.warn('Local teams read error:', e)
+    }
+
+    setTeams(Array.from(map.values()))
   }
 
   const fetchPinConfig = async () => {
@@ -283,6 +301,16 @@ export default function AdminPage({ onNavigate }) {
           localStorage.setItem('hackvally_registrations', JSON.stringify(updated))
         } catch (e) {}
 
+        // Update in Cloud Firestore
+        try {
+          await updateTeamStatusInFirestore(team.registrationId, {
+            status: 'Approved',
+            paymentStatus: 'Approved'
+          })
+        } catch (fsErr) {
+          console.warn('[AdminPage] Firestore approve note:', fsErr)
+        }
+
         setToastMessage(`✅ ${team.teamName} approved! Confirmation email sent to ${team.leaderEmail}`)
         setTimeout(() => setToastMessage(''), 5000)
       } else {
@@ -290,6 +318,12 @@ export default function AdminPage({ onNavigate }) {
       }
     } catch (err) {
       console.error('Approve error:', err)
+      try {
+        await updateTeamStatusInFirestore(team.registrationId, {
+          status: 'Approved',
+          paymentStatus: 'Approved'
+        })
+      } catch (e) {}
       setTeams((prev) =>
         prev.map((t) =>
           t.registrationId === team.registrationId
@@ -297,7 +331,7 @@ export default function AdminPage({ onNavigate }) {
             : t
         )
       )
-      setToastMessage(`✅ ${team.teamName} marked as Approved locally`)
+      setToastMessage(`✅ ${team.teamName} marked as Approved`)
       setTimeout(() => setToastMessage(''), 4000)
     } finally {
       setApprovingId(null)

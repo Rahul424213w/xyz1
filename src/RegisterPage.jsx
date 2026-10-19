@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import Navbar from './Navbar'
+import { saveTeamRegistrationToFirestore } from './firebase'
 import './RegisterPage.css'
 
 const DOMAINS_LIST = [
@@ -355,13 +356,22 @@ export default function RegisterPage({ onNavigate }) {
       submittedAt: new Date().toISOString()
     }
 
-    // Save locally
+    // 1. Save to Cloud Firestore
+    try {
+      console.log(`[Firestore] Saving team registration: ${payload.teamName} [${payload.registrationId}]...`)
+      await saveTeamRegistrationToFirestore(payload)
+      console.log('✅ [Firestore] Registration securely recorded in Cloud Firestore:', payload.registrationId)
+    } catch (fsErr) {
+      console.error('⚠️ [Firestore] Firestore save error:', fsErr)
+    }
+
+    // 2. Save locally
     try {
       const stored = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
       stored.push(payload)
       localStorage.setItem('hackvally_registrations', JSON.stringify(stored))
       localStorage.setItem('hackvally_last_registration', JSON.stringify(payload))
-      console.log('✅ [HackVally] Registration recorded:', payload)
+      console.log('✅ [HackVally] Registration recorded locally:', payload)
     } catch (e) {
       console.warn('[HackVally] Storage note:', e)
     }
