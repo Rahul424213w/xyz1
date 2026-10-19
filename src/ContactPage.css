@@ -367,10 +367,11 @@
   border-color: #f59e0b;
 }
 
-/* Photo frame — sized to the image, never cropped */
+/* Photo frame — fixed square, never resized by the image aspect ratio */
 .member-photo-frame {
   position: relative;
   width: 100%;
+  aspect-ratio: 1 / 1;
   background: #181818;
   overflow: hidden;
   display: flex;
@@ -381,7 +382,7 @@
 .member-img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
   object-fit: contain;
   filter: grayscale(100%) contrast(115%) brightness(102%);
   transition: filter 0.3s ease;
