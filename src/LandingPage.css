@@ -69,6 +69,20 @@
   will-change: transform;
 }
 
+/* ── Seal sub-pixel seams between stacked sections so the sticky hero
+      background never shows through tiny 1px gaps during scroll ── */
+.about-section,
+.astronaut-perks-section,
+.timeline-section,
+.challenges-section,
+.rewards-section,
+.meet-crew-section,
+.faq-section,
+.hack-footer-section {
+  margin-top: -1px;
+  position: relative;
+}
+
 /* ── Background Video ── */
 .hero-bg-video {
   position: absolute;
@@ -392,6 +406,11 @@
   border: none;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+}
+
+/* ── Mobile-only Register CTA in Hero (Hidden on Desktop) ── */
+.hero-mobile-register-btn {
+  display: none;
 }
 
 /* ── Soft text-only backdrop (fades to transparent at the edges) so white
@@ -1684,6 +1703,31 @@
     padding: 6px;
   }
 
+  .hero-mobile-register-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 12px 34px;
+    background: linear-gradient(135deg, #facc15 0%, #f59e0b 50%, #ea580c 100%);
+    border: none;
+    border-radius: 40px;
+    color: #000000;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 0 22px rgba(245, 158, 11, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.35);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+  }
+
+  .hero-mobile-register-btn:active {
+    transform: scale(0.97);
+  }
+
   /* About Us Section */
   .about-section {
     padding: 90px 20px 100px;
@@ -1847,6 +1891,12 @@
   }
   .partners-grid {
     gap: 9px;
+  }
+
+  .hero-mobile-register-btn {
+    padding: 11px 28px;
+    font-size: 11px;
+    letter-spacing: 1.3px;
   }
 
   .about-section {
@@ -3239,6 +3289,11 @@
   cursor: grabbing;
 }
 
+/* Mobile-only 3D astronaut rendered after the venue map (hidden on desktop) */
+.footer-astronaut-mobile-wrap {
+  display: none;
+}
+
 /* ── Lower Section: Venue & Interactive Google Map Card ── */
 .footer-venue-wrap {
   margin-top: 30px;
@@ -3418,6 +3473,19 @@
   .footer-astronaut-wrap {
     grid-column: span 1;
     height: 320px;
+  }
+  .footer-astronaut-mobile-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    width: 100%;
+    height: 210px;
+    min-height: 190px;
+    margin-top: 10px;
+  }
+  .footer-venue-wrap {
+    margin-bottom: 10px;
   }
   .footer-contacts-grid {
     grid-template-columns: repeat(2, 1fr);

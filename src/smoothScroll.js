@@ -32,7 +32,7 @@ function findNestedScrollable(target, dy, scrollerEl) {
  * @param {{ lambda?: number }} [options] - damping strength (higher = snappier)
  * @returns {() => void} cleanup
  */
-export function attachSmoothScroll(scroller, { lambda = 10 } = {}) {
+export function attachSmoothScroll(scroller, { lambda = 4.5 } = {}) {
   if (typeof window === 'undefined' || !scroller) return () => {}
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return () => {}
 
@@ -104,7 +104,7 @@ export function attachSmoothScroll(scroller, { lambda = 10 } = {}) {
       target = current
     }
 
-    target = Math.max(0, Math.min(target + dy, maxScroll()))
+    target = Math.max(0, Math.min(target + dy * 0.75, maxScroll()))
 
     if (rafId === 0) {
       lastTime = performance.now()

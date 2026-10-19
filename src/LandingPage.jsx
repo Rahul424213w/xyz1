@@ -22,10 +22,10 @@ const PARTNER_LOGOS = [
 const TIMELINE_EVENTS = [
   {
     id: '01',
-    stageTag: 'REGISTRATION OPEN',
-    dateText: 'Nov 23',
-    title: 'Registration Live',
-    desc: 'Registrations are now live. Register to participate in the challenge.',
+    stageTag: 'REGISTRATION OPENS',
+    dateText: 'Oct 23',
+    title: 'Registration Opens',
+    desc: 'Registrations open. Register your team to participate in HackVally.',
     icon: 'edit',
     active: true, // Stage 01 is currently active in Golden Amber
     align: 'right', // 01 Box on RIGHT, Date on LEFT
@@ -34,18 +34,18 @@ const TIMELINE_EVENTS = [
     id: '02',
     stageTag: 'REGISTRATION CLOSES',
     dateText: 'Nov 8',
-    title: 'Hatch Sealed',
-    desc: 'Registration closes on November 8th. Secure your spot before the portal shuts for good.',
+    title: 'Registration Closes',
+    desc: 'Last date to complete team registration.',
     icon: 'lock',
     active: false, // Turns Golden Amber on Nov 8
     align: 'left', // 02 Box on LEFT, Date on RIGHT
   },
   {
     id: '03',
-    stageTag: 'HACKATHON DAY (Day 0)',
-    dateText: 'Nov 13',
-    title: 'Crew Selected',
-    desc: 'Teams shortlisted based on their solution approach by the technical team and experienced faculties. Top 60 teams out of 500+ will be selected.',
+    stageTag: 'TEAM CONFIRMATION',
+    dateText: 'After Registration',
+    title: 'Team Confirmation',
+    desc: 'Teams receive confirmation emails with event details.',
     icon: 'users',
     active: false,
     align: 'right', // 03 Box on RIGHT, Date on LEFT
@@ -53,29 +53,29 @@ const TIMELINE_EVENTS = [
   {
     id: '04',
     stageTag: 'INAUGURATION CEREMONY',
-    dateText: '9:00 AM',
-    title: 'Lock In',
-    desc: 'Get confirmation from the teams on their attendance and commence the official mission briefing.',
+    dateText: 'Nov 12 - 9:00 AM',
+    title: 'Inauguration Ceremony',
+    desc: 'Official inauguration and opening of HackVally.',
     icon: 'ceremony',
     active: false,
     align: 'left', // 04 Box on LEFT, Date/Time on RIGHT
   },
   {
     id: '05',
-    stageTag: 'FINAL PAYMENT DEADLINE',
-    dateText: 'Nov 13',
-    title: 'Fuel Up',
-    desc: 'Final payment must be done without any extensions beyond this date. This covers accommodation and food for the event.',
+    stageTag: 'HACKATHON BEGINS',
+    dateText: 'Nov 12',
+    title: 'Hackathon Begins',
+    desc: 'The 24-hour hackathon begins. Build, innovate, and collaborate.',
     icon: 'fuel',
     active: false,
     align: 'right', // 05 Box on RIGHT, Date on LEFT
   },
   {
     id: '06',
-    stageTag: 'HACKATHON DAYS',
-    dateText: 'Nov 13 - Nov 14',
-    title: 'Main Engine Burn',
-    desc: '24-hour Hackathon D-day. Build, break, and rebuild — this is where legends are forged.',
+    stageTag: 'HACKATHON ENDS',
+    dateText: 'Nov 13',
+    title: 'Hackathon Ends',
+    desc: 'Complete your prototype and prepare for the final showcase.',
     icon: 'burn',
     active: false,
     align: 'left', // 06 Box on LEFT, Date on RIGHT
@@ -83,19 +83,19 @@ const TIMELINE_EVENTS = [
   {
     id: '07',
     stageTag: 'PRIZE DISTRIBUTION',
-    dateText: 'Nov 14',
-    title: 'Touchdown',
-    desc: 'The winners are crowned. Prizes distributed, glory earned — the mission reaches its climax.',
+    dateText: 'Nov 13',
+    title: 'Prize Distribution',
+    desc: 'Winners are announced and prizes are distributed.',
     icon: 'trophy',
     active: false,
     align: 'right', // 07 Box on RIGHT, Date on LEFT
   },
   {
     id: '08',
-    stageTag: 'MISSION ACCOMPLISHED',
-    dateText: 'Nov 14 (Evening)',
-    title: 'Beyond The Horizon',
-    desc: 'Networking, mentorship follow-ups, and project showcases. The hackathon concludes, but your journey continues.',
+    stageTag: 'EVENT CONCLUDES',
+    dateText: 'Nov 13 - Evening',
+    title: 'Event Concludes',
+    desc: 'Celebrate the experience and connect with fellow innovators.',
     icon: 'sparkles',
     active: false,
     align: 'left', // 08 Box on LEFT, Date on RIGHT
@@ -219,6 +219,19 @@ export default function LandingPage({ onNavigate }) {
   const [isAtTimelineTop, setIsAtTimelineTop] = useState(true)
   const [openFaqIndex, setOpenFaqIndex] = useState(0)
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+
+  // Mobile footer: 3D astronaut is rendered after the venue map (smaller size)
+  const [isFooterMobile, setIsFooterMobile] = useState(() =>
+    typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches
+  )
+
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 640px)')
+    const update = () => setIsFooterMobile(mq.matches)
+    update()
+    mq.addEventListener('change', update)
+    return () => mq.removeEventListener('change', update)
+  }, [])
 
   // Track scroll position for active section and buttery-smooth timeline rocket follower
   useEffect(() => {
@@ -435,7 +448,7 @@ export default function LandingPage({ onNavigate }) {
             {/* 12 - 13 November Dates */}
             <div className="hero-date-row">
               <span className="date-glow-line" />
-              <span className="hero-date-val">12 — 13 NOVEMBER</span>
+              <span className="hero-date-val">13 NOVEMBER</span>
               <span className="date-glow-line" />
             </div>
 
@@ -463,6 +476,15 @@ export default function LandingPage({ onNavigate }) {
                 ))}
               </div>
             </div>
+
+            {/* Mobile-only Register CTA below hero content */}
+            <button
+              type="button"
+              className="hero-mobile-register-btn"
+              onClick={() => onNavigate && onNavigate('register')}
+            >
+              Register Now
+            </button>
           </div>
         </div>
       </section>
@@ -684,7 +706,7 @@ export default function LandingPage({ onNavigate }) {
             <div className="challenges-box-ambient-glow" />
             <div className="challenges-box-badge">
               <span className="challenges-pulse-dot" />
-              <span>13 NOVEMBER</span>
+              <span>12 NOVEMBER</span>
             </div>
 
             <div className="challenges-box-icon-wrap">
@@ -1089,10 +1111,12 @@ export default function LandingPage({ onNavigate }) {
               </div>
             </div>
 
-            {/* Right Side: Floating 3D Astronaut Model */}
-            <div className="footer-astronaut-wrap">
-              <Astronaut3D />
-            </div>
+            {/* Right Side: Floating 3D Astronaut Model (Desktop only) */}
+            {!isFooterMobile && (
+              <div className="footer-astronaut-wrap">
+                <Astronaut3D />
+              </div>
+            )}
           </div>
 
           {/* Lower Section: Venue Tag & Interactive Google Maps Card */}
@@ -1146,6 +1170,13 @@ export default function LandingPage({ onNavigate }) {
               </div>
             </div>
           </div>
+
+          {/* Mobile-only: Floating 3D Astronaut placed after the venue map */}
+          {isFooterMobile && (
+            <div className="footer-astronaut-mobile-wrap">
+              <Astronaut3D />
+            </div>
+          )}
         </div>
       </footer>
     </div>

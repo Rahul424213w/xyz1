@@ -5,17 +5,14 @@ import './RegisterPage.css'
 
 const DOMAINS_LIST = [
   'Full Stack',
-  'AI / ML',
-  'Cybersecurity',
-  'Cloud & DevOps',
-  'Open Innovation'
+  'AI / ML'
 ]
 
 const INITIAL_FORM = {
   teamName: '',
   institute: '',
   domain: '',
-  extra: '1', // 1 additional member => 2 total members
+  extra: '',
   lead: '',
   phone: '',
   email: '',
@@ -628,13 +625,16 @@ export default function RegisterPage({ onNavigate }) {
                       value={form.extra}
                       onChange={(e) => handleInputChange('extra', e.target.value)}
                     >
+                      <option value="">-- Select team size --</option>
                       <option value="1">2 Members (1 Leader + 1 Member)</option>
                       <option value="2">3 Members (1 Leader + 2 Members)</option>
                       <option value="3">4 Members (1 Leader + 3 Members)</option>
                     </select>
-                    <span className="field-helper">
-                      Leader + {additionalCount} additional member{additionalCount > 1 ? 's' : ''}
-                    </span>
+                    {form.extra && (
+                      <span className="field-helper">
+                        Leader + {additionalCount} additional member{additionalCount > 1 ? 's' : ''}
+                      </span>
+                    )}
                   </div>
                 </div>
               )}

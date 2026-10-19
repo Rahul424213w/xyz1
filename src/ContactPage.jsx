@@ -366,8 +366,27 @@ export default function ContactPage({ onNavigate }) {
               <div className="reach-content">
                 <span className="reach-tag">CORE LEADS HELPLINE</span>
                 <p className="reach-text">
-                  +91 98451 20112 (Prajin) • +91 98451 20113 (Prem) • +91 98451 20114 (Sai Sathwik)
+                  Swayam Khangaonkar — EVENT LEAD
                 </p>
+                <div className="reach-contact-row">
+                  <a href="tel:+918105132836" className="reach-link">
+                    +91 81051 32836
+                  </a>
+                  <a href="mailto:swayamuk1@gmail.com" className="reach-link">
+                    swayamuk1@gmail.com
+                  </a>
+                </div>
+                <p className="reach-text">
+                  Rahul AK — EVENT LEAD
+                </p>
+                <div className="reach-contact-row">
+                  <a href="tel:+918269643984" className="reach-link">
+                    +91 82696 43984
+                  </a>
+                  <a href="mailto:rahulak424213w@gmail.com" className="reach-link">
+                    rahulak424213w@gmail.com
+                  </a>
+                </div>
               </div>
             </div>
           </div>
