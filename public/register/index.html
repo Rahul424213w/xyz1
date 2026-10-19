@@ -9,8 +9,7 @@
   <meta http-equiv="Content-Security-Policy"
     content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; style-src-elem 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src data: https://fonts.gstatic.com; img-src 'self' https: data:; media-src 'self' data:; connect-src https://script.google.com https://script.googleusercontent.com https://cdn.jsdelivr.net; base-uri 'none'; form-action 'none'">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;600;700;800&family=Orbitron:wght@600;700;800&family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
   <script>
     /*
     ====================================================
@@ -82,9 +81,12 @@
     }
 
     :root {
-      --display: Pricedown, Impact, sans-serif;
-      --script: Rage, 'Brush Script MT', cursive;
-      --body: Arbor, system-ui, sans-serif;
+      --display: 'Bricolage Grotesque', 'Space Grotesk', sans-serif;
+      --script: 'Space Grotesk', sans-serif;
+      --body: 'Outfit', 'Space Grotesk', system-ui, sans-serif;
+      --font-display: 'Bricolage Grotesque', 'Space Grotesk', 'Outfit', sans-serif;
+      --font-ui: 'Space Grotesk', 'Outfit', system-ui, sans-serif;
+      --font-mono: 'Space Mono', monospace;
       --ink: #14061f;
       --pink: #ff2e93;
       --cyan: #22e6f0;
@@ -550,8 +552,12 @@
 
     /* ---- Registration page theme & styles ---- */
     :root {
-      --font-display: 'Outfit', 'Plus Jakarta Sans', system-ui, sans-serif;
-      --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-display: 'Bricolage Grotesque', 'Space Grotesk', 'Outfit', sans-serif;
+      --font-ui: 'Space Grotesk', 'Outfit', system-ui, sans-serif;
+      --font-mono: 'Space Mono', monospace;
+      --body: 'Outfit', 'Space Grotesk', sans-serif;
+      --display: 'Bricolage Grotesque', 'Space Grotesk', sans-serif;
+      --script: 'Space Grotesk', sans-serif;
       --accent-purple: #c084fc;
       --accent-blue: #60a5fa;
       --accent-cyan: #38bdf8;
@@ -831,10 +837,10 @@
       transform: translateY(-1px) !important;
     }
     .nav .brand {
-      font-family: var(--font-display) !important;
-      font-size: 24px !important;
-      font-weight: 800 !important;
-      letter-spacing: 0.04em !important;
+      font-family: 'Bricolage Grotesque', 'Space Grotesk', sans-serif !important;
+      font-size: 26px !important;
+      font-weight: 700 !important;
+      letter-spacing: -0.02em !important;
       background: linear-gradient(135deg, #ffffff 40%, #ff9900 100%) !important;
       -webkit-background-clip: text !important;
       -webkit-text-fill-color: transparent !important;
@@ -856,7 +862,7 @@
       margin-top: 20px !important;
       margin-bottom: 70px !important;
       box-shadow: 0 30px 80px rgba(0, 0, 0, 0.95), 0 0 50px rgba(255, 130, 0, 0.08) !important;
-      font-family: var(--font-ui) !important;
+      font-family: 'Outfit', 'Space Grotesk', sans-serif !important;
       box-sizing: border-box;
       max-width: 840px;
       margin-left: auto;
@@ -871,7 +877,7 @@
     .prog {
       display: flex;
       gap: 8px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
       height: 6px;
     }
     .prog i {
@@ -886,12 +892,12 @@
       box-shadow: 0 0 14px rgba(255, 140, 0, 0.7) !important;
     }
     .step-counter-text {
-      font-family: var(--font-ui);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: #ff9900;
+      font-family: 'Space Mono', monospace !important;
+      font-size: 11px !important;
+      font-weight: 700 !important;
+      letter-spacing: 2px !important;
+      text-transform: uppercase !important;
+      color: #f59e0b !important;
     }
 
     .step-header-badge {
@@ -900,46 +906,34 @@
       gap: 15px;
       margin-bottom: 8px;
     }
-    .step-icon-box {
-      width: 46px;
-      height: 46px;
-      border-radius: 12px;
-      background: rgba(255, 153, 0, 0.12);
-      border: 1px solid rgba(255, 153, 0, 0.35);
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      flex-shrink: 0;
-      color: #ffaa00;
-      box-shadow: 0 0 18px rgba(255, 153, 0, 0.15);
-    }
     .step-title-text {
-      font-family: var(--font-display) !important;
-      font-size: 24px !important;
-      font-weight: 800 !important;
-      letter-spacing: 0.05em !important;
+      font-family: 'Bricolage Grotesque', 'Space Grotesk', sans-serif !important;
+      font-size: clamp(22px, 3vw, 26px) !important;
+      font-weight: 700 !important;
+      letter-spacing: -0.01em !important;
       text-transform: uppercase !important;
       color: #ffffff !important;
       margin: 0 !important;
-      line-height: 1.2 !important;
+      line-height: 1.25 !important;
       text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6) !important;
     }
     p.sub {
-      font-family: var(--font-ui) !important;
-      font-size: 14px !important;
-      color: #8e99a8 !important;
+      font-family: 'Outfit', 'Inter', sans-serif !important;
+      font-size: 14.5px !important;
+      font-weight: 300 !important;
+      color: rgba(255, 255, 255, 0.62) !important;
       margin: 6px 0 26px 0 !important;
-      line-height: 1.5 !important;
+      line-height: 1.55 !important;
+      letter-spacing: 0.15px !important;
     }
 
     .form-section-title {
-      font-family: var(--font-display);
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #ff9900;
+      font-family: 'Space Mono', monospace !important;
+      font-size: 11.5px !important;
+      font-weight: 700 !important;
+      letter-spacing: 2px !important;
+      text-transform: uppercase !important;
+      color: #f59e0b !important;
       margin: 0 0 16px 0;
       display: flex;
       align-items: center;
@@ -951,8 +945,8 @@
       width: 7px;
       height: 7px;
       border-radius: 50%;
-      background: #ff9900;
-      box-shadow: 0 0 8px #ff9900;
+      background: #f59e0b;
+      box-shadow: 0 0 8px #f59e0b;
     }
 
     .form-grid {
@@ -969,34 +963,35 @@
     }
 
     .field-label {
-      font-family: var(--font-ui) !important;
-      font-size: 11px !important;
-      font-weight: 700 !important;
+      font-family: 'Space Grotesk', 'Outfit', sans-serif !important;
+      font-size: 11.5px !important;
+      font-weight: 600 !important;
       letter-spacing: 0.08em !important;
       text-transform: uppercase !important;
-      color: #8e99a8 !important;
+      color: rgba(255, 255, 255, 0.72) !important;
       margin-bottom: 8px !important;
       display: flex !important;
       align-items: center !important;
     }
     .field-label .req {
-      color: #ff5500;
+      color: #f59e0b;
       margin-left: 4px;
-      font-weight: bold;
+      font-weight: 700;
     }
 
     .panel input,
     .panel select {
       width: 100% !important;
       min-height: 50px !important;
-      background: #0c0d12 !important;
-      border: 1px solid #1f212b !important;
+      background: #0d0f14 !important;
+      border: 1px solid rgba(255, 255, 255, 0.12) !important;
       border-radius: 12px !important;
       padding: 12px 18px !important;
-      color: #f8fafc !important;
-      font-family: var(--font-ui) !important;
+      color: #ffffff !important;
+      font-family: 'Outfit', 'Inter', sans-serif !important;
       font-size: 15px !important;
-      font-weight: 500 !important;
+      font-weight: 400 !important;
+      letter-spacing: 0.15px !important;
       transition: all 0.25s ease !important;
       outline: none !important;
       box-sizing: border-box !important;
@@ -1006,7 +1001,7 @@
     .panel select:focus {
       border-color: #ff9900 !important;
       box-shadow: 0 0 0 3px rgba(255, 153, 0, 0.22), 0 0 16px rgba(255, 153, 0, 0.16) !important;
-      background: #111219 !important;
+      background: #111319 !important;
     }
     .panel select {
       cursor: pointer;
@@ -1020,13 +1015,14 @@
       appearance: none !important;
     }
     .panel select option {
-      background: #0c0d12;
-      color: #f8fafc;
+      background: #0d0f14;
+      color: #ffffff;
       padding: 10px;
     }
     .panel input::placeholder {
-      color: #4b5563 !important;
-      font-family: var(--font-ui) !important;
+      color: rgba(255, 255, 255, 0.32) !important;
+      font-family: 'Outfit', 'Inter', sans-serif !important;
+      font-weight: 300 !important;
     }
     .panel input.bad,
     .panel select.bad {
@@ -1044,10 +1040,11 @@
 
     .field-hint {
       font-size: 12px;
-      color: #64748b;
+      color: rgba(255, 255, 255, 0.45);
       margin-top: 6px;
-      line-height: 1.4;
-      font-family: var(--font-ui);
+      line-height: 1.45;
+      font-family: 'Outfit', 'Inter', sans-serif;
+      font-weight: 300;
     }
 
     /* Gender Pills */
@@ -1061,10 +1058,11 @@
       background: #101116 !important;
       border: 1px solid #1f212b !important;
       border-radius: 12px !important;
-      color: #8e99a8 !important;
-      font-family: var(--font-ui) !important;
+      color: rgba(255, 255, 255, 0.72) !important;
+      font-family: 'Space Grotesk', 'Outfit', sans-serif !important;
       font-weight: 600 !important;
-      font-size: 14px !important;
+      font-size: 13.5px !important;
+      letter-spacing: 0.02em !important;
       cursor: pointer !important;
       display: inline-flex !important;
       align-items: center !important;
@@ -1100,22 +1098,24 @@
     }
 
     .info-callout {
-      background: rgba(255, 153, 0, 0.08);
-      border: 1px solid rgba(255, 153, 0, 0.26);
+      background: rgba(245, 158, 11, 0.08);
+      border: 1px solid rgba(245, 158, 11, 0.26);
       border-radius: 14px;
       padding: 15px 20px;
       margin-bottom: 22px;
       display: flex;
       align-items: center;
       gap: 14px;
-      font-size: 14px;
+      font-size: 13.5px;
       color: #cbd5e1;
-      font-family: var(--font-ui);
+      font-family: 'Outfit', 'Inter', sans-serif;
+      line-height: 1.55;
     }
     .info-callout b,
     .info-callout strong {
-      color: #ffaa22;
-      font-weight: 700;
+      color: #fbbf24;
+      font-weight: 600;
+      font-family: 'Space Grotesk', sans-serif;
     }
 
     /* Accommodation */
@@ -1149,17 +1149,17 @@
       box-shadow: 0 0 25px rgba(255, 153, 0, 0.25) !important;
     }
     .accom-card-title {
-      font-family: var(--font-display);
-      font-size: 24px;
-      font-weight: 800;
+      font-family: 'Bricolage Grotesque', 'Space Grotesk', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
       color: #ffffff;
       margin: 0;
     }
     .accom-card-sub {
       font-size: 13px;
-      color: #8e99a8;
-      font-family: var(--font-ui);
-      line-height: 1.4;
+      color: rgba(255, 255, 255, 0.6);
+      font-family: 'Outfit', 'Inter', sans-serif;
+      line-height: 1.45;
     }
 
     /* Payment & QR */
@@ -1177,19 +1177,19 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
     .pay-amt-box {
-      font-family: var(--font-display);
-      font-size: 40px;
+      font-family: 'Bricolage Grotesque', 'Outfit', sans-serif;
+      font-size: 42px;
       font-weight: 800;
       color: #ffffff;
-      background: linear-gradient(135deg, #ffc107 0%, #ff6200 100%);
+      background: linear-gradient(135deg, #fde047 0%, #f59e0b 50%, #ea580c 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       letter-spacing: -0.02em;
     }
     .pay-fee-desc {
-      font-family: var(--font-ui);
+      font-family: 'Outfit', 'Inter', sans-serif;
       font-size: 14px;
-      color: #8e99a8;
+      color: rgba(255, 255, 255, 0.62);
     }
     .qr-frame {
       width: 176px;
@@ -1215,8 +1215,8 @@
       border: 1px solid #1f212b;
       border-radius: 10px;
       padding: 8px 16px;
-      font-family: var(--font-ui);
-      font-size: 14px;
+      font-family: 'Space Mono', monospace;
+      font-size: 13.5px;
       color: #e2e8f0;
     }
     .upi-copy-btn {
@@ -1225,6 +1225,7 @@
       color: #ffaa22 !important;
       border-radius: 8px !important;
       padding: 5px 14px !important;
+      font-family: 'Space Mono', monospace !important;
       font-size: 12px !important;
       font-weight: 700 !important;
       cursor: pointer !important;
@@ -1247,10 +1248,11 @@
       gap: 16px !important;
     }
     .btn-back {
-      font-family: var(--font-ui) !important;
-      font-size: 14px !important;
+      font-family: 'Space Grotesk', 'Outfit', sans-serif !important;
+      font-size: 13.5px !important;
       font-weight: 600 !important;
-      color: #8e99a8 !important;
+      letter-spacing: 0.04em !important;
+      color: rgba(255, 255, 255, 0.7) !important;
       background: #111218 !important;
       border: 1px solid #1f212b !important;
       border-radius: 12px !important;
@@ -1267,23 +1269,23 @@
       box-shadow: 0 0 16px rgba(255, 153, 0, 0.22) !important;
     }
     .btn-continue {
-      font-family: var(--font-display) !important;
-      font-size: 15px !important;
+      font-family: 'Orbitron', 'Space Grotesk', sans-serif !important;
+      font-size: 13px !important;
       font-weight: 800 !important;
-      letter-spacing: 0.06em !important;
+      letter-spacing: 1.5px !important;
       text-transform: uppercase !important;
-      color: #ffffff !important;
-      background: linear-gradient(135deg, #ffaa00 0%, #ff5500 100%) !important;
+      color: #000000 !important;
+      background: linear-gradient(135deg, #facc15 0%, #f59e0b 50%, #ea580c 100%) !important;
       border: none !important;
       border-radius: 12px !important;
-      padding: 14px 36px !important;
+      padding: 14px 34px !important;
       cursor: pointer !important;
       transition: all 0.25s ease !important;
-      box-shadow: 0 6px 25px rgba(255, 130, 0, 0.5) !important;
+      box-shadow: 0 4px 22px rgba(245, 158, 11, 0.45) !important;
       margin-left: auto;
     }
     .btn-continue:hover {
-      box-shadow: 0 10px 32px rgba(255, 130, 0, 0.75) !important;
+      box-shadow: 0 8px 30px rgba(245, 158, 11, 0.75) !important;
       transform: translateY(-2px) !important;
     }
     .btn-continue:disabled {
@@ -1293,7 +1295,7 @@
     }
 
     .err {
-      font-family: var(--font-ui) !important;
+      font-family: 'Space Grotesk', 'Outfit', sans-serif !important;
       font-size: 14px !important;
       font-weight: 600 !important;
       color: #fca5a5 !important;
@@ -1772,7 +1774,6 @@
 
     const STEPS = [
       {
-        icon: '👥',
         title: 'TEAM DETAILS',
         sub: '',
         html: () => `
@@ -1839,7 +1840,6 @@
       },
 
       {
-        icon: '👤',
         title: 'TEAM LEADER DETAILS',
         sub: '',
         html: () => `
@@ -1895,7 +1895,6 @@
       },
 
       {
-        icon: '👥',
         title: 'TEAM MEMBERS',
         sub: 'Enter details for the additional team members.',
         html: () => `
@@ -1928,7 +1927,6 @@
       },
 
       {
-        icon: '🚻',
         title: 'GENDER SPLIT',
         sub: 'Tell us the gender split of your team for accommodation arrangements.',
         html: () => {
@@ -1974,7 +1972,6 @@
       },
 
       {
-        icon: '🏨',
         title: 'ACCOMMODATION DETAILS',
         sub: 'Accommodation is available only on the 12th November hackathon night (no prior accommodation).',
         html: () => `
@@ -1997,7 +1994,6 @@
       },
 
       {
-        icon: '💳',
         title: 'PAYMENT & VERIFICATION',
         sub: 'Scan the UPI QR code to pay the registration fee and enter transaction details.',
         html: () => {
@@ -2086,7 +2082,6 @@
   <div class="panel">
     ${bars(step)}
     <div class="step-header-badge">
-      <div class="step-icon-box">${S.icon || '📝'}</div>
       <h2 class="step-title-text" id="ttl" tabindex="-1">${esc(S.title)}</h2>
     </div>
     <p class="sub">${esc(S.sub)}</p>
@@ -2221,7 +2216,6 @@
       app.innerHTML = `<div class="nav"><span class="brand">Hackvally</span><a href="#faq">Event FAQs &rarr;</a></div>
 <div class="panel" style="text-align:center">
    <div class="step-header-badge" style="justify-content:center">
-     <div class="step-icon-box" style="background:rgba(34,197,94,0.18);border-color:rgba(34,197,94,0.4);color:#4ade80">✓</div>
      <h2 class="step-title-text" style="font-size:24px !important">Registration Successful</h2>
    </div>
    <p class="sub" style="text-align:center">Your team registration has been recorded successfully.</p>
@@ -2466,6 +2460,49 @@
           if (p && p.catch) p.catch(function () { });
         } catch (err) { }
       }, true);
+    })();
+  </script>
+  <script>
+    /* Lightweight wheel smoother: eases window scroll with damping.
+       Native scrollbar / keyboard / touch momentum keep working. */
+    (function () {
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      var target = window.scrollY, current = target, lastWritten = target, rafId = 0, lastTime = 0;
+      function maxScroll() { return Math.max(0, document.documentElement.scrollHeight - window.innerHeight); }
+      function setTop(v) { var top = Math.max(0, Math.min(v, maxScroll())); window.scrollTo({ top: top, behavior: 'instant' }); return top; }
+      function stop() { if (rafId) { cancelAnimationFrame(rafId); rafId = 0; } }
+      function tick(now) {
+        var dt = Math.min(0.05, (now - lastTime) / 1000); lastTime = now;
+        var diff = target - current;
+        if (Math.abs(diff) < 0.35) { current = target; lastWritten = setTop(current); stop(); return; }
+        current += diff * (1 - Math.exp(-10 * dt));
+        lastWritten = setTop(current);
+        rafId = requestAnimationFrame(tick);
+      }
+      window.addEventListener('wheel', function (e) {
+        if (e.ctrlKey) return;
+        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+        var dy = e.deltaY;
+        if (e.deltaMode === 1) dy *= 16;
+        else if (e.deltaMode === 2) dy *= window.innerHeight;
+        /* let nested scrollable panels (e.g. wide tables) handle their own scroll */
+        var node = e.target && e.target.parentElement;
+        while (node && node !== document.body && node !== document.documentElement) {
+          var oy = getComputedStyle(node).overflowY;
+          if ((oy === 'auto' || oy === 'scroll') && node.scrollHeight > node.clientHeight + 1) {
+            if ((dy < 0 && node.scrollTop > 0) || (dy > 0 && node.scrollTop < node.scrollHeight - node.clientHeight - 0.5)) return;
+          }
+          node = node.parentElement;
+        }
+        e.preventDefault();
+        if (rafId === 0) { current = window.scrollY; target = current; }
+        target = Math.max(0, Math.min(target + dy, maxScroll()));
+        if (rafId === 0) { lastTime = performance.now(); rafId = requestAnimationFrame(tick); }
+      }, { passive: false });
+      window.addEventListener('scroll', function () {
+        var top = window.scrollY;
+        if (Math.abs(top - lastWritten) > 1.5) { target = top; current = top; lastWritten = top; }
+      }, { passive: true });
     })();
   </script>
 </body>
