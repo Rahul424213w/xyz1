@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { TEAM_CATEGORIES, TEAM_MEMBERS } from './teamData'
 import Navbar from './Navbar'
+import { attachSmoothScroll } from './smoothScroll'
 import './ContactPage.css'
 
 export default function ContactPage({ onNavigate }) {
@@ -8,6 +9,10 @@ export default function ContactPage({ onNavigate }) {
   const [activeCategory, setActiveCategory] = useState('crew')
   const [selectedMember, setSelectedMember] = useState(null)
   const canvasRef = useRef(null)
+  const containerRef = useRef(null)
+
+  // Wheel smoothing for the page scroll container
+  useEffect(() => attachSmoothScroll(containerRef.current), [])
 
   // ── Constellation particle network background (matching the subtle lines/dots in the image) ──
   useEffect(() => {
@@ -227,7 +232,7 @@ export default function ContactPage({ onNavigate }) {
   )
 
   return (
-    <div className="contact-page-container">
+    <div className="contact-page-container" ref={containerRef}>
       {/* ── Dynamic Constellation Background Canvas ── */}
       <canvas ref={canvasRef} className="constellation-canvas" />
 
@@ -441,8 +446,6 @@ export default function ContactPage({ onNavigate }) {
                 <div className="modal-role-badge">
                   <span>{selectedMember.role}</span>
                 </div>
-
-                <p className="modal-bio">{selectedMember.bio}</p>
 
                 <div className="modal-contacts-list">
                   {selectedMember.email && (

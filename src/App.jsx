@@ -180,21 +180,27 @@ export default function App() {
       {currentPage === 'intro' && (
         <main className="canvas-wrap" id="shuttle-canvas">
           <Canvas
-            dpr={[1, 1.5]}
-            gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
+            dpr={[1, 2]}
+            gl={{
+              antialias: true,
+              alpha: false,
+              powerPreference: 'high-performance',
+              stencil: false,
+              toneMappingExposure: 1.15,
+            }}
             style={{ background: '#000' }}
           >
             {/* Fixed camera */}
-            <PerspectiveCamera makeDefault position={[0, 0.5, 10]} fov={50} />
+            <PerspectiveCamera makeDefault position={[0, 0.5, 10]} fov={48} near={0.1} far={800} />
 
             {/* Cinematic lighting */}
-            <ambientLight intensity={0.2} />
-            <directionalLight position={[6, 8, 6]} intensity={2.2} color="#ffffff" />
-            <directionalLight position={[-6, -3, -6]} intensity={0.4} color="#a0c0ff" />
+            <ambientLight intensity={0.25} />
+            <directionalLight position={[6, 8, 6]} intensity={2.4} color="#ffffff" />
+            <directionalLight position={[-6, -3, -6]} intensity={0.5} color="#a0c0ff" />
 
             {/* Deep space stars */}
             <Environment preset="night" />
-            <Stars count={2000} />
+            <Stars count={4000} />
 
             <Suspense fallback={<Loader />}>
               <ShuttleModel onArrival={handleArrival} />

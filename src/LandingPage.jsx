@@ -2,7 +2,14 @@ import { useRef, useEffect, useState } from 'react'
 import TimelineShuttle from './TimelineShuttle'
 import Astronaut3D from './Astronaut3D'
 import Navbar from './Navbar'
+import { attachSmoothScroll } from './smoothScroll'
 import './LandingPage.css'
+
+// Hero background video: desktop skips first 20s;
+// mobile loops starting from 20s
+const isMobileViewport = () =>
+  typeof window !== 'undefined' && window.innerWidth <= 900
+const heroVideoStartSec = () => (isMobileViewport() ? 20 : 20)
 
 const PARTNER_LOGOS = [
   { id: 1, src: '/logo1.jpg', alt: 'Partner 1', label: 'Logo 1' },
@@ -97,6 +104,10 @@ const TIMELINE_EVENTS = [
 
 // Accommodation and Event FAQs (transferred from register page to home after rewards)
 const FAQ_ITEMS = [
+  {
+    q: 'Will all participants receive a participation certificate?',
+    a: 'Yes, all participants will receive an official Certificate of Participation after the event.',
+  },
   {
     q: 'Is accommodation available for outstation participants?',
     a: 'Yes, accommodation is available only on the night of 12th November during the hackathon itself. Please note that no prior accommodation (before 12th November) will be provided.',
@@ -214,6 +225,9 @@ export default function LandingPage({ onNavigate }) {
     const el = wrapperRef.current
     if (!el) return
 
+    // Wheel smoothing: eases wheel input toward target with damping
+    const detachSmoothScroll = attachSmoothScroll(el)
+
     let animId
     let isRunning = true
 
@@ -327,12 +341,15 @@ export default function LandingPage({ onNavigate }) {
     }
 
     el.addEventListener('scroll', onScroll, { passive: true })
+    window.addEventListener('resize', onScroll, { passive: true })
     onScroll()
 
     return () => {
       isRunning = false
       cancelAnimationFrame(animId)
+      detachSmoothScroll()
       el.removeEventListener('scroll', onScroll)
+      window.removeEventListener('resize', onScroll)
     }
   }, [])
 
@@ -363,13 +380,25 @@ export default function LandingPage({ onNavigate }) {
       {/* ── SECTION 1: Fullscreen 4K Hero Section with Sticky Cutting Scroll ── */}
       <section className="hero-fullscreen" id="home">
         <div className="hero-parallax-wrap">
-          {/* Hero Section Background Video */}
+          {/* Hero Section Background Video (skips the first 20 seconds) */}
           <video
             className="hero-bg-video"
             autoPlay
             loop
             muted
             playsInline
+            onLoadedMetadata={(e) => {
+              const v = e.currentTarget
+              const start = heroVideoStartSec()
+              if (v.duration > start + 1) v.currentTime = start
+            }}
+            onTimeUpdate={(e) => {
+              const v = e.currentTarget
+              const start = heroVideoStartSec()
+              if (v.readyState >= 1 && v.duration > start + 1 && v.currentTime < start) {
+                v.currentTime = start
+              }
+            }}
           >
             <source src="/189457-885804464.mp4" type="video/mp4" />
           </video>
@@ -435,14 +464,6 @@ export default function LandingPage({ onNavigate }) {
               </div>
             </div>
           </div>
-
-          {/* Scroll down indicator */}
-          <a href="#about" className="scroll-indicator" aria-label="Scroll to About section">
-            <div className="scroll-mouse-icon">
-              <span className="scroll-mouse-wheel" />
-            </div>
-            <span>Scroll</span>
-          </a>
         </div>
       </section>
 
@@ -478,7 +499,7 @@ export default function LandingPage({ onNavigate }) {
           {/* Left Orange Card */}
           <div className="perk-card perk-card-orange">
             <div className="perk-card-content perk-content-left">
-              <h3 className="perk-heading">
+              <h3 className="perk-heading perk-heading-left">
                 Prize Pool
               </h3>
               <div className="perk-prize-amount">
@@ -515,7 +536,7 @@ export default function LandingPage({ onNavigate }) {
             {/* Top Orange Card: Prize Pool 50 k */}
             <div className="perks-mobile-card perks-mobile-orange">
               <div className="perks-mobile-content">
-                <h3 className="perks-mobile-heading">Prize Pool</h3>
+                <h3 className="perks-mobile-heading perks-mobile-heading-sm perks-mobile-heading-orange">Prize Pool</h3>
                 <div className="perks-mobile-amount">50 k</div>
               </div>
             </div>
@@ -523,7 +544,7 @@ export default function LandingPage({ onNavigate }) {
             {/* Bottom Blue Card: Organized By */}
             <div className="perks-mobile-card perks-mobile-blue">
               <div className="perks-mobile-content perks-mobile-content-blue">
-                <h3 className="perks-mobile-heading perks-mobile-heading-sm">Organized By</h3>
+                <h3 className="perks-mobile-heading perks-mobile-heading-sm perks-mobile-heading-blue">Organized By</h3>
                 <p className="perks-mobile-desc perks-mobile-desc-blue">
                   Dept. of Computer Science<br />and Engineering
                 </p>
@@ -599,7 +620,7 @@ export default function LandingPage({ onNavigate }) {
                   className={`timeline-row ${isRightAligned ? 'align-box-right' : 'align-box-left'} ${event.active ? 'row-active' : ''}`}
                 >
                   {/* Left Column */}
-                  <div className="timeline-col timeline-col-left">
+                  <div className={`timeline-col timeline-col-left ${isRightAligned ? 'timeline-col-date' : 'timeline-col-card'}`}>
                     {isRightAligned ? dateComponent : cardComponent}
                   </div>
 
@@ -621,7 +642,7 @@ export default function LandingPage({ onNavigate }) {
                   </div>
 
                   {/* Right Column */}
-                  <div className="timeline-col timeline-col-right">
+                  <div className={`timeline-col timeline-col-right ${isRightAligned ? 'timeline-col-card' : 'timeline-col-date'}`}>
                     {isRightAligned ? cardComponent : dateComponent}
                   </div>
                 </div>
@@ -688,6 +709,7 @@ export default function LandingPage({ onNavigate }) {
             <div className="rewards-tag-wrap">
               <span className="amber-line amber-line-left" />
               <span className="rewards-tag-text">REWARDS</span>
+              <span className="amber-line amber-line-right" />
             </div>
 
             <h2 className="rewards-main-title">
@@ -794,6 +816,74 @@ export default function LandingPage({ onNavigate }) {
               </div>
             </div>
           </div>
+
+          {/* ── Participation Certificate Banner (Below Prizes) ── */}
+          <div className="rewards-cert-banner">
+            <div className="rewards-cert-icon-badge">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4 4C4 2.89543 4.89543 2 6 2H18C19.1046 2 20 2.89543 20 4V20C20 21.1046 19.1046 22 18 22H6C4.89543 22 4 21.1046 4 20V4Z" fill="rgba(245, 158, 11, 0.15)" stroke="#f59e0b" strokeWidth="1.75" />
+                <path d="M8 6.5H16" stroke="#fbbf24" strokeWidth="1.75" strokeLinecap="round" />
+                <path d="M8 10H16" stroke="rgba(255, 255, 255, 0.45)" strokeWidth="1.5" strokeLinecap="round" />
+                <path d="M8 13.5H12" stroke="rgba(255, 255, 255, 0.45)" strokeWidth="1.5" strokeLinecap="round" />
+                <circle cx="15.5" cy="15.5" r="2.8" fill="#f59e0b" stroke="#fbbf24" strokeWidth="1.2" />
+                <path d="M14.2 17.8L13.8 20.5L15.5 19.4L17.2 20.5L16.8 17.8" fill="#f59e0b" stroke="#fbbf24" strokeWidth="1" strokeLinejoin="round" />
+              </svg>
+            </div>
+            <div className="rewards-cert-text-wrap">
+              <h3 className="rewards-cert-title">
+                <span className="cert-title-white">Plus </span>
+                <span className="cert-title-highlight">Participation Certificate for All</span>
+              </h3>
+              <p className="rewards-cert-desc">
+                Official certificates awarded to all attendees to validate their innovation journey!
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 5.5: Meet The Crew CTA Section ── */}
+      <section className="meet-crew-section">
+        <div className="meet-crew-container">
+          {/* Tag Line */}
+          <div className="meet-crew-tag-wrap">
+            <span className="amber-line amber-line-left" />
+            <span className="meet-crew-tag-text">THE CREW</span>
+            <span className="amber-line amber-line-right" />
+          </div>
+
+          {/* Heading */}
+          <h2 className="meet-crew-main-title">
+            Meet The <span className="about-accent-text">Crew</span>
+          </h2>
+
+          {/* Subtitle */}
+          <p className="meet-crew-subtitle">
+            The organisers, mentors and volunteers making Hack Vally happen — say hello!
+          </p>
+
+          {/* CTA Button → redirects to Contact Us */}
+          <button
+            type="button"
+            className="meet-crew-btn"
+            onClick={() => onNavigate && onNavigate('contact')}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="meet-crew-btn-icon"
+            >
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+              <circle cx="9" cy="7" r="4" />
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </svg>
+            <span>Meet The Crew</span>
+          </button>
         </div>
       </section>
 
@@ -982,18 +1072,18 @@ export default function LandingPage({ onNavigate }) {
                     <span className="contact-person-name">Rahul AK</span>
                     <span className="contact-role-badge">EVENT LEAD</span>
                   </div>
-                  <a href="tel:+918492595258" className="contact-detail-line contact-phone-line">
+                  <a href="tel:+918269643984" className="contact-detail-line contact-phone-line">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" />
                     </svg>
-                    <span>+91 84925 95258</span>
+                    <span>+91 82696 43984</span>
                   </a>
-                  <a href="mailto:Rahulak@gmail.com" className="contact-detail-line">
+                  <a href="mailto:rahulak424213w@gmail.com" className="contact-detail-line">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
                       <polyline points="22,6 12,13 2,6" />
                     </svg>
-                    <span>Rahulak@gmail.com</span>
+                    <span>rahulak424213w@gmail.com</span>
                   </a>
                 </div>
               </div>
