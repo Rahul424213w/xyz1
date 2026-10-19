@@ -24,8 +24,8 @@ const TIMELINE_EVENTS = [
     id: '01',
     stageTag: 'REGISTRATION OPENS',
     dateText: 'Oct 23',
-    title: 'Registration Opens',
-    desc: 'Registrations open. Register your team to participate in HackVally.',
+    title: 'Registration Live',
+    desc: 'Registrations are now open for HackVally. Register your team and get ready to innovate!',
     icon: 'edit',
     active: true, // Stage 01 is currently active in Golden Amber
     align: 'right', // 01 Box on RIGHT, Date on LEFT
@@ -34,8 +34,8 @@ const TIMELINE_EVENTS = [
     id: '02',
     stageTag: 'REGISTRATION CLOSES',
     dateText: 'Nov 8',
-    title: 'Registration Closes',
-    desc: 'Last date to complete team registration.',
+    title: 'Hatch Sealed',
+    desc: 'Registration closes soon, so complete your team details. Secure your spot at HackVally before the deadline!',
     icon: 'lock',
     active: false, // Turns Golden Amber on Nov 8
     align: 'left', // 02 Box on LEFT, Date on RIGHT
@@ -44,8 +44,8 @@ const TIMELINE_EVENTS = [
     id: '03',
     stageTag: 'TEAM CONFIRMATION',
     dateText: 'After Registration',
-    title: 'Team Confirmation',
-    desc: 'Teams receive confirmation emails with event details.',
+    title: 'Signal Received',
+    desc: 'Registered teams will receive a confirmation email. Check your inbox for important event updates and instructions.',
     icon: 'users',
     active: false,
     align: 'right', // 03 Box on RIGHT, Date on LEFT
@@ -54,8 +54,8 @@ const TIMELINE_EVENTS = [
     id: '04',
     stageTag: 'INAUGURATION CEREMONY',
     dateText: 'Nov 12 - 9:00 AM',
-    title: 'Inauguration Ceremony',
-    desc: 'Official inauguration and opening of HackVally.',
+    title: 'Liftoff',
+    desc: 'Join us for the official HackVally inauguration ceremony. Get ready to kick-start an exciting journey of innovation!',
     icon: 'ceremony',
     active: false,
     align: 'left', // 04 Box on LEFT, Date/Time on RIGHT
@@ -63,9 +63,9 @@ const TIMELINE_EVENTS = [
   {
     id: '05',
     stageTag: 'HACKATHON BEGINS',
-    dateText: 'Nov 12',
-    title: 'Hackathon Begins',
-    desc: 'The 24-hour hackathon begins. Build, innovate, and collaborate.',
+    dateText: 'Nov 12 - 10:00 AM',
+    title: 'Main Engine Burn',
+    desc: 'The 24-hour hackathon begins—turn your ideas into reality. Collaborate, code, and build solutions that make an impact!',
     icon: 'fuel',
     active: false,
     align: 'right', // 05 Box on RIGHT, Date on LEFT
@@ -73,9 +73,9 @@ const TIMELINE_EVENTS = [
   {
     id: '06',
     stageTag: 'HACKATHON ENDS',
-    dateText: 'Nov 13',
-    title: 'Hackathon Ends',
-    desc: 'Complete your prototype and prepare for the final showcase.',
+    dateText: 'Nov 13 - 10:00 AM',
+    title: 'Final Countdown',
+    desc: 'Complete your prototype and prepare your final submission. Put your skills to the test and get ready to showcase your work!',
     icon: 'burn',
     active: false,
     align: 'left', // 06 Box on LEFT, Date on RIGHT
@@ -84,8 +84,8 @@ const TIMELINE_EVENTS = [
     id: '07',
     stageTag: 'PRIZE DISTRIBUTION',
     dateText: 'Nov 13',
-    title: 'Prize Distribution',
-    desc: 'Winners are announced and prizes are distributed.',
+    title: 'Touchdown',
+    desc: 'Celebrate the teams and solutions that stood out. Join us as the winners are announced and prizes are distributed!',
     icon: 'trophy',
     active: false,
     align: 'right', // 07 Box on RIGHT, Date on LEFT
@@ -93,9 +93,9 @@ const TIMELINE_EVENTS = [
   {
     id: '08',
     stageTag: 'EVENT CONCLUDES',
-    dateText: 'Nov 13 - Evening',
-    title: 'Event Concludes',
-    desc: 'Celebrate the experience and connect with fellow innovators.',
+    dateText: 'Nov 13 - Afternoon',
+    title: 'Mission Accomplished',
+    desc: 'Celebrate an incredible journey of creativity and collaboration. Connect with fellow innovators and take your ideas beyond HackVally!',
     icon: 'sparkles',
     active: false,
     align: 'left', // 08 Box on LEFT, Date on RIGHT
