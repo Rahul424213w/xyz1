@@ -1053,16 +1053,16 @@ export default function AdminPage({ onNavigate }) {
               <table className="admin-table">
                 <thead>
                   <tr>
-                    <th>Team Name</th>
-                    <th>Domain</th>
-                    <th>Leader</th>
-                    <th>Size</th>
-                    <th>College</th>
-                    <th>Transaction ID</th>
-                    <th>Payment</th>
-                    <th>Status</th>
-                    <th>Date</th>
-                    <th>Actions</th>
+                    <th style={{ minWidth: '160px' }}>Team Name</th>
+                    <th style={{ minWidth: '130px' }}>Domain</th>
+                    <th style={{ minWidth: '180px' }}>Leader</th>
+                    <th style={{ minWidth: '70px' }}>Size</th>
+                    <th style={{ minWidth: '160px' }}>College</th>
+                    <th style={{ minWidth: '140px' }}>Transaction ID</th>
+                    <th style={{ minWidth: '130px' }}>Payment</th>
+                    <th style={{ minWidth: '120px' }}>Status</th>
+                    <th style={{ minWidth: '110px' }}>Date</th>
+                    <th style={{ minWidth: '180px', width: '180px' }}>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1121,7 +1121,7 @@ export default function AdminPage({ onNavigate }) {
                                 ? new Date(t.submittedAt).toLocaleDateString()
                                 : '—')}
                           </td>
-                          <td>
+                          <td style={{ minWidth: '180px', width: '180px', whiteSpace: 'nowrap' }}>
                             <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                               {!isApproved ? (
                                 <button
@@ -1291,16 +1291,16 @@ export default function AdminPage({ onNavigate }) {
                   <table className="admin-table">
                     <thead>
                       <tr>
-                        <th>Team Name</th>
-                        <th>Domain</th>
-                        <th>Leader</th>
-                        <th>Size</th>
-                        <th>College</th>
-                        <th>Transaction ID</th>
-                        <th>Screenshot</th>
-                        <th>Status</th>
-                        <th>Rejected Date</th>
-                        <th>Action</th>
+                        <th style={{ minWidth: '160px' }}>Team Name</th>
+                        <th style={{ minWidth: '130px' }}>Domain</th>
+                        <th style={{ minWidth: '180px' }}>Leader</th>
+                        <th style={{ minWidth: '70px' }}>Size</th>
+                        <th style={{ minWidth: '160px' }}>College</th>
+                        <th style={{ minWidth: '140px' }}>Transaction ID</th>
+                        <th style={{ minWidth: '130px' }}>Screenshot</th>
+                        <th style={{ minWidth: '120px' }}>Status</th>
+                        <th style={{ minWidth: '120px' }}>Rejected Date</th>
+                        <th style={{ minWidth: '160px', width: '160px' }}>Action</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -1353,7 +1353,7 @@ export default function AdminPage({ onNavigate }) {
                                   ? new Date(t.submittedAt).toLocaleDateString()
                                   : '—'}
                               </td>
-                              <td>
+                              <td style={{ minWidth: '160px', width: '160px', whiteSpace: 'nowrap' }}>
                                 <button
                                   type="button"
                                   className="btn-delete-team-action"
