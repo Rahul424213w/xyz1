@@ -1,5 +1,15 @@
 import React, { useState, useEffect } from 'react'
-import { getTeamRegistrationsFromFirestore, updateTeamStatusInFirestore } from './firebase'
+import {
+  getTeamRegistrationsFromFirestore,
+  updateTeamStatusInFirestore,
+  deleteTeamFromFirestore,
+  getAdminPinConfigFromFirestore,
+  saveAdminPinConfigToFirestore,
+  getBinPinConfigFromFirestore,
+  saveBinPinConfigToFirestore,
+  getAdminUsersFromFirestore,
+  saveAdminUsersToFirestore
+} from './firebase'
 import './AdminPage.css'
 
 export default function AdminPage({ onNavigate }) {
@@ -31,7 +41,7 @@ export default function AdminPage({ onNavigate }) {
   const [loginError, setLoginError] = useState('')
   const [isLoggingIn, setIsLoggingIn] = useState(false)
 
-  // Active view tab: 'teams' | 'pin' | 'access'
+  // Active view tab: 'teams' | 'bin' | 'pin' | 'access'
   const [activeTab, setActiveTab] = useState('teams')
 
   // Registered teams data & filters
@@ -44,13 +54,28 @@ export default function AdminPage({ onNavigate }) {
   // View image modal
   const [selectedImageTeam, setSelectedImageTeam] = useState(null)
 
-  // PIN settings state
+  // Admin Panel PIN settings state (Stored in Firestore config/admin_pin)
+  const [adminPinConfig, setAdminPinConfig] = useState({ accessPin: 'admin2026', defaultPinEnabled: true })
   const [defaultPinEnabled, setDefaultPinEnabled] = useState(true)
   const [newPin, setNewPin] = useState('')
   const [confirmPin, setConfirmPin] = useState('')
   const [pinFeedback, setPinFeedback] = useState({ text: '', type: '' })
 
-  // Admin Access management state
+  // Team Bin State & PIN (Stored in Firestore config/bin_pin)
+  const [isBinUnlocked, setIsBinUnlocked] = useState(() => {
+    return sessionStorage.getItem('hackvally_bin_unlocked') === 'true'
+  })
+  const [binPinInput, setBinPinInput] = useState('')
+  const [binPinError, setBinPinError] = useState('')
+  const [isVerifyingBinPin, setIsVerifyingBinPin] = useState(false)
+  const [binPinConfig, setBinPinConfig] = useState({ accessPin: 'jcer', defaultPinEnabled: true })
+  const [binDefaultPinEnabled, setBinDefaultPinEnabled] = useState(true)
+  const [newBinPin, setNewBinPin] = useState('')
+  const [confirmBinPin, setConfirmBinPin] = useState('')
+  const [binPinFeedback, setBinPinFeedback] = useState({ text: '', type: '' })
+  const [deletingTeamId, setDeletingTeamId] = useState(null)
+
+  // Admin Access management state (Stored in Firestore config/admin_users)
   const [adminUsers, setAdminUsers] = useState([])
   const [newAdminEmail, setNewAdminEmail] = useState('')
   const [newAdminPassword, setNewAdminPassword] = useState('')
@@ -63,99 +88,85 @@ export default function AdminPage({ onNavigate }) {
   const [editPassword, setEditPassword] = useState('')
   const [isSavingEdit, setIsSavingEdit] = useState(false)
 
-  // ── 1. Load Data ──
+  // ── 1. Load Data from Cloud Firestore ──
   const fetchTeams = async () => {
-    const map = new Map()
-
-    // 1. Fetch from Cloud Firestore database
     try {
       const fsTeams = await getTeamRegistrationsFromFirestore()
-      if (Array.isArray(fsTeams)) {
-        fsTeams.forEach((t) => {
-          if (t && t.registrationId) {
-            map.set(t.registrationId, t)
-          }
-        })
+      if (Array.isArray(fsTeams) && fsTeams.length > 0) {
+        setTeams(fsTeams)
+        try {
+          localStorage.setItem('hackvally_registrations', JSON.stringify(fsTeams))
+        } catch (e) {}
+      } else {
+        const local = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
+        setTeams(local)
       }
     } catch (fsErr) {
-      console.warn('[AdminPage] Firestore fetch note:', fsErr)
-    }
-
-    // 2. Fetch from Backend Server API
-    try {
-      const res = await fetch('/api/teams')
-      const json = await res.json()
-      if (json.success && Array.isArray(json.teams)) {
-        json.teams.forEach((t) => {
-          if (t && t.registrationId && !map.has(t.registrationId)) {
-            map.set(t.registrationId, t)
-          }
-        })
+      console.warn('[AdminPage] Firestore teams fetch note:', fsErr)
+      try {
+        const local = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
+        setTeams(local)
+      } catch (e) {
+        setTeams([])
       }
-    } catch (err) {
-      // expected if running on static hosting without server
     }
-
-    // 3. Fallback / Merge with LocalStorage
-    try {
-      const localTeams = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
-      if (Array.isArray(localTeams)) {
-        localTeams.forEach((t) => {
-          if (t && t.registrationId && !map.has(t.registrationId)) {
-            map.set(t.registrationId, t)
-          }
-        })
-      }
-    } catch (e) {
-      console.warn('Local teams read error:', e)
-    }
-
-    setTeams(Array.from(map.values()))
   }
 
   const fetchPinConfig = async () => {
     try {
-      const res = await fetch('/api/admin-pin-config')
-      const json = await res.json()
-      if (json.success) {
-        setDefaultPinEnabled(json.defaultPinEnabled !== false)
+      const cfg = await getAdminPinConfigFromFirestore()
+      if (cfg) {
+        setAdminPinConfig(cfg)
+        setDefaultPinEnabled(cfg.defaultPinEnabled !== false)
       }
     } catch (err) {
-      const localDef = localStorage.getItem('hackvally_default_pin_enabled')
-      if (localDef !== null) {
-        setDefaultPinEnabled(localDef === 'true')
+      console.warn('[AdminPage] Pin config fetch note:', err)
+    }
+  }
+
+  const fetchBinPinConfig = async () => {
+    try {
+      const cfg = await getBinPinConfigFromFirestore()
+      if (cfg) {
+        setBinPinConfig(cfg)
+        setBinDefaultPinEnabled(cfg.defaultPinEnabled !== false)
       }
+    } catch (err) {
+      console.warn('[AdminPage] Bin pin config fetch note:', err)
     }
   }
 
   const fetchAdminUsers = async () => {
     try {
-      const res = await fetch('/api/admin-users')
-      const json = await res.json()
-      if (json.success && Array.isArray(json.users)) {
-        setAdminUsers(json.users)
+      const users = await getAdminUsersFromFirestore()
+      if (Array.isArray(users)) {
+        setAdminUsers(users)
       }
     } catch (err) {
-      console.warn('Failed to fetch admin users:', err)
-      try {
-        const local = JSON.parse(localStorage.getItem('hackvally_admin_users') || '[]')
-        setAdminUsers(local)
-      } catch (e) {}
+      console.warn('[AdminPage] Admin users fetch note:', err)
     }
   }
+
+  useEffect(() => {
+    fetchPinConfig()
+    fetchBinPinConfig()
+    fetchAdminUsers()
+  }, [])
 
   useEffect(() => {
     if (isAuthenticated) {
       fetchTeams()
       fetchPinConfig()
+      fetchBinPinConfig()
       fetchAdminUsers()
     }
   }, [isAuthenticated])
 
-  // ── 2. Handle PIN Unlock (Tier 1) ──
+  // ── 2. Handle PIN Unlock (Tier 1) via Cloud Firestore ──
   const handleVerifyPin = async (e) => {
     e.preventDefault()
-    if (!pinInput.trim()) {
+    const trimmed = pinInput.trim()
+    if (!trimmed) {
       setPinError('Please enter a PIN')
       return
     }
@@ -164,47 +175,43 @@ export default function AdminPage({ onNavigate }) {
     setPinError('')
 
     try {
-      const res = await fetch('/api/verify-pin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pin: pinInput.trim() })
-      })
-      const json = await res.json()
+      let cfg = adminPinConfig
+      try {
+        cfg = await getAdminPinConfigFromFirestore()
+        setAdminPinConfig(cfg)
+        setDefaultPinEnabled(cfg.defaultPinEnabled !== false)
+      } catch (e) {}
 
-      if (json.success && json.authorized) {
+      const isCustomMatch = trimmed === (cfg.accessPin || 'admin2026')
+      const isDefaultMatch = cfg.defaultPinEnabled !== false && trimmed === 'jcerbhackvally'
+
+      if (isCustomMatch || isDefaultMatch) {
         setIsPinVerified(true)
         sessionStorage.setItem('hackvally_admin_pin_verified', 'true')
         setPinError('')
+      } else if (cfg.defaultPinEnabled === false && trimmed === 'jcerbhackvally') {
+        setPinError('Default backup PIN (jcerbhackvally) is disabled. Please enter your main Access PIN.')
       } else {
-        setPinError(json.error || 'Incorrect PIN entered')
+        setPinError('Incorrect PIN entered. Please try again.')
       }
     } catch (err) {
-      const trimmed = pinInput.trim()
-      const savedPin = localStorage.getItem('hackvally_admin_pin') || 'admin2026'
-      const defEnabled = localStorage.getItem('hackvally_default_pin_enabled') !== 'false'
-
-      if (trimmed === savedPin || (defEnabled && trimmed === 'jcerbhackvally')) {
-        setIsPinVerified(true)
-        sessionStorage.setItem('hackvally_admin_pin_verified', 'true')
-        setPinError('')
-      } else if (!defEnabled && trimmed === 'jcerbhackvally') {
-        setPinError('Default PIN is disabled. Please enter your main Access PIN.')
-      } else {
-        setPinError('Incorrect PIN entered')
-      }
+      setPinError('Error verifying PIN. Please try again.')
     } finally {
       setIsVerifyingPin(false)
     }
   }
 
-  // ── 3. Handle Admin Email & Password Login (Tier 2) ──
+  // ── 3. Handle Admin Email & Password Login (Tier 2) via Cloud Firestore ──
   const handleAdminLogin = async (e) => {
     e.preventDefault()
-    if (!loginEmail.trim()) {
+    const inputEmail = loginEmail.trim().toLowerCase()
+    const inputPass = loginPassword.trim()
+
+    if (!inputEmail) {
       setLoginError('Please enter your authorized admin email')
       return
     }
-    if (!loginPassword.trim()) {
+    if (!inputPass) {
       setLoginError('Please enter your admin password')
       return
     }
@@ -213,45 +220,30 @@ export default function AdminPage({ onNavigate }) {
     setLoginError('')
 
     try {
-      const res = await fetch('/api/admin-login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: loginEmail.trim().toLowerCase(),
-          password: loginPassword.trim()
-        })
-      })
-      const json = await res.json()
+      let users = adminUsers
+      try {
+        users = await getAdminUsersFromFirestore()
+        setAdminUsers(users)
+      } catch (e) {}
 
-      if (json.success && json.user) {
+      const matchedUser = users.find(
+        (u) =>
+          u.email &&
+          u.email.toLowerCase() === inputEmail &&
+          String(u.password) === inputPass
+      )
+
+      if (matchedUser) {
         setIsAuthenticated(true)
-        setCurrentAdminUser(json.user)
+        setCurrentAdminUser(matchedUser)
         sessionStorage.setItem('hackvally_admin_logged_in', 'true')
-        sessionStorage.setItem('hackvally_admin_user', JSON.stringify(json.user))
+        sessionStorage.setItem('hackvally_admin_user', JSON.stringify(matchedUser))
         setLoginError('')
       } else {
-        setLoginError(json.error || 'Invalid admin email or password')
+        setLoginError('Invalid admin email or password. Only authorized admin emails can access.')
       }
     } catch (err) {
-      try {
-        const localAdmins = JSON.parse(localStorage.getItem('hackvally_admin_users') || '[]')
-        const found = localAdmins.find(
-          (u) =>
-            u.email.toLowerCase() === loginEmail.trim().toLowerCase() &&
-            u.password === loginPassword.trim()
-        )
-        if (found || (loginEmail.trim().toLowerCase() === 'swayamuk1@gmail.com' && loginPassword.trim() === 'admin123')) {
-          const userObj = found || { id: 'admin_1', email: 'swayamuk1@gmail.com', role: 'Super Admin' }
-          setIsAuthenticated(true)
-          setCurrentAdminUser(userObj)
-          sessionStorage.setItem('hackvally_admin_logged_in', 'true')
-          sessionStorage.setItem('hackvally_admin_user', JSON.stringify(userObj))
-        } else {
-          setLoginError('Invalid admin email or password. Only authorized admin emails can access.')
-        }
-      } catch (e2) {
-        setLoginError('Authentication error. Please try again.')
-      }
+      setLoginError('Authentication error. Please try again.')
     } finally {
       setIsLoggingIn(false)
     }
@@ -261,8 +253,10 @@ export default function AdminPage({ onNavigate }) {
     sessionStorage.removeItem('hackvally_admin_logged_in')
     sessionStorage.removeItem('hackvally_admin_pin_verified')
     sessionStorage.removeItem('hackvally_admin_user')
+    sessionStorage.removeItem('hackvally_bin_unlocked')
     setIsAuthenticated(false)
     setIsPinVerified(false)
+    setIsBinUnlocked(false)
     setCurrentAdminUser(null)
     setPinInput('')
     setLoginEmail('')
@@ -272,84 +266,223 @@ export default function AdminPage({ onNavigate }) {
   // ── 4. Handle Team Approval ──
   const handleApproveTeam = async (team) => {
     setApprovingId(team.registrationId)
-    setToastMessage(`Approving ${team.teamName} and sending email...`)
+    setToastMessage(`Approving ${team.teamName} and dispatching confirmation email...`)
 
     try {
-      const res = await fetch('/api/approve-team', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ registrationId: team.registrationId })
+      // 1. Update status directly in Cloud Firestore (real-time watcher immediately sends email via Gmail SMTP!)
+      await updateTeamStatusInFirestore(team.registrationId, {
+        status: 'Approved',
+        paymentStatus: 'Approved',
+        approvedAt: new Date().toISOString()
       })
-      const json = await res.json()
 
-      if (json.success) {
-        setTeams((prev) =>
-          prev.map((t) =>
-            t.registrationId === team.registrationId
-              ? { ...t, status: 'Approved', paymentStatus: 'Approved' }
-              : t
-          )
-        )
-
-        try {
-          const stored = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
-          const updated = stored.map((t) =>
-            t.registrationId === team.registrationId
-              ? { ...t, status: 'Approved', paymentStatus: 'Approved' }
-              : t
-          )
-          localStorage.setItem('hackvally_registrations', JSON.stringify(updated))
-        } catch (e) {}
-
-        // Update in Cloud Firestore
-        try {
-          await updateTeamStatusInFirestore(team.registrationId, {
-            status: 'Approved',
-            paymentStatus: 'Approved'
-          })
-        } catch (fsErr) {
-          console.warn('[AdminPage] Firestore approve note:', fsErr)
-        }
-
-        setToastMessage(`✅ ${team.teamName} approved! Confirmation email sent to ${team.leaderEmail}`)
-        setTimeout(() => setToastMessage(''), 5000)
-      } else {
-        alert('Could not approve team: ' + (json.error || 'Unknown error'))
-      }
-    } catch (err) {
-      console.error('Approve error:', err)
+      // 2. Also ping local server API if running
       try {
-        await updateTeamStatusInFirestore(team.registrationId, {
-          status: 'Approved',
-          paymentStatus: 'Approved'
-        })
+        await fetch('/api/approve-team', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ registrationId: team.registrationId })
+        }).catch(() => {})
       } catch (e) {}
+
+      // 3. Update local state
       setTeams((prev) =>
         prev.map((t) =>
+          t.registrationId === team.registrationId
+            ? { ...t, status: 'Approved', paymentStatus: 'Approved', approvedAt: new Date().toISOString() }
+            : t
+        )
+      )
+
+      try {
+        const stored = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
+        const updated = stored.map((t) =>
           t.registrationId === team.registrationId
             ? { ...t, status: 'Approved', paymentStatus: 'Approved' }
             : t
         )
-      )
-      setToastMessage(`✅ ${team.teamName} marked as Approved`)
+        localStorage.setItem('hackvally_registrations', JSON.stringify(updated))
+      } catch (e) {}
+
+      setToastMessage(`✅ ${team.teamName} approved! Confirmation email dispatched to ${team.leaderEmail}`)
+      setTimeout(() => setToastMessage(''), 5000)
+    } catch (err) {
+      console.error('Approve error:', err)
+      setToastMessage(`⚠️ Could not approve team: ${err.message}`)
       setTimeout(() => setToastMessage(''), 4000)
     } finally {
       setApprovingId(null)
     }
   }
 
-  // ── 5. PIN Settings Handlers ──
+  // ── 5. Handle Team Rejection (Moves team to Team Bin) ──
+  const handleRejectTeam = async (team) => {
+    const confirmReject = window.confirm(
+      `Reject team "${team.teamName}"?\n\nThis will remove the team from All Registered Teams and move it into the Team Bin.`
+    )
+    if (!confirmReject) return
+
+    setToastMessage(`Moving ${team.teamName} to Team Bin...`)
+
+    try {
+      // Update in Cloud Firestore
+      await updateTeamStatusInFirestore(team.registrationId, {
+        status: 'Rejected',
+        rejectedAt: new Date().toISOString()
+      })
+
+      // Update local state
+      setTeams((prev) =>
+        prev.map((t) =>
+          t.registrationId === team.registrationId
+            ? { ...t, status: 'Rejected', rejectedAt: new Date().toISOString() }
+            : t
+        )
+      )
+
+      try {
+        const stored = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
+        const updated = stored.map((t) =>
+          t.registrationId === team.registrationId
+            ? { ...t, status: 'Rejected', rejectedAt: new Date().toISOString() }
+            : t
+        )
+        localStorage.setItem('hackvally_registrations', JSON.stringify(updated))
+      } catch (e) {}
+
+      setToastMessage(`🚫 ${team.teamName} moved to Team Bin`)
+      setTimeout(() => setToastMessage(''), 4000)
+    } catch (err) {
+      console.error('Reject error:', err)
+      setToastMessage(`⚠️ Error moving team to Team Bin: ${err.message}`)
+      setTimeout(() => setToastMessage(''), 4000)
+    }
+  }
+
+  // ── 6. Handle Team Bin Security & Operations ──
+  const handleVerifyBinPin = async (e) => {
+    e.preventDefault()
+    const trimmed = binPinInput.trim()
+    if (!trimmed) {
+      setBinPinError('Please enter Team Bin PIN')
+      return
+    }
+
+    setIsVerifyingBinPin(true)
+    setBinPinError('')
+
+    try {
+      let cfg = binPinConfig
+      try {
+        cfg = await getBinPinConfigFromFirestore()
+        setBinPinConfig(cfg)
+        setBinDefaultPinEnabled(cfg.defaultPinEnabled !== false)
+      } catch (e) {}
+
+      const isCustomMatch = trimmed === (cfg.accessPin || 'jcer')
+      const isDefaultMatch = cfg.defaultPinEnabled !== false && trimmed === 'jcer'
+
+      if (isCustomMatch || isDefaultMatch) {
+        setIsBinUnlocked(true)
+        sessionStorage.setItem('hackvally_bin_unlocked', 'true')
+        setBinPinError('')
+      } else if (cfg.defaultPinEnabled === false && trimmed === 'jcer') {
+        setBinPinError('Default backup PIN (jcer) is disabled. Enter your custom Bin PIN.')
+      } else {
+        setBinPinError('Incorrect Team Bin PIN. Default is "jcer".')
+      }
+    } catch (err) {
+      setBinPinError('Error verifying Bin PIN.')
+    } finally {
+      setIsVerifyingBinPin(false)
+    }
+  }
+
+  const handleLockBin = () => {
+    setIsBinUnlocked(false)
+    sessionStorage.removeItem('hackvally_bin_unlocked')
+    setBinPinInput('')
+    setBinPinError('')
+  }
+
+  const handleToggleBinDefaultPin = async () => {
+    const nextState = !binDefaultPinEnabled
+    setBinDefaultPinEnabled(nextState)
+
+    try {
+      await saveBinPinConfigToFirestore({ defaultPinEnabled: nextState })
+      setBinPinFeedback({
+        text: nextState
+          ? 'Default Bin PIN (jcer) is now ENABLED as backup.'
+          : 'Default Bin PIN (jcer) is now DISABLED. Only custom Bin PIN works.',
+        type: 'success'
+      })
+    } catch (err) {
+      setBinPinFeedback({ text: 'Saved locally', type: 'success' })
+    }
+  }
+
+  const handleUpdateBinPin = async (e) => {
+    e.preventDefault()
+    if (!newBinPin.trim()) {
+      setBinPinFeedback({ text: 'Please enter a new Bin PIN', type: 'error' })
+      return
+    }
+    if (newBinPin !== confirmBinPin) {
+      setBinPinFeedback({ text: 'New PIN and Confirm PIN do not match', type: 'error' })
+      return
+    }
+
+    try {
+      await saveBinPinConfigToFirestore({ accessPin: newBinPin.trim() })
+      setBinPinConfig((prev) => ({ ...prev, accessPin: newBinPin.trim() }))
+      setBinPinFeedback({ text: '✓ Team Bin PIN updated successfully in Cloud Firestore!', type: 'success' })
+      setNewBinPin('')
+      setConfirmBinPin('')
+    } catch (err) {
+      setBinPinFeedback({ text: 'Error saving Bin PIN: ' + err.message, type: 'error' })
+    }
+  }
+
+  // Permanently delete team from Cloud Firestore
+  const handlePermanentlyDeleteTeam = async (team) => {
+    const confirmDelete = window.confirm(
+      `⚠️ PERMANENTLY DELETE TEAM?\n\nTeam: "${team.teamName}" (${team.registrationId})\nLeader: ${team.leaderName}\n\nThis will completely remove the registration from Cloud Firestore database. This action CANNOT be undone.`
+    )
+    if (!confirmDelete) return
+
+    setDeletingTeamId(team.registrationId)
+    setToastMessage(`Permanently deleting ${team.teamName} from Firestore...`)
+
+    try {
+      await deleteTeamFromFirestore(team.registrationId)
+
+      setTeams((prev) => prev.filter((t) => t.registrationId !== team.registrationId))
+
+      try {
+        const stored = JSON.parse(localStorage.getItem('hackvally_registrations') || '[]')
+        const updated = stored.filter((t) => t.registrationId !== team.registrationId)
+        localStorage.setItem('hackvally_registrations', JSON.stringify(updated))
+      } catch (e) {}
+
+      setToastMessage(`🗑️ ${team.teamName} [${team.registrationId}] permanently deleted from database`)
+      setTimeout(() => setToastMessage(''), 4500)
+    } catch (err) {
+      console.error('Delete error:', err)
+      alert(`Could not delete team from database: ${err.message}`)
+      setToastMessage('')
+    } finally {
+      setDeletingTeamId(null)
+    }
+  }
+
+  // ── 7. Admin Panel PIN Settings Handlers (Stored in Firestore) ──
   const handleToggleDefaultPin = async () => {
     const nextState = !defaultPinEnabled
     setDefaultPinEnabled(nextState)
-    localStorage.setItem('hackvally_default_pin_enabled', String(nextState))
 
     try {
-      await fetch('/api/admin-pin-config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ defaultPinEnabled: nextState })
-      })
+      await saveAdminPinConfigToFirestore({ defaultPinEnabled: nextState })
       setPinFeedback({
         text: nextState
           ? 'Default PIN (jcerbhackvally) is now ENABLED as backup.'
@@ -357,10 +490,7 @@ export default function AdminPage({ onNavigate }) {
         type: 'success'
       })
     } catch (err) {
-      setPinFeedback({
-        text: `Default PIN ${nextState ? 'enabled' : 'disabled'} locally`,
-        type: 'success'
-      })
+      setPinFeedback({ text: 'Config saved locally', type: 'success' })
     }
   }
 
@@ -376,81 +506,67 @@ export default function AdminPage({ onNavigate }) {
     }
 
     try {
-      await fetch('/api/admin-pin-config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ newPin: newPin.trim(), defaultPinEnabled })
-      })
-      localStorage.setItem('hackvally_admin_pin', newPin.trim())
+      await saveAdminPinConfigToFirestore({ accessPin: newPin.trim() })
+      setAdminPinConfig((prev) => ({ ...prev, accessPin: newPin.trim() }))
+      setPinFeedback({ text: '✓ Admin PIN updated successfully in Cloud Firestore!', type: 'success' })
       setNewPin('')
       setConfirmPin('')
-      setPinFeedback({ text: '✓ Admin PIN updated successfully!', type: 'success' })
     } catch (err) {
-      localStorage.setItem('hackvally_admin_pin', newPin.trim())
-      setNewPin('')
-      setConfirmPin('')
-      setPinFeedback({ text: '✓ Admin PIN saved locally!', type: 'success' })
+      setPinFeedback({ text: 'Error saving PIN: ' + err.message, type: 'error' })
     }
   }
 
-  // ── 6. Admin Access Handlers (Add, Edit, Remove) ──
-  const handleAddAdmin = async (e) => {
+  // ── 8. Admin Access Handlers (Stored in Firestore) ──
+  const handleCreateAdmin = async (e) => {
     e.preventDefault()
     setAdminAccessFeedback({ text: '', type: '' })
 
-    if (!newAdminEmail.trim()) {
+    const email = newAdminEmail.trim().toLowerCase()
+    const password = newAdminPassword.trim()
+
+    if (!email) {
       setAdminAccessFeedback({ text: 'Please enter an admin email address', type: 'error' })
       return
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(newAdminEmail.trim())) {
+    if (!emailRegex.test(email)) {
       setAdminAccessFeedback({ text: 'Please enter a valid email format', type: 'error' })
       return
     }
-    if (!newAdminPassword.trim()) {
+    if (!password) {
       setAdminAccessFeedback({ text: 'Please enter a password for this admin', type: 'error' })
       return
     }
 
     setIsSubmittingAdmin(true)
     try {
-      const res = await fetch('/api/admin-users', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: newAdminEmail.trim().toLowerCase(),
-          password: newAdminPassword.trim()
-        })
-      })
-      const json = await res.json()
-      if (json.success) {
-        setAdminAccessFeedback({
-          text: `✓ Admin access granted for ${newAdminEmail.trim().toLowerCase()}!`,
-          type: 'success'
-        })
-        setNewAdminEmail('')
-        setNewAdminPassword('')
-        fetchAdminUsers()
-      } else {
-        setAdminAccessFeedback({ text: json.error || 'Failed to add admin', type: 'error' })
+      const exists = adminUsers.some((u) => u.email.toLowerCase() === email)
+      if (exists) {
+        setAdminAccessFeedback({ text: 'An admin with this email already exists', type: 'error' })
+        setIsSubmittingAdmin(false)
+        return
       }
-    } catch (err) {
+
       const newUser = {
         id: 'admin_' + Date.now(),
-        email: newAdminEmail.trim().toLowerCase(),
-        password: newAdminPassword.trim(),
+        email,
+        password,
         role: 'Admin',
         createdAt: new Date().toISOString()
       }
+
       const updated = [...adminUsers, newUser]
+      await saveAdminUsersToFirestore(updated)
       setAdminUsers(updated)
-      localStorage.setItem('hackvally_admin_users', JSON.stringify(updated))
+
       setAdminAccessFeedback({
-        text: `✓ Admin access granted locally for ${newUser.email}!`,
+        text: `✓ Admin access granted for ${email}!`,
         type: 'success'
       })
       setNewAdminEmail('')
       setNewAdminPassword('')
+    } catch (err) {
+      setAdminAccessFeedback({ text: 'Error adding admin: ' + err.message, type: 'error' })
     } finally {
       setIsSubmittingAdmin(false)
     }
@@ -468,105 +584,58 @@ export default function AdminPage({ onNavigate }) {
     if (!confirmDelete) return
 
     try {
-      const res = await fetch('/api/admin-users', {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: user.id })
+      const updated = adminUsers.filter((u) => u.id !== user.id)
+      await saveAdminUsersToFirestore(updated)
+      setAdminUsers(updated)
+      setAdminAccessFeedback({
+        text: `✓ Admin access revoked for ${user.email}`,
+        type: 'success'
       })
-      const json = await res.json()
-      if (json.success) {
-        setAdminAccessFeedback({
-          text: `✓ Admin access revoked for ${user.email}`,
-          type: 'success'
-        })
-        fetchAdminUsers()
-      } else {
-        alert(json.error || 'Failed to remove admin')
-      }
     } catch (err) {
-      try {
-        await fetch('/api/admin-users/delete', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ id: user.id })
-        })
-        fetchAdminUsers()
-      } catch (e2) {
-        const filtered = adminUsers.filter((u) => u.id !== user.id)
-        setAdminUsers(filtered)
-        localStorage.setItem('hackvally_admin_users', JSON.stringify(filtered))
-      }
+      alert('Error removing admin: ' + err.message)
     }
   }
 
-  const handleOpenEdit = (user) => {
+  const handleStartEditAdmin = (user) => {
     setEditingAdmin(user)
     setEditEmail(user.email)
-    setEditPassword(user.password || '')
+    setEditPassword(user.password)
+    setAdminAccessFeedback({ text: '', type: '' })
   }
 
-  const handleSaveEdit = async (e) => {
+  const handleSaveEditAdmin = async (e) => {
     e.preventDefault()
-    if (!editingAdmin) return
-    if (!editEmail.trim()) {
-      alert('Email cannot be empty')
+    if (!editEmail.trim() || !editPassword.trim()) {
+      alert('Email and password cannot be empty')
       return
     }
 
     setIsSavingEdit(true)
     try {
-      const res = await fetch('/api/admin-users', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: editingAdmin.id,
-          email: editEmail.trim().toLowerCase(),
-          password: editPassword.trim()
-        })
+      const updated = adminUsers.map((u) =>
+        u.id === editingAdmin.id
+          ? { ...u, email: editEmail.trim().toLowerCase(), password: editPassword.trim(), updatedAt: new Date().toISOString() }
+          : u
+      )
+      await saveAdminUsersToFirestore(updated)
+      setAdminUsers(updated)
+      setEditingAdmin(null)
+      setAdminAccessFeedback({
+        text: `✓ Admin account updated successfully!`,
+        type: 'success'
       })
-      const json = await res.json()
-      if (json.success) {
-        setEditingAdmin(null)
-        setAdminAccessFeedback({
-          text: `✓ Updated access details for ${editEmail.trim().toLowerCase()}`,
-          type: 'success'
-        })
-        fetchAdminUsers()
-      } else {
-        alert(json.error || 'Failed to update admin')
-      }
     } catch (err) {
-      try {
-        await fetch('/api/admin-users/edit', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            id: editingAdmin.id,
-            email: editEmail.trim().toLowerCase(),
-            password: editPassword.trim()
-          })
-        })
-        setEditingAdmin(null)
-        fetchAdminUsers()
-      } catch (e2) {
-        const updated = adminUsers.map((u) =>
-          u.id === editingAdmin.id
-            ? { ...u, email: editEmail.trim().toLowerCase(), password: editPassword.trim() }
-            : u
-        )
-        setAdminUsers(updated)
-        localStorage.setItem('hackvally_admin_users', JSON.stringify(updated))
-        setEditingAdmin(null)
-      }
+      alert('Error updating admin: ' + err.message)
     } finally {
       setIsSavingEdit(false)
     }
   }
 
-  // ── 7. Export to Excel / CSV (Without Accommodation) ──
-  const handleExportCSV = () => {
-    if (teams.length === 0) {
-      alert('No teams registered yet to export.')
+  // ── 9. Export to CSV (Formatted for Excel) ──
+  const handleExportCsv = () => {
+    const listToExport = activeTeams
+    if (listToExport.length === 0) {
+      alert('No teams available to export.')
       return
     }
 
@@ -608,7 +677,7 @@ export default function AdminPage({ onNavigate }) {
       return `"${str}"`
     }
 
-    const rows = teams.map((t) => {
+    const rows = listToExport.map((t) => {
       const m1 = t.members && t.members[0] ? t.members[0] : {}
       const m2 = t.members && t.members[1] ? t.members[1] : {}
       const m3 = t.members && t.members[2] ? t.members[2] : {}
@@ -658,8 +727,13 @@ export default function AdminPage({ onNavigate }) {
     URL.revokeObjectURL(url)
   }
 
-  // Filtering teams
-  const filteredTeams = teams.filter((team) => {
+  // Active teams (NOT in Team Bin)
+  const activeTeams = teams.filter((t) => t.status !== 'Rejected')
+  // Rejected teams (in Team Bin)
+  const rejectedTeams = teams.filter((t) => t.status === 'Rejected')
+
+  // Filtering active teams
+  const filteredTeams = activeTeams.filter((team) => {
     if (domainFilter !== 'All Domains' && team.domain !== domainFilter) {
       return false
     }
@@ -671,69 +745,83 @@ export default function AdminPage({ onNavigate }) {
     return true
   })
 
-  // ── 8. Render Lock Screens (Two-Tier Auth) ──
+  // ── 10. Render Lock Screens (Two-Tier Auth) ──
 
   // Tier 1: PIN Screen
   if (!isPinVerified) {
     return (
       <div className="admin-lock-screen">
         <div className="admin-lock-card">
-          <div className="lock-icon-wrap">🔒</div>
-          <h1 className="lock-title">HACK VALLY ADMIN</h1>
-          <p className="lock-sub">Step 1: Enter your security PIN to access the management portal.</p>
+          <div className="admin-lock-icon-wrap">
+            <span style={{ fontSize: '30px' }}>🔒</span>
+          </div>
+
+          <h2 className="admin-lock-title">Admin Access Required</h2>
+          <p className="admin-lock-sub">
+            Please enter the designated security PIN to verify your authorization before accessing the administrator panel.
+          </p>
 
           <form onSubmit={handleVerifyPin}>
-            <input
-              type="password"
-              className="lock-pin-input"
-              placeholder="Enter PIN"
-              value={pinInput}
-              onChange={(e) => {
-                setPinInput(e.target.value)
-                setPinError('')
-              }}
-              autoFocus
-            />
+            <div className="admin-pin-input-wrap">
+              <input
+                type="password"
+                className="admin-pin-field"
+                placeholder="Enter Security PIN..."
+                value={pinInput}
+                onChange={(e) => {
+                  setPinInput(e.target.value)
+                  setPinError('')
+                }}
+                autoFocus
+              />
+            </div>
 
-            <button type="submit" className="btn-unlock" disabled={isVerifyingPin}>
-              {isVerifyingPin ? 'Verifying…' : 'Unlock Panel →'}
+            <button type="submit" className="btn-unlock-admin" disabled={isVerifyingPin}>
+              {isVerifyingPin ? 'Verifying PIN…' : 'Unlock Admin Panel'}
             </button>
           </form>
 
           {pinError && <div className="lock-error-text">⚠ {pinError}</div>}
+
+          <div style={{ marginTop: '24px', paddingTop: '16px', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+            <button
+              type="button"
+              className="btn-back-to-pin"
+              onClick={() => {
+                if (onNavigate) onNavigate('landing')
+                else window.location.hash = '#home'
+              }}
+            >
+              ← Back to Hack Vally Home
+            </button>
+          </div>
         </div>
       </div>
     )
   }
 
   // Tier 2: Email & Password Login Screen
-  if (isPinVerified && !isAuthenticated) {
+  if (!isAuthenticated) {
     return (
       <div className="admin-lock-screen">
         <div className="admin-lock-card">
-          <div
-            className="lock-icon-wrap"
-            style={{
-              background: 'rgba(20, 184, 166, 0.12)',
-              borderColor: 'rgba(20, 184, 166, 0.35)',
-              color: '#2dd4bf'
-            }}
-          >
-            🛡️
+          <div className="admin-lock-icon-wrap" style={{ borderColor: 'rgba(20, 184, 166, 0.4)', background: 'rgba(20, 184, 166, 0.12)' }}>
+            <span style={{ fontSize: '30px' }}>🛡️</span>
           </div>
-          <h1 className="lock-title">ADMIN LOGIN</h1>
-          <p className="lock-sub">
-            Step 2: Enter authorized administrator email and password to access the portal.
+
+          <h2 className="admin-lock-title">Admin Login</h2>
+          <p className="admin-lock-sub">
+            PIN verified. Now enter your authorized administrator email and password to proceed.
           </p>
 
           <form onSubmit={handleAdminLogin}>
-            <div className="admin-login-inputs-wrap">
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', marginBottom: '18px', textAlign: 'left' }}>
               <div>
-                <label className="admin-login-field-lbl">Admin Email</label>
+                <label className="admin-login-field-lbl">Admin Email Address</label>
                 <input
                   type="email"
                   className="admin-login-input"
-                  placeholder="admin@example.com"
+                  placeholder="name@gmail.com"
                   value={loginEmail}
                   onChange={(e) => {
                     setLoginEmail(e.target.value)
@@ -782,7 +870,7 @@ export default function AdminPage({ onNavigate }) {
     )
   }
 
-  // ── 9. Render Main Admin Panel ──
+  // ── 11. Render Main Admin Panel ──
   return (
     <div className="admin-container">
       {/* ── Left Sidebar ── */}
@@ -816,7 +904,7 @@ export default function AdminPage({ onNavigate }) {
           </div>
         </div>
 
-        {/* Navigation Menu (Registered Teams, PIN Settings, Admin Access) */}
+        {/* Navigation Menu */}
         <nav className="admin-nav">
           <button
             type="button"
@@ -825,6 +913,18 @@ export default function AdminPage({ onNavigate }) {
           >
             <span className="admin-nav-icon">📋</span>
             <span>Registered Teams</span>
+          </button>
+
+          <button
+            type="button"
+            className={`admin-nav-item ${activeTab === 'bin' ? 'active' : ''}`}
+            onClick={() => setActiveTab('bin')}
+          >
+            <span className="admin-nav-icon">🗑️</span>
+            <span>Team Bin</span>
+            {rejectedTeams.length > 0 && (
+              <span className="admin-nav-badge">{rejectedTeams.length}</span>
+            )}
           </button>
 
           <button
@@ -858,39 +958,24 @@ export default function AdminPage({ onNavigate }) {
           >
             ← Exit to Website
           </button>
+
           <button
             type="button"
-            className="admin-exit-btn"
-            style={{ color: '#f87171' }}
+            className="admin-lock-btn"
             onClick={handleLockPanel}
+            title="Lock admin session"
           >
-            Lock Panel
+            🔒 Lock Panel
           </button>
         </div>
       </aside>
 
-      {/* ── Main Content View ── */}
+      {/* ── Main Content Area ── */}
       <main className="admin-main">
-        {/* Toast Alert */}
+        {/* Toast Feedback Notification */}
         {toastMessage && (
-          <div
-            style={{
-              position: 'fixed',
-              top: '24px',
-              right: '24px',
-              zIndex: 9999999,
-              background: '#042f2e',
-              border: '1px solid #14b8a6',
-              color: '#2dd4bf',
-              padding: '12px 20px',
-              borderRadius: '10px',
-              boxShadow: '0 10px 30px rgba(0,0,0,0.8)',
-              fontWeight: 600,
-              fontSize: '14px',
-              animation: 'adminFadeIn 0.3s ease'
-            }}
-          >
-            {toastMessage}
+          <div className="admin-toast-banner">
+            <span>{toastMessage}</span>
           </div>
         )}
 
@@ -898,54 +983,73 @@ export default function AdminPage({ onNavigate }) {
         {activeTab === 'teams' && (
           <div>
             <div className="admin-top-bar">
-              <h1 className="admin-page-title">
-                <span>📋</span> Registered Teams
-              </h1>
-              <span className="admin-sync-tag">
-                💾 Data saved &bull; syncs everywhere
-              </span>
-            </div>
+              <div>
+                <h1 className="admin-page-title">
+                  <span>📋</span> Registered Teams ({activeTeams.length})
+                </h1>
+                <p className="admin-page-subtitle">
+                  Review submitted registrations, verify UPI transactions, and approve entries.
+                </p>
+              </div>
 
-            <div className="admin-controls-row">
-              <span className="admin-count-label">
-                All Registered Teams ({filteredTeams.length} / {teams.length})
-              </span>
-
-              <div className="admin-filters-group">
-                <select
-                  className="admin-select"
-                  value={domainFilter}
-                  onChange={(e) => setDomainFilter(e.target.value)}
-                >
-                  <option value="All Domains">All Domains</option>
-                  <option value="Full Stack">Full Stack</option>
-                  <option value="AI / ML">AI / ML</option>
-                  <option value="Cybersecurity">Cybersecurity</option>
-                  <option value="Cloud & DevOps">Cloud & DevOps</option>
-                  <option value="Open Innovation">Open Innovation</option>
-                </select>
-
-                <select
-                  className="admin-select"
-                  value={statusFilter}
-                  onChange={(e) => setStatusFilter(e.target.value)}
-                >
-                  <option value="All Status">All Status</option>
-                  <option value="Pending">Pending</option>
-                  <option value="Approved">Approved</option>
-                </select>
-
+              <div className="admin-top-actions">
                 <button
                   type="button"
-                  className="admin-export-btn"
-                  onClick={handleExportCSV}
+                  className="btn-export-csv"
+                  onClick={handleExportCsv}
+                  title="Download Excel / CSV spreadsheet"
                 >
-                  <span>📊</span> Export CSV
+                  <span>📥</span> Export CSV
+                </button>
+                <button
+                  type="button"
+                  className="btn-refresh-teams"
+                  onClick={fetchTeams}
+                  title="Refresh registrations from Cloud Firestore"
+                >
+                  <span>🔄</span> Refresh
                 </button>
               </div>
             </div>
 
-            <div className="admin-table-card">
+            {/* Filter Bar */}
+            <div className="admin-filter-bar">
+              <div className="filter-group">
+                <label className="filter-label">Domain:</label>
+                <select
+                  className="filter-select"
+                  value={domainFilter}
+                  onChange={(e) => setDomainFilter(e.target.value)}
+                >
+                  <option>All Domains</option>
+                  <option>Full Stack</option>
+                  <option>AI / ML</option>
+                  <option>Cybersecurity</option>
+                  <option>Cloud & DevOps</option>
+                  <option>Open Innovation</option>
+                </select>
+              </div>
+
+              <div className="filter-group">
+                <label className="filter-label">Status:</label>
+                <select
+                  className="filter-select"
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                >
+                  <option>All Status</option>
+                  <option>Approved</option>
+                  <option>Pending</option>
+                </select>
+              </div>
+
+              <div className="filter-stats">
+                Showing {filteredTeams.length} of {activeTeams.length} registered teams
+              </div>
+            </div>
+
+            {/* Teams Table */}
+            <div className="admin-table-container">
               <table className="admin-table">
                 <thead>
                   <tr>
@@ -958,12 +1062,13 @@ export default function AdminPage({ onNavigate }) {
                     <th>Payment</th>
                     <th>Status</th>
                     <th>Date</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   {filteredTeams.length === 0 ? (
                     <tr>
-                      <td colSpan="9" className="no-teams-empty">
+                      <td colSpan="10" className="no-teams-empty">
                         No registered teams found matching filters.
                       </td>
                     </tr>
@@ -974,7 +1079,10 @@ export default function AdminPage({ onNavigate }) {
 
                       return (
                         <tr key={t.registrationId || idx}>
-                          <td className="team-name-cell">{t.teamName}</td>
+                          <td className="team-name-cell">
+                            <div>{t.teamName}</div>
+                            <span style={{ fontSize: '11px', color: '#64748b' }}>#{t.registrationId}</span>
+                          </td>
                           <td className="domain-cell">{t.domain}</td>
                           <td>
                             <div className="leader-cell">
@@ -1002,14 +1110,9 @@ export default function AdminPage({ onNavigate }) {
                                 ✓ Approved
                               </span>
                             ) : (
-                              <button
-                                type="button"
-                                className="btn-approve-action"
-                                disabled={isApproving}
-                                onClick={() => handleApproveTeam(t)}
-                              >
-                                {isApproving ? 'Approving…' : '⚡ Approve'}
-                              </button>
+                              <span style={{ color: '#f59e0b', fontSize: '12px', fontWeight: 600 }}>
+                                ⏳ Pending
+                              </span>
                             )}
                           </td>
                           <td className="date-cell">
@@ -1017,6 +1120,32 @@ export default function AdminPage({ onNavigate }) {
                               (t.submittedAt
                                 ? new Date(t.submittedAt).toLocaleDateString()
                                 : '—')}
+                          </td>
+                          <td>
+                            <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                              {!isApproved ? (
+                                <button
+                                  type="button"
+                                  className="btn-approve-action"
+                                  disabled={isApproving}
+                                  onClick={() => handleApproveTeam(t)}
+                                >
+                                  {isApproving ? 'Approving…' : '⚡ Approve'}
+                                </button>
+                              ) : (
+                                <span style={{ fontSize: '11.5px', color: '#10b981', fontWeight: 700 }}>
+                                  ✓ Verified
+                                </span>
+                              )}
+                              <button
+                                type="button"
+                                className="btn-reject-action"
+                                onClick={() => handleRejectTeam(t)}
+                                title="Reject team and move to Team Bin"
+                              >
+                                🚫 Reject
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       )
@@ -1028,22 +1157,241 @@ export default function AdminPage({ onNavigate }) {
           </div>
         )}
 
-        {/* TAB 2: 🔑 PIN SETTINGS */}
+        {/* TAB 2: 🗑️ TEAM BIN (DELETE TEAM) */}
+        {activeTab === 'bin' && (
+          <div>
+            {!isBinUnlocked ? (
+              /* Security Gate: Asks for Team Bin PIN (Default: 'jcer') */
+              <div className="bin-lock-card">
+                <div className="bin-lock-icon">🗑️</div>
+                <h2 className="bin-lock-title">Team Bin Security Gate</h2>
+                <p className="bin-lock-sub">
+                  Enter the designated Team Bin PIN to view, restore, or permanently delete rejected teams.
+                </p>
+
+                <form onSubmit={handleVerifyBinPin}>
+                  <div className="admin-pin-input-wrap">
+                    <input
+                      type="password"
+                      className="admin-pin-field"
+                      placeholder="Enter Team Bin PIN..."
+                      value={binPinInput}
+                      onChange={(e) => {
+                        setBinPinInput(e.target.value)
+                        setBinPinError('')
+                      }}
+                      autoFocus
+                    />
+                  </div>
+
+                  <button type="submit" className="btn-unlock-bin" disabled={isVerifyingBinPin}>
+                    {isVerifyingBinPin ? 'Verifying PIN…' : 'Unlock Team Bin'}
+                  </button>
+                </form>
+
+                {binPinError && <div className="lock-error-text">⚠ {binPinError}</div>}
+              </div>
+            ) : (
+              /* Unlocked Team Bin View */
+              <div>
+                <div className="team-bin-top-row">
+                  <div>
+                    <h1 className="admin-page-title" style={{ color: '#f87171' }}>
+                      <span>🗑️</span> Team Bin (Delete Team) &bull; {rejectedTeams.length} Teams
+                    </h1>
+                    <p className="admin-page-subtitle">
+                      Teams rejected from All Registered Teams are placed here. Deleting a team here will permanently delete it from Cloud Firestore.
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    className="btn-lock-bin"
+                    onClick={handleLockBin}
+                  >
+                    🔒 Lock Bin
+                  </button>
+                </div>
+
+                {/* Team Bin PIN Settings Card */}
+                <div className="pin-settings-card" style={{ borderColor: 'rgba(239, 68, 68, 0.35)', marginBottom: '32px' }}>
+                  <h2 className="pin-card-title" style={{ color: '#fca5a5' }}>
+                    <span>🔑</span> Team Bin PIN Settings
+                  </h2>
+                  <p className="pin-card-sub">
+                    Configure the access PIN required to unlock this Team Bin. Default PIN is <strong style={{ color: '#fca5a5' }}>jcer</strong>.
+                  </p>
+
+                  {binPinFeedback.text && (
+                    <div className={`pin-feedback-msg ${binPinFeedback.type}`}>
+                      {binPinFeedback.text}
+                    </div>
+                  )}
+
+                  {/* Default Backup PIN Row & Toggle Switch */}
+                  <div className="default-pin-toggle-row">
+                    <div className="default-pin-text-wrap">
+                      <span className="default-pin-label">
+                        Default Backup PIN:
+                        <span className="default-pin-highlight" style={{ color: '#fca5a5' }}>jcer</span>
+                      </span>
+                      <span className="default-pin-sub">
+                        {binDefaultPinEnabled
+                          ? 'Backup PIN is ON (Green). Anyone with "jcer" can also access.'
+                          : 'Backup PIN is OFF (Red). Disabled! Only your custom Bin PIN can unlock.'}
+                      </span>
+                    </div>
+
+                    <label className="switch-control" title="Toggle Default Backup PIN">
+                      <input
+                        type="checkbox"
+                        checked={binDefaultPinEnabled}
+                        onChange={handleToggleBinDefaultPin}
+                      />
+                      <span className="switch-slider" />
+                    </label>
+                  </div>
+
+                  {/* Form to update Bin Access PIN */}
+                  <form onSubmit={handleUpdateBinPin}>
+                    <div className="pin-form-group">
+                      <label className="pin-form-label">New Bin PIN</label>
+                      <input
+                        type="password"
+                        className="pin-form-input"
+                        placeholder="Enter new Bin PIN..."
+                        value={newBinPin}
+                        onChange={(e) => setNewBinPin(e.target.value)}
+                      />
+                    </div>
+
+                    <div className="pin-form-group">
+                      <label className="pin-form-label">Confirm New Bin PIN</label>
+                      <input
+                        type="password"
+                        className="pin-form-input"
+                        placeholder="Confirm new Bin PIN..."
+                        value={confirmBinPin}
+                        onChange={(e) => setConfirmBinPin(e.target.value)}
+                      />
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="btn-update-pin"
+                      style={{ background: 'linear-gradient(135deg, #ef4444 0%, #b91c1c 100%)' }}
+                    >
+                      <span>🔑</span> Update Bin PIN
+                    </button>
+                  </form>
+                </div>
+
+                {/* Rejected Teams Table */}
+                <div className="admin-table-container">
+                  <table className="admin-table">
+                    <thead>
+                      <tr>
+                        <th>Team Name</th>
+                        <th>Domain</th>
+                        <th>Leader</th>
+                        <th>Size</th>
+                        <th>College</th>
+                        <th>Transaction ID</th>
+                        <th>Screenshot</th>
+                        <th>Status</th>
+                        <th>Rejected Date</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {rejectedTeams.length === 0 ? (
+                        <tr>
+                          <td colSpan="10" className="no-teams-empty">
+                            No teams in bin. Teams rejected from All Registered Teams will appear here.
+                          </td>
+                        </tr>
+                      ) : (
+                        rejectedTeams.map((t, idx) => {
+                          const isDeleting = deletingTeamId === t.registrationId
+
+                          return (
+                            <tr key={t.registrationId || idx}>
+                              <td className="team-name-cell">
+                                <div style={{ color: '#fca5a5' }}>{t.teamName}</div>
+                                <span style={{ fontSize: '11px', color: '#64748b' }}>#{t.registrationId}</span>
+                              </td>
+                              <td className="domain-cell">{t.domain}</td>
+                              <td>
+                                <div className="leader-cell">
+                                  <span className="leader-name">{t.leaderName}</span>
+                                  <span className="leader-email">{t.leaderEmail}</span>
+                                </div>
+                              </td>
+                              <td className="size-cell">{t.teamSize || 2}</td>
+                              <td className="college-cell" title={t.institute}>
+                                {t.institute}
+                              </td>
+                              <td className="utr-cell">{t.utr || '—'}</td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="btn-view-image"
+                                  onClick={() => setSelectedImageTeam(t)}
+                                >
+                                  <span>🖼️</span> View Image
+                                </button>
+                              </td>
+                              <td>
+                                <span className="status-badge-rejected">
+                                  🚫 Rejected
+                                </span>
+                              </td>
+                              <td className="date-cell">
+                                {t.rejectedAt
+                                  ? new Date(t.rejectedAt).toLocaleDateString()
+                                  : t.submittedAt
+                                  ? new Date(t.submittedAt).toLocaleDateString()
+                                  : '—'}
+                              </td>
+                              <td>
+                                <button
+                                  type="button"
+                                  className="btn-delete-team-action"
+                                  disabled={isDeleting}
+                                  onClick={() => handlePermanentlyDeleteTeam(t)}
+                                  title="Permanently delete from Cloud Firestore"
+                                >
+                                  {isDeleting ? 'Deleting…' : '🗑️ Delete Team'}
+                                </button>
+                              </td>
+                            </tr>
+                          )
+                        })
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* TAB 3: 🔑 PIN SETTINGS (ADMIN PANEL PIN) */}
         {activeTab === 'pin' && (
           <div>
             <div className="admin-top-bar">
               <h1 className="admin-page-title">
-                <span>🔑</span> PIN Settings
+                <span>🔑</span> Admin Panel PIN Settings
               </h1>
               <span className="admin-sync-tag">
-                💾 Data saved &bull; syncs everywhere
+                💾 Stored in Cloud Firestore &bull; syncs everywhere
               </span>
             </div>
 
             <div className="pin-settings-card">
-              <h2 className="pin-card-title">Change Admin PIN</h2>
+              <h2 className="pin-card-title">Change Main Admin PIN</h2>
               <p className="pin-card-sub">
-                The PIN is stored securely and is required before accessing the admin panel.
+                This PIN is stored securely in Cloud Firestore and is required to unlock the Admin Panel.
               </p>
 
               {pinFeedback.text && (
@@ -1061,7 +1409,7 @@ export default function AdminPage({ onNavigate }) {
                   </span>
                   <span className="default-pin-sub">
                     {defaultPinEnabled
-                      ? 'Backup PIN is ON (Green). Anyone with jcerbhackvally can also access.'
+                      ? 'Backup PIN is ON (Green). Anyone with "jcerbhackvally" can also access.'
                       : 'Backup PIN is OFF (Red). Disabled! Only your custom Access PIN can unlock.'}
                   </span>
                 </div>
@@ -1079,7 +1427,7 @@ export default function AdminPage({ onNavigate }) {
               {/* Form to update Access PIN */}
               <form onSubmit={handleUpdatePin}>
                 <div className="pin-form-group">
-                  <label className="pin-form-label">New PIN</label>
+                  <label className="pin-form-label">New Admin PIN</label>
                   <input
                     type="password"
                     className="pin-form-input"
@@ -1090,7 +1438,7 @@ export default function AdminPage({ onNavigate }) {
                 </div>
 
                 <div className="pin-form-group">
-                  <label className="pin-form-label">Confirm New PIN</label>
+                  <label className="pin-form-label">Confirm New Admin PIN</label>
                   <input
                     type="password"
                     className="pin-form-input"
@@ -1101,14 +1449,14 @@ export default function AdminPage({ onNavigate }) {
                 </div>
 
                 <button type="submit" className="btn-update-pin">
-                  <span>🔑</span> Update PIN
+                  <span>🔑</span> Update Admin PIN
                 </button>
               </form>
             </div>
           </div>
         )}
 
-        {/* TAB 3: 🛡️ ADMIN ACCESS MANAGEMENT */}
+        {/* TAB 4: 🛡️ ADMIN ACCESS MANAGEMENT (STORED IN FIRESTORE) */}
         {activeTab === 'access' && (
           <div>
             <div className="admin-top-bar">
@@ -1116,42 +1464,42 @@ export default function AdminPage({ onNavigate }) {
                 <span>🛡️</span> Admin Access Management
               </h1>
               <span className="admin-sync-tag">
-                💾 Authorized admins only &bull; syncs everywhere
+                💾 Stored in Cloud Firestore &bull; syncs everywhere
               </span>
             </div>
 
-            {adminAccessFeedback.text && (
-              <div className={`pin-feedback-msg ${adminAccessFeedback.type}`}>
-                {adminAccessFeedback.text}
-              </div>
-            )}
-
-            <div className="admin-access-grid">
-              {/* Form Card: Grant Admin Access */}
-              <div className="admin-access-card">
-                <h2 className="admin-access-title">Grant Admin Access</h2>
-                <p className="admin-access-sub">
-                  Add authorized administrator emails and passwords. Only emails submitted here will be allowed access to the admin portal.
+            <div className="admin-access-layout">
+              {/* Left Column: Form to Grant New Admin Access */}
+              <div className="admin-access-form-card">
+                <h2 className="admin-card-header">Grant Admin Access</h2>
+                <p className="admin-card-subtitle">
+                  Create new credentials. Only emails listed here will be granted access to the admin dashboard.
                 </p>
 
-                <form className="admin-access-form" onSubmit={handleAddAdmin}>
-                  <div className="pin-form-group">
-                    <label className="pin-form-label">Admin Email Address</label>
+                {adminAccessFeedback.text && (
+                  <div className={`admin-access-feedback ${adminAccessFeedback.type}`}>
+                    {adminAccessFeedback.text}
+                  </div>
+                )}
+
+                <form onSubmit={handleCreateAdmin}>
+                  <div className="admin-input-group">
+                    <label className="admin-input-label">Admin Email Address</label>
                     <input
                       type="email"
-                      className="pin-form-input"
-                      placeholder="e.g. organizer@example.com"
+                      className="admin-text-field"
+                      placeholder="e.g. coordinator@gmail.com"
                       value={newAdminEmail}
                       onChange={(e) => setNewAdminEmail(e.target.value)}
                     />
                   </div>
 
-                  <div className="pin-form-group">
-                    <label className="pin-form-label">Password</label>
+                  <div className="admin-input-group">
+                    <label className="admin-input-label">Admin Password</label>
                     <input
                       type="password"
-                      className="pin-form-input"
-                      placeholder="Assign access password"
+                      className="admin-text-field"
+                      placeholder="Create secure password"
                       value={newAdminPassword}
                       onChange={(e) => setNewAdminPassword(e.target.value)}
                     />
@@ -1162,183 +1510,160 @@ export default function AdminPage({ onNavigate }) {
                     className="btn-grant-access"
                     disabled={isSubmittingAdmin}
                   >
-                    <span>🛡️</span> {isSubmittingAdmin ? 'Granting Access…' : 'Submit'}
+                    {isSubmittingAdmin ? 'Granting Access…' : '✓ Submit & Grant Access'}
                   </button>
                 </form>
               </div>
 
-              {/* List Card: Authorized Admin Accounts */}
-              <div className="admin-access-card">
-                <h2 className="admin-access-title">
-                  Authorized Admin Accounts ({adminUsers.length})
-                </h2>
-                <p className="admin-access-sub">
-                  All accounts currently permitted to log in to the admin panel.
-                </p>
+              {/* Right Column: List of Authorized Admin Users */}
+              <div className="admin-users-list-card">
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                  <h2 className="admin-card-header" style={{ margin: 0 }}>
+                    Authorized Admins ({adminUsers.length})
+                  </h2>
+                  <span style={{ fontSize: '11.5px', color: '#10b981', fontWeight: 600 }}>
+                    ● Active Access
+                  </span>
+                </div>
 
                 <div className="admin-users-list">
-                  {adminUsers.length === 0 ? (
-                    <div style={{ color: '#94a3b8', fontSize: '13.5px', textAlign: 'center', padding: '20px' }}>
-                      No authorized admin accounts found.
-                    </div>
-                  ) : (
-                    adminUsers.map((user) => (
-                      <div key={user.id || user.email} className="admin-user-card">
-                        <div className="admin-user-left">
-                          <div className="admin-user-avatar">
-                            {user.email ? user.email[0].toUpperCase() : 'A'}
-                          </div>
-                          <div className="admin-user-details">
-                            <span className="admin-user-email">{user.email}</span>
-                            <div className="admin-user-meta">
-                              <span className="admin-role-badge">{user.role || 'Admin'}</span>
-                              <span>&bull;</span>
-                              <span>Password: ••••••••</span>
-                            </div>
-                          </div>
+                  {adminUsers.map((user) => (
+                    <div key={user.id} className="admin-user-row">
+                      <div className="admin-user-details">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <span className="admin-user-email">{user.email}</span>
+                          <span className="admin-role-badge">{user.role || 'Admin'}</span>
                         </div>
-
-                        <div className="admin-actions-group">
-                          <button
-                            type="button"
-                            className="btn-edit-admin"
-                            title="Edit email or password"
-                            onClick={() => handleOpenEdit(user)}
-                          >
-                            <span>✏️</span> Edit
-                          </button>
-                          <button
-                            type="button"
-                            className="btn-remove-admin"
-                            title="Revoke admin access"
-                            onClick={() => handleRemoveAdmin(user)}
-                          >
-                            <span>🗑️</span> Remove
-                          </button>
-                        </div>
+                        <span className="admin-user-meta">
+                          Password: {user.password ? '•'.repeat(Math.min(user.password.length, 10)) : '••••••••'} &bull; Added:{' '}
+                          {user.createdAt ? new Date(user.createdAt).toLocaleDateString() : 'N/A'}
+                        </span>
                       </div>
-                    ))
-                  )}
+
+                      <div className="admin-user-actions">
+                        <button
+                          type="button"
+                          className="btn-edit-admin"
+                          onClick={() => handleStartEditAdmin(user)}
+                          title="Edit email or password"
+                        >
+                          ✎ Edit
+                        </button>
+
+                        <button
+                          type="button"
+                          className="btn-remove-admin"
+                          onClick={() => handleRemoveAdmin(user)}
+                          title="Revoke access"
+                        >
+                          ✕ Remove
+                        </button>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         )}
-      </main>
 
-      {/* ── EDIT ADMIN MODAL ── */}
-      {editingAdmin && (
-        <div
-          className="admin-modal-overlay"
-          onClick={() => setEditingAdmin(null)}
-        >
-          <div
-            className="admin-modal-edit-card"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="admin-access-title" style={{ marginBottom: '8px' }}>
-              Edit Admin Access
-            </h2>
-            <p className="admin-access-sub" style={{ marginBottom: '18px' }}>
-              Update the authorized email or reset the password for this admin.
-            </p>
+        {/* ── Edit Admin Modal ── */}
+        {editingAdmin && (
+          <div className="admin-modal-overlay" onClick={() => setEditingAdmin(null)}>
+            <div className="edit-admin-modal-card" onClick={(e) => e.stopPropagation()}>
+              <h2 style={{ color: '#ffffff', margin: '0 0 8px', fontSize: '18px', fontWeight: 800 }}>
+                Edit Admin Credentials
+              </h2>
+              <p style={{ color: '#94a3b8', fontSize: '13px', margin: '0 0 20px' }}>
+                Update login credentials for {editingAdmin.email}.
+              </p>
 
-            <form onSubmit={handleSaveEdit}>
-              <div className="pin-form-group">
-                <label className="pin-form-label">Admin Email</label>
-                <input
-                  type="email"
-                  className="pin-form-input"
-                  value={editEmail}
-                  onChange={(e) => setEditEmail(e.target.value)}
-                  required
-                />
-              </div>
+              <form onSubmit={handleSaveEditAdmin}>
+                <div className="admin-input-group">
+                  <label className="admin-input-label">Email Address</label>
+                  <input
+                    type="email"
+                    className="admin-text-field"
+                    value={editEmail}
+                    onChange={(e) => setEditEmail(e.target.value)}
+                    required
+                  />
+                </div>
 
-              <div className="pin-form-group" style={{ marginTop: '12px' }}>
-                <label className="pin-form-label">Password</label>
-                <input
-                  type="text"
-                  className="pin-form-input"
-                  value={editPassword}
-                  placeholder="Enter new or existing password"
-                  onChange={(e) => setEditPassword(e.target.value)}
-                  required
-                />
-              </div>
+                <div className="admin-input-group">
+                  <label className="admin-input-label">Password</label>
+                  <input
+                    type="text"
+                    className="admin-text-field"
+                    value={editPassword}
+                    onChange={(e) => setEditPassword(e.target.value)}
+                    required
+                  />
+                </div>
 
-              <div className="edit-modal-actions">
-                <button
-                  type="button"
-                  className="btn-modal-cancel"
-                  onClick={() => setEditingAdmin(null)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="btn-modal-save"
-                  disabled={isSavingEdit}
-                >
-                  {isSavingEdit ? 'Saving…' : 'Save Changes'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* ── VIEW IMAGE MODAL ── */}
-      {selectedImageTeam && (
-        <div
-          className="admin-modal-overlay"
-          onClick={() => setSelectedImageTeam(null)}
-        >
-          <div
-            className="admin-image-modal-card"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              className="admin-modal-close-circle"
-              onClick={() => setSelectedImageTeam(null)}
-              aria-label="Close image"
-            >
-              &times;
-            </button>
-
-            {selectedImageTeam.paymentScreenshot ? (
-              <img
-                src={selectedImageTeam.paymentScreenshot}
-                alt={`Payment receipt for ${selectedImageTeam.teamName}`}
-                className="admin-screenshot-img"
-              />
-            ) : (
-              <div
-                style={{
-                  padding: '40px 20px',
-                  background: '#0d1821',
-                  borderRadius: '16px',
-                  color: '#94a3b8',
-                  textAlign: 'center',
-                  border: '1px dashed rgba(255,255,255,0.2)'
-                }}
-              >
-                <div style={{ fontSize: '32px', marginBottom: '8px' }}>📸</div>
-                <strong>No screenshot file uploaded</strong>
-                <p style={{ margin: '6px 0 0', fontSize: '13px' }}>
-                  Transaction UTR: {selectedImageTeam.utr || 'N/A'}
-                </p>
-              </div>
-            )}
-
-            <div className="admin-modal-caption">
-              <strong>{selectedImageTeam.teamName}</strong> &bull; UTR:{' '}
-              {selectedImageTeam.utr || 'N/A'} &bull; ₹1000
+                <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+                  <button
+                    type="button"
+                    className="btn-modal-cancel"
+                    onClick={() => setEditingAdmin(null)}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn-modal-save"
+                    disabled={isSavingEdit}
+                  >
+                    {isSavingEdit ? 'Saving…' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {/* ── View Image Modal ── */}
+        {selectedImageTeam && (
+          <div className="admin-modal-overlay" onClick={() => setSelectedImageTeam(null)}>
+            <div
+              className="admin-image-modal-card"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                className="admin-modal-close-btn"
+                onClick={() => setSelectedImageTeam(null)}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+
+              <div className="admin-modal-meta-box">
+                <h3 className="admin-modal-team-name">
+                  {selectedImageTeam.teamName} &bull; Payment Verification
+                </h3>
+                <p className="admin-modal-sub">
+                  UTR: <strong style={{ color: '#5eead4' }}>{selectedImageTeam.utr || 'N/A'}</strong> &bull; Amount: ₹1000 &bull;{' '}
+                  {selectedImageTeam.paymentDate || ''}
+                </p>
+              </div>
+
+              {selectedImageTeam.paymentScreenshot ? (
+                <img
+                  src={selectedImageTeam.paymentScreenshot}
+                  alt={`Payment proof for ${selectedImageTeam.teamName}`}
+                  className="admin-preview-img"
+                />
+              ) : (
+                <div className="admin-no-screenshot-box">
+                  <span style={{ fontSize: '40px', marginBottom: '8px' }}>📷</span>
+                  <p>No screenshot attached with this submission.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </main>
     </div>
   )
 }

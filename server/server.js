@@ -84,7 +84,55 @@ const server = http.createServer((req, res) => {
   })
 })
 
+import { db } from '../src/firebase.js'
+import { collection, onSnapshot, doc, updateDoc } from 'firebase/firestore'
+import { sendRegistrationConfirmation } from './mailer.js'
+
+function initFirestoreEmailWatcher() {
+  console.log('📡 [Firestore Watcher] Active - Monitoring Approved registrations for instant email delivery...')
+  try {
+    const colRef = collection(db, 'registrations')
+    onSnapshot(colRef, (snapshot) => {
+      snapshot.docChanges().forEach(async (change) => {
+        if (change.type === 'added' || change.type === 'modified') {
+          const team = change.doc.data()
+          if (team && team.status === 'Approved' && !team.emailSent && team.leaderEmail) {
+            console.log(`\n📬 [Firestore Watcher] Found Approved team awaiting confirmation email: "${team.teamName}" [${team.registrationId}] -> ${team.leaderEmail}`)
+            
+            try {
+              // Set pending state to avoid duplicate sends
+              await updateDoc(doc(db, 'registrations', team.registrationId), {
+                emailSent: 'sending'
+              })
+
+              const result = await sendRegistrationConfirmation(team)
+              console.log(`✅ [Firestore Watcher] Email delivered successfully to ${team.leaderEmail}! MessageId: ${result.messageId}\n`)
+
+              await updateDoc(doc(db, 'registrations', team.registrationId), {
+                emailSent: true,
+                emailSentAt: new Date().toISOString(),
+                emailMessageId: result.messageId || ''
+              })
+            } catch (mailErr) {
+              console.error(`❌ [Firestore Watcher] Error sending email to ${team.leaderEmail}:`, mailErr.message)
+              await updateDoc(doc(db, 'registrations', team.registrationId), {
+                emailSent: false,
+                emailError: mailErr.message
+              }).catch(() => {})
+            }
+          }
+        }
+      })
+    }, (err) => {
+      console.warn('⚠️ [Firestore Watcher] Listener note:', err.message)
+    })
+  } catch (err) {
+    console.warn('⚠️ [Firestore Watcher] Init note:', err.message)
+  }
+}
+
 server.listen(PORT, () => {
   console.log(`\n🚀 Hack Vally Production Server running on http://localhost:${PORT}`)
-  console.log(`📧 Connected to Gmail SMTP for ${process.env.GMAIL_USER || 'swayamuk1@gmail.com'}\n`)
+  console.log(`📧 Connected to Gmail SMTP for ${process.env.GMAIL_USER || 'swayamuk1@gmail.com'}`)
+  initFirestoreEmailWatcher()
 })

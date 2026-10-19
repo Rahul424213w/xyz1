@@ -1214,3 +1214,161 @@ input:checked + .switch-slider:before {
     padding: 20px 16px;
   }
 }
+
+/* ── Reject & Delete Team Action Buttons ── */
+.btn-reject-action {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.45);
+  color: #f87171;
+  border-radius: 8px;
+  padding: 6px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-reject-action:hover {
+  background: rgba(239, 68, 68, 0.25);
+  color: #ffffff;
+  border-color: #ef4444;
+  box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-delete-team-action {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  color: #ffffff;
+  border: 1px solid rgba(254, 202, 202, 0.2);
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 10px rgba(239, 68, 68, 0.35);
+  white-space: nowrap;
+}
+
+.btn-delete-team-action:hover:not(:disabled) {
+  background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.55);
+  transform: translateY(-1px);
+}
+
+.btn-delete-team-action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Navigation Badge for Team Bin */
+.admin-nav-badge {
+  background: rgba(239, 68, 68, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  border-radius: 12px;
+  padding: 1px 7px;
+  font-size: 11px;
+  font-weight: 700;
+  margin-left: auto;
+}
+
+/* Team Bin Header & Lock Controls */
+.team-bin-top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.btn-lock-bin {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  color: #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.btn-lock-bin:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #fca5a5;
+}
+
+/* Team Bin Security Gate (Locked View) */
+.bin-lock-card {
+  max-width: 480px;
+  margin: 40px auto;
+  background: #0d1520;
+  border: 1px solid rgba(239, 68, 68, 0.35);
+  border-radius: 20px;
+  padding: 36px 32px;
+  text-align: center;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(239, 68, 68, 0.08);
+  animation: adminScaleUp 0.25s ease-out;
+}
+
+.bin-lock-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 30px;
+  margin: 0 auto 18px;
+}
+
+.bin-lock-title {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0 0 8px;
+}
+
+.bin-lock-sub {
+  color: #94a3b8;
+  font-size: 13.5px;
+  line-height: 1.5;
+  margin: 0 0 24px;
+}
+
+.btn-unlock-bin {
+  background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 14px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+}
+
+.btn-unlock-bin:hover {
+  background: linear-gradient(135deg, #f87171 0%, #dc2626 100%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.55);
+}
+

@@ -15,11 +15,16 @@ service cloud.firestore {
       // Allow reading team registrations for admin panel and pass lookup
       allow read: if true;
 
-      // Allow updating registration status (e.g. Approved / Verified)
+      // Allow admin updates (e.g. Approved / Rejected / Verified)
       allow update: if true;
 
-      // Prevent accidental or unauthorized deletion of registrations
-      allow delete: if false;
+      // Allow admin deletion (used in Team Bin permanently delete feature)
+      allow delete: if true;
+    }
+
+    // Config collection for admin pin, bin pin, and admin access users
+    match /config/{configId} {
+      allow read, write: if true;
     }
 
     // Default deny for all other collections

@@ -5,6 +5,8 @@ import {
   getFirestore,
   doc,
   setDoc,
+  getDoc,
+  deleteDoc,
   getDocs,
   collection,
   updateDoc,
@@ -143,7 +145,7 @@ export async function getTeamRegistrationsFromFirestore() {
 }
 
 /**
- * Updates team registration status (e.g. 'Approved') in Firestore
+ * Updates team registration status (e.g. 'Approved', 'Rejected') in Firestore
  */
 export async function updateTeamStatusInFirestore(registrationId, updates = {}) {
   try {
@@ -159,3 +161,164 @@ export async function updateTeamStatusInFirestore(registrationId, updates = {}) 
     return false;
   }
 }
+
+/**
+ * Permanently deletes a team registration from Firestore (Team Bin)
+ */
+export async function deleteTeamFromFirestore(registrationId) {
+  try {
+    const docRef = doc(db, 'registrations', registrationId);
+    await deleteDoc(docRef);
+    console.log(`[Firestore] 🗑️ Permanently deleted team registration: ${registrationId}`);
+    return true;
+  } catch (err) {
+    console.error(`[Firestore] Error deleting team ${registrationId}:`, err);
+    throw err;
+  }
+}
+
+/**
+ * ── Admin Panel PIN (Stored in Cloud Firestore) ──
+ * Document: config/admin_pin
+ * NOTE: Default PIN ('jcerbhackvally') is never saved to the database. Only accessPin & defaultPinEnabled.
+ */
+export async function getAdminPinConfigFromFirestore() {
+  try {
+    const docRef = doc(db, 'config', 'admin_pin');
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      return {
+        accessPin: data.accessPin || 'admin2026',
+        defaultPinEnabled: data.defaultPinEnabled !== false
+      };
+    }
+    // Initialize default if doesn't exist
+    const initial = { accessPin: 'admin2026', defaultPinEnabled: true };
+    await setDoc(docRef, { ...initial, createdAt: new Date().toISOString() });
+    return initial;
+  } catch (err) {
+    console.warn('[Firestore] Error reading admin PIN config:', err);
+    return { accessPin: 'admin2026', defaultPinEnabled: true };
+  }
+}
+
+export async function saveAdminPinConfigToFirestore({ accessPin, defaultPinEnabled }) {
+  try {
+    const docRef = doc(db, 'config', 'admin_pin');
+    const payload = {
+      defaultPinEnabled: typeof defaultPinEnabled === 'boolean' ? defaultPinEnabled : true,
+      updatedAt: new Date().toISOString()
+    };
+    if (accessPin && accessPin.trim()) {
+      payload.accessPin = accessPin.trim();
+    }
+    await setDoc(docRef, payload, { merge: true });
+    console.log('[Firestore] ✅ Admin PIN configuration saved to Firestore');
+    return true;
+  } catch (err) {
+    console.error('[Firestore] Error saving admin PIN config:', err);
+    throw err;
+  }
+}
+
+/**
+ * ── Team Bin PIN (Stored in Cloud Firestore) ──
+ * Document: config/bin_pin
+ * Default access PIN: 'jcer'
+ */
+export async function getBinPinConfigFromFirestore() {
+  try {
+    const docRef = doc(db, 'config', 'bin_pin');
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      return {
+        accessPin: data.accessPin || 'jcer',
+        defaultPinEnabled: data.defaultPinEnabled !== false
+      };
+    }
+    // Initialize default if doesn't exist (default PIN: 'jcer')
+    const initial = { accessPin: 'jcer', defaultPinEnabled: true };
+    await setDoc(docRef, { ...initial, createdAt: new Date().toISOString() });
+    return initial;
+  } catch (err) {
+    console.warn('[Firestore] Error reading bin PIN config:', err);
+    return { accessPin: 'jcer', defaultPinEnabled: true };
+  }
+}
+
+export async function saveBinPinConfigToFirestore({ accessPin, defaultPinEnabled }) {
+  try {
+    const docRef = doc(db, 'config', 'bin_pin');
+    const payload = {
+      defaultPinEnabled: typeof defaultPinEnabled === 'boolean' ? defaultPinEnabled : true,
+      updatedAt: new Date().toISOString()
+    };
+    if (accessPin && accessPin.trim()) {
+      payload.accessPin = accessPin.trim();
+    }
+    await setDoc(docRef, payload, { merge: true });
+    console.log('[Firestore] ✅ Team Bin PIN configuration saved to Firestore');
+    return true;
+  } catch (err) {
+    console.error('[Firestore] Error saving bin PIN config:', err);
+    throw err;
+  }
+}
+
+/**
+ * ── Admin Users Access Management (Stored in Cloud Firestore) ──
+ * Document: config/admin_users
+ */
+export async function getAdminUsersFromFirestore() {
+  try {
+    const docRef = doc(db, 'config', 'admin_users');
+    const snap = await getDoc(docRef);
+    if (snap.exists()) {
+      const data = snap.data();
+      if (Array.isArray(data.users) && data.users.length > 0) {
+        return data.users;
+      }
+    }
+    // Initialize default super admin
+    const defaultUsers = [
+      {
+        id: 'admin_1',
+        email: 'swayamuk1@gmail.com',
+        password: 'admin123',
+        role: 'Super Admin',
+        createdAt: new Date().toISOString()
+      }
+    ];
+    await setDoc(docRef, { users: defaultUsers, updatedAt: new Date().toISOString() });
+    return defaultUsers;
+  } catch (err) {
+    console.warn('[Firestore] Error reading admin users:', err);
+    return [
+      {
+        id: 'admin_1',
+        email: 'swayamuk1@gmail.com',
+        password: 'admin123',
+        role: 'Super Admin',
+        createdAt: new Date().toISOString()
+      }
+    ];
+  }
+}
+
+export async function saveAdminUsersToFirestore(users) {
+  try {
+    const docRef = doc(db, 'config', 'admin_users');
+    await setDoc(docRef, {
+      users: Array.isArray(users) ? users : [],
+      updatedAt: new Date().toISOString()
+    });
+    console.log(`[Firestore] ✅ Saved ${users.length} admin users to Firestore`);
+    return true;
+  } catch (err) {
+    console.error('[Firestore] Error saving admin users:', err);
+    throw err;
+  }
+}
+
