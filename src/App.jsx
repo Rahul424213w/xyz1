@@ -49,25 +49,47 @@ export default function App() {
   })
   const [flashStage, setFlashStage] = useState('idle') // 'idle' | 'flashing-in' | 'flashing-out'
 
+  // Replay intro
+  const handleReplay = useCallback(() => {
+    setFlashStage('flashing-in')
+
+    setTimeout(() => {
+      resetScroll()
+      setCurrentPage('intro')
+      setFlashStage('flashing-out')
+
+      setTimeout(() => {
+        setFlashStage('idle')
+      }, 200)
+    }, 80)
+  }, [])
+
   // Register wheel/keyboard listeners for the 3D flight
   useEffect(() => {
     const cleanup = initScroll()
     return cleanup
   }, [])
 
-  // Allow pressing 'r' or 'R' or Escape on keyboard to replay the 3D intro anytime
+  // Allow pressing 'r' or 'R' or Escape on keyboard to replay the 3D intro ONLY from the landing page
   useEffect(() => {
     const onKey = (e) => {
+      // Ignore if user is currently typing in an input, textarea, select, or editable element
+      const tag = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : ''
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target?.isContentEditable) {
+        return
+      }
+
+      // ONLY replay when on landing page - NEVER on register or contact forms!
       if (
         (e.key === 'r' || e.key === 'R' || e.key === 'Escape') &&
-        (currentPage === 'landing' || currentPage === 'contact' || currentPage === 'register')
+        currentPage === 'landing'
       ) {
         handleReplay()
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [currentPage])
+  }, [currentPage, handleReplay])
 
   // Sync with browser hash changes for back/forward buttons
   useEffect(() => {
@@ -136,23 +158,8 @@ export default function App() {
     }, 90)
   }, [flashStage])
 
-  // Replay intro
-  const handleReplay = useCallback(() => {
-    setFlashStage('flashing-in')
-
-    setTimeout(() => {
-      resetScroll()
-      setCurrentPage('intro')
-      setFlashStage('flashing-out')
-
-      setTimeout(() => {
-        setFlashStage('idle')
-      }, 200)
-    }, 80)
-  }, [])
-
   return (
-    <div className="app">
+    <div className={`app ${currentPage === 'register' ? 'app-register' : ''}`}>
       {/* ── Quick White Flash Overlay ── */}
       <div
         className={`white-flash ${flashStage === 'flashing-in' ? 'flashing-in' : flashStage === 'flashing-out' ? 'flashing-out' : ''}`}

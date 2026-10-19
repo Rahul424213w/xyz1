@@ -20,6 +20,10 @@ export function initScroll() {
 
   // Keyboard navigation support: ArrowDown, ArrowUp, PageDown, PageUp, Space
   const onKeyDown = (e) => {
+    const tag = e.target && e.target.tagName ? e.target.tagName.toUpperCase() : ''
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || e.target?.isContentEditable) {
+      return
+    }
     if (!scrollState.enabled) return
     if (e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
       scrollState.progress = Math.min(1, scrollState.progress + 0.03)

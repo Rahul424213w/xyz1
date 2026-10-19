@@ -10,6 +10,11 @@
   position: relative;
 }
 
+.app.app-register {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
 .canvas-wrap {
   width: 100%;
   height: 100%;
